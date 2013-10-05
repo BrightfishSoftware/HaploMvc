@@ -18,6 +18,7 @@ class HaploSetup {
      * @throws HaploDirNotWritableException
      * @throws HaploException
      * @throws HaploPhpConfigException
+     * @throws HaploClassNotFoundException
      */
     public static function validate($appBase) {
         if (ini_get('register_globals')) {
@@ -33,11 +34,15 @@ class HaploSetup {
         }
 
         if (!is_dir($appBase.'/Templates')) {
-            throw new HaploException('Templates directory ('.$appBase.'/Templates) not found.');
+            throw new HaploDirNotFoundException('Templates directory ('.$appBase.'/Templates) not found.');
+        }
+
+        if (!is_dir($appBase.'/TemplateFunctions')) {
+            throw new HaploDirNotFoundException('Template functions directory ('.$appBase.'/TemplateFunctions) not found.');
         }
         
         if (!is_dir($appBase.'/PostFilters')) {
-            throw new HaploDirnotFoundException('Template post filters directory ('.$appBase.'/PostFilters) not found.');
+            throw new HaploDirNotFoundException('Template post filters directory ('.$appBase.'/PostFilters) not found.');
         }
         
         if (!is_dir($appBase.'/Translations')) {
@@ -50,6 +55,10 @@ class HaploSetup {
         
         if (!is_writable($appBase.'/Cache')) {
             throw new HaploDirNotWritableException('Cache directory ('.$appBase.'/Cache) is not writeable.');
+        }
+
+        if (!class_exists('\Zend\Escaper\Escaper')) {
+            throw new HaploClassNotFoundException('Class \Zend\Escaper\Escaper not found. Required for HaploEscaper.');
         }
     }
 }
