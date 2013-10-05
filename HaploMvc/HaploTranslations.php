@@ -80,9 +80,9 @@ class HaploTranslations extends HaploSingleton {
      */
     protected function __construct(HaploApp $app) {
         $this->app = $app;
-        $this->lang = $this->app->config->get_key('translations', 'lang');
-        $this->defaultLang = $this->app->config->get_key('translations', 'defaultLang');
-        $this->allowShowKeys = $this->app->config->get_key('translations', 'allowShowKeys');
+        $this->lang = $this->app->config->get_key('translations', 'lang', 'en-US');
+        $this->defaultLang = $this->app->config->get_key('translations', 'defaultLang', 'en-US');
+        $this->allowShowKeys = $this->app->config->get_key('translations', 'allowShowKeys', false);
         $this->translationsDir = $this->app->appBase.'/Translations';
         $this->translationsCacheDir = $this->app->appBase.'/Cache';
         $this->file = $this->translationsDir.'/'.$this->lang.'.txt';

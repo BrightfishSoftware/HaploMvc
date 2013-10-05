@@ -18,6 +18,10 @@ HaploEscaper uses the Zend Escaper library which is licensed under the Zend Fram
 
 ## Change Log
 
+## 0.0.2 (5th October 2013)
+
+Add defaults for translation options.
+
 ### 0.0.1 (5th October 2013)
 
 Initial release. Based on an earlier version of the same framework but completely rewritten to use namespaces and to ensure looser coupling between components.
