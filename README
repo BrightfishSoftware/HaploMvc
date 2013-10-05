@@ -1,5 +1,5 @@
 
-A simple and lightweight PHP MVC development framework - helps you structure your app without getting in your way.
+A simple and lightweight PHP MVC development framework.
 
 Key Features
 
@@ -11,6 +11,6 @@ Key Features
    * Support for localisation
 
 BSD License (see LICENSE for conditions of use).
-HaploEscaper uses the Zend Escaper library which is licensed under the [Zend Framework license](http://framework.zend.com/license)
+HaploEscaper uses the Zend Escaper library which is licensed under the Zend Framework license (http://framework.zend.com/license)
 
 Please let me know if you encounter any errors whilst using.
