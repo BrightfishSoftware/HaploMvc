@@ -10,37 +10,20 @@ namespace HaploMvc;
  * @package HaploMvc
  */
 class HaploLoader {
+    /** @var string */
     protected static $appBase;
     /** @var array */
-    protected static $searchPaths = array(
-        '/Includes/',
-        '/HaploMvc/'
+    protected static $namespaces = array(
+        'Actions',
+        'HaploMvc',
+        'Includes',
+        'Models',
+        'Zend'
     );
 
     /**
-     * @param string $filename
-     * @throws HaploClassFileNotFoundException
+     * @param $appBase
      */
-    public static function load_file($filename) {
-        $fullPath = '';
-
-        foreach (self::$searchPaths as $path) {
-            $fullPath = static::$appBase.$path.$filename;
-            if (file_exists($fullPath)) {
-                break;
-            }
-        }
-
-        if ($fullPath !== '') {
-            require_once $fullPath;
-        } else {
-            throw new HaploClassFileNotFoundException(sprintf(
-                '%s not found in any of the search paths.',
-                $filename
-            ));
-        }
-    }
-
     public static function register($appBase) {
         static::$appBase = $appBase;
         spl_autoload_register('\HaploMvc\HaploLoader::load_class');
@@ -48,9 +31,19 @@ class HaploLoader {
 
     /**
      * @param string $className
+     * @return bool
      */
     public static function load_class($className) {
-        require static::$appBase.'/'.preg_replace('#\\\|_(?!.*\\\)#','/',$className).'.php';
+        foreach (static::$namespaces as $namespace) {
+            if (substr($className, 0, strlen($namespace)) === $namespace) {
+                $filename = static::$appBase.'/'.preg_replace('#\\\|_(?!.*\\\)#','/',$className).'.php';
+                if (is_readable($filename)) {
+                    require $filename;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 
