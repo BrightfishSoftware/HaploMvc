@@ -176,18 +176,18 @@ class HaploDb extends HaploSingleton {
             if ($count > 0) {
                 if ($this->useSqlCalcFoundRows) {
                     $stmt = preg_replace(
-                        '/^select\s+/i', 
-                        'select sql_calc_found_rows ', 
+                        '/^SELECT\s+/i',
+                        'SELECT SQL_CALC_FOUND_ROWS ',
                         sprintf('%s limit %d, %d', trim($stmt), $start, $count)
                     );
                 } else {
                     $countStmt = preg_replace(
                         '/^select.*from/is',
-                        'select count(*) from ',
+                        'SELECT COUNT(*) FROM ',
                         trim($stmt)
                     );
                     $this->lastRowCount = $this->get_column($countStmt, $params);
-                    $stmt =sprintf('%s limit %d offset %d', trim($stmt), $count, $start);
+                    $stmt = sprintf('%s LIMIT %d OFFSET %d', trim($stmt), $count, $start);
                 }
             }
         
@@ -252,7 +252,7 @@ class HaploDb extends HaploSingleton {
     public function get_recordset($stmt, array $params = array(), $start = 0, $count = 0) {
         try {
             if ($count > 0) {
-                $stmt = sprintf('%s limit %d, %d', $stmt, $start, $count);
+                $stmt = sprintf('%s LIMIT %d, %d', $stmt, $start, $count);
             }
         
             if (empty($params) && $result = $this->db->query($stmt)) {
@@ -304,7 +304,7 @@ class HaploDb extends HaploSingleton {
     public function get_total_rows() {
         if ($this->useSqlCalcFoundRows) {
             try {
-                if ($result = $this->db->query('select found_rows()')) {
+                if ($result = $this->db->query('SELECT FOUND_ROWS()')) {
                     return $result->fetchColumn(0);
                 }
             } catch (PDOException $e) {
@@ -395,5 +395,17 @@ class HaploDb extends HaploSingleton {
         } else {
             $this->useSqlCalcFoundRows = false;
         }
+    }
+
+    /**
+     * @param string $identifier
+     * @return string
+     */
+    public function quote_identifier($identifier) {
+        $parts = explode('.', $identifier);
+        foreach ($parts as &$part) {
+            $part = '`'.trim(str_replace('`', '``', $part)).'`';
+        }
+        return implode('.', $parts);
     }
 }
