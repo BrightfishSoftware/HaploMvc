@@ -401,6 +401,8 @@ class HaploQueryBuilder {
     }
 
     /**
+     * TODO: work out how to filter to prevent possible SQL injection
+     *
      * @param string $table
      * @param string $on
      * @param string $type
@@ -504,7 +506,12 @@ class HaploQueryBuilder {
         $values = implode(',', $values);
         $sql .= sprintf(' (%s) VALUES (%s)', $names, $values);
         $this->reset();
-        return $this->db->run($sql) ? $this->db->lastInsertId() : false;
+        if ($this->dryRun) {
+            echo $sql;
+            return true;
+        } else {
+            return $this->db->run($sql) ? $this->db->lastInsertId() : false;
+        }
     }
 
     /**
@@ -534,7 +541,12 @@ class HaploQueryBuilder {
             $sql .= $this->limit;
         }
         $this->reset();
-        return (bool)$this->db->run($sql);
+        if ($this->dryRun) {
+            echo $sql;
+            return true;
+        } else {
+            return (bool)$this->db->run($sql);
+        }
     }
 
     /**
@@ -553,7 +565,12 @@ class HaploQueryBuilder {
             $sql .= $this->limit;
         }
         $this->reset();
-        return (bool)$this->db->run($sql);
+        if ($this->dryRun) {
+            echo $sql;
+            return true;
+        } else {
+            return (bool)$this->db->run($sql);
+        }
     }
 
     /**
@@ -561,7 +578,13 @@ class HaploQueryBuilder {
      * @return bool
      */
     public function delete_all($table) {
-        return $this->db->run('DELETE FROM '.$this->db->quote_identifier($table));
+        $sql = 'DELETE FROM '.$this->db->quote_identifier($table);
+        if ($this->dryRun) {
+            echo $sql;
+            return true;
+        } else {
+            return $this->db->run($sql);
+        }
     }
 
     /**
@@ -569,7 +592,13 @@ class HaploQueryBuilder {
      * @return bool
      */
     public function truncate($table) {
-        return $this->db->run('TRUNCATE '.$this->db->quote_identifier($table));
+        $sql = 'TRUNCATE '.$this->db->quote_identifier($table);
+        if ($this->dryRun) {
+            echo $sql;
+            return true;
+        } else {
+            return $this->db->run($sql);
+        }
     }
 
     /**
@@ -594,7 +623,12 @@ class HaploQueryBuilder {
             $sql .= $this->limit;
         }
         $this->reset();
-        return $this->single ? $this->db->get_row($sql) : $this->db->get_array($sql);
+        if ($this->dryRun) {
+            echo $sql;
+            return true;
+        } else {
+            return $this->single ? $this->db->get_row($sql) : $this->db->get_array($sql);
+        }
     }
 
     /**
@@ -616,7 +650,12 @@ class HaploQueryBuilder {
             $sql .= ' ORDER BY '.$this->orderBy;
         }
         $this->reset();
-        return $this->db->get_column($sql);
+        if ($this->dryRun) {
+            echo $sql;
+            return true;
+        } else {
+            return $this->db->get_column($sql);
+        }
     }
 
     public function reset() {
