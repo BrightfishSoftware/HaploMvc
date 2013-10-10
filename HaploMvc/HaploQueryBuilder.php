@@ -55,12 +55,33 @@ class HaploQueryBuilder {
         'IN',
         'NOT IN'
     );
+    /** @var array */
+    protected $joinTypes = array(
+        'JOIN',
+        'LEFT JOIN',
+        'RIGHT_JOIN',
+        'OUTER_JOIN',
+        'INNER_JOIN',
+        'LEFT OUTER JOIN',
+        'RIGHT OUTER JOIN'
+    );
+    /** @var bool */
+    protected $dryRun = false;
 
     /**
      * @param HaploDb $db
      */
     public function __construct(HaploDb $db) {
         $this->db = $db;
+    }
+
+    /**
+     * @param $dryRun
+     * @return HaploQueryBuilder $this
+     */
+    public function dry_run($dryRun) {
+        $this->dryRun = $dryRun;
+        return $this;
     }
 
     /**
@@ -380,24 +401,83 @@ class HaploQueryBuilder {
     }
 
     /**
+     * @param string $table
+     * @param string $on
+     * @param string $type
      * @return HaploQueryBuilder $this
+     * @throws \Exception
      */
-    public function join() {
+    protected function _join($table, $on, $type = 'JOIN') {
+        $type = strtoupper($type);
+        if (!in_array($type, $this->joinTypes)) {
+            throw new Exception('Invalid join type specified.');
+        }
+        $sql = sprintf('%s %s ON %s', $type, $table, $on);
+        $this->join = $this->join === '' ? $sql : ', '.$sql;
         return $this;
     }
 
     /**
+     * @param string $table
+     * @param string $on
      * @return HaploQueryBuilder $this
      */
-    public function left_join() {
-        return $this;
+    public function join($table, $on) {
+        return $this->_join($table, $on, 'JOIN');
     }
 
     /**
+     * @param string $table
+     * @param string $on
      * @return HaploQueryBuilder $this
      */
-    public function right_join() {
-        return $this;
+    public function left_join($table, $on) {
+        return $this->_join($table, $on, 'LEFT JOIN');
+    }
+
+    /**
+     * @param string $table
+     * @param string $on
+     * @return HaploQueryBuilder $this
+     */
+    public function right_join($table, $on) {
+        return $this->_join($table, $on, 'RIGHT JOIN');
+    }
+
+    /**
+     * @param string $table
+     * @param string $on
+     * @return HaploQueryBuilder $this
+     */
+    public function outer_join($table, $on) {
+        return $this->_join($table, $on, 'OUTER JOIN');
+    }
+
+    /**
+     * @param string $table
+     * @param string $on
+     * @return HaploQueryBuilder $this
+     */
+    public function inner_join($table, $on) {
+        return $this->_join($table, $on, 'INNER JOIN');
+    }
+
+    /**
+     * @param string $table
+     * @param string $on
+     * @return HaploQueryBuilder $this
+     */
+    public function left_outer_join($table, $on) {
+        return $this->_join($table, $on, 'LEFT OUTER JOIN');
+    }
+
+    /**
+     * @param string $table
+     * @param string $on
+     * @return HaploQueryBuilder $this
+     */
+    public function right_outer_join($table, $on) {
+        return $this->_join($table, $on, 'RIGHT OUTER JOIN');
     }
 
     /**
