@@ -6,6 +6,13 @@
 
 namespace HaploMvc;
 
+use \HaploMvc\Pattern\HaploSingleton,
+    \HaploMvc\Template\HaploTemplateFactory,
+    \HaploMvc\Config\HaploConfig,
+    \HaploMvc\Cache\HaploCacheFactory,
+    \HaploMvc\Security\HaploNonce,
+    \HaploMvc\Translation\HaploTranslations;
+
 /**
  * Class HaploApp
  * @package HaploMvc

@@ -4,7 +4,10 @@
  * @package HaploNonce
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Security;
+
+use \HaploMvc\Pattern\HaploSingleton,
+    \HaploMvc\HaploApp;
 
 /**
  * Class HaploNonce

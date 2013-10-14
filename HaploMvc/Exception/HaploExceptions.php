@@ -4,7 +4,7 @@
  * @package HaploExceptions
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Exception;
 
 use Exception;
 
@@ -199,3 +199,9 @@ class HaploException extends Exception {}
  * @package HaploMvc
  */
 class HaploTemplateFunctionNotFound extends Exception {}
+
+/**
+ * Class HaploRegionModeException
+ * @package HaploMvc
+ */
+class HaploRegionModeException extends Exception {}

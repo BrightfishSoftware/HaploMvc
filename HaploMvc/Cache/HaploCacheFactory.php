@@ -4,7 +4,11 @@
  * @package HaploCacheFactory
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Cache;
+
+use HaploMvc\Pattern\HaploSingleton,
+    HaploMvc\HaploApp,
+    HaploMvc\Exception\HaploLibraryNotFoundException;
 
 /**
  * Class HaploCacheFactory

@@ -4,7 +4,14 @@
  * @package HaploTemplate
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Template;
+
+use \HaploMvc\HaploApp,
+    \HaploMvc\Security\HaploEscaper,
+    \HaploMvc\Exception\HaploInvalidTemplateException,
+    \HaploMvc\Exception\HaploTemplateFunctionNotFound,
+    \HaploMvc\Exception\HaploPostFilterFunctionNotFoundException,
+    \HaploMvc\Exception\HaploTemplateNotFoundException;
 
 /**
  * Class HaploTemplate
@@ -26,21 +33,32 @@ class HaploTemplate {
      **/
     protected $filePath;
     /**
-     * Stores variables to pass to template
-     *
-     * @var string
-     **/
-    protected $vars = array();
-    /**
      * @var array
      */
     protected $templateFunctions = array();
     /**
      * Stores reference to post filter functions to run against template
+     * @var array
+     */
+    protected $postFilters = array();
+    /**
+     * @var array
+     */
+    protected $inherits = array();
+    /**
+     * Stores variables to pass to template
      *
+     * @var string
+     **/
+    public $vars = array();
+    /**
      * @var array
      **/
-    protected $postFilters = array();
+    public $regionNames = array();
+    /**
+     * @var array
+     */
+    public $regions = array();
 
     /**
      * Constructor for class
@@ -67,7 +85,7 @@ class HaploTemplate {
      * @param string $filename Filename for template to include - uses the same file paths as the parent
      * @param array $vars Optionally pass additional variables to the template
      **/
-    protected function inc_template($filename, $vars = array()) {
+    protected function inc_template($filename, array $vars = array()) {
         $template = new HaploTemplate($this->app, $filename);
         $template->vars = $this->vars;
         
@@ -81,6 +99,53 @@ class HaploTemplate {
     }
 
     /**
+     * @param string $filename
+     */
+    public function inherits($filename) {
+        $this->inherits[] = $filename;
+    }
+
+    /**
+     * @param string $name
+     * @param string $mode
+     */
+    public function region($name, $mode = 'replace') {
+        $this->regionNames[] = array($name, $mode);
+        ob_start();
+    }
+
+    public function end_region() {
+        list($name, $mode) = array_pop($this->regionNames);
+
+        if (!isset($this->regions[$name])) {
+            $this->regions[$name] = array('content' => ob_get_contents(), 'mode' => $mode);
+        } else {
+            switch ($this->regions[$name]['mode']) {
+                case 'prepend':
+                case 'before':
+                    $this->regions[$name] = array(
+                        'content' => $this->regions[$name]['content'].ob_get_contents(),
+                        'mode' => $mode
+                    );
+                    break;
+                case 'append':
+                case 'after':
+                    $this->regions[$name] = array(
+                        'content' => ob_get_contents().$this->regions[$name]['content'],
+                        'mode' => $mode
+                    );
+                    break;
+            }
+        }
+
+        ob_end_clean();
+
+        if ($mode === 'replace') {
+            echo $this->regions[$name]['content'];
+        }
+    }
+
+    /**
      * Set a variable (make it available within the scope of the template)
      *
      * @param string $name Name of variable to set
@@ -90,7 +155,7 @@ class HaploTemplate {
     public function set(
         $name, 
         $value, 
-        $options = array()
+        array $options = array()
     ) {
         $defaultOptions = array(
             'stripHtml' => $this->app->config->get_key('templates', 'stripHtml', true),
@@ -133,8 +198,8 @@ class HaploTemplate {
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param callable|string $value
      * @throws HaploTemplateFunctionNotFound
      */
     public function add_function($name, $value) {
@@ -155,7 +220,7 @@ class HaploTemplate {
     /**
      * Add a post filter - a function which is run against the generated template before outputting
      *
-     * @param $postFilter
+     * @param callable|string $postFilter
      * @throws HaploPostFilterFunctionNotFoundException
      */
     public function add_post_filter($postFilter) {
@@ -210,6 +275,14 @@ class HaploTemplate {
         }
         
         $output .= ob_get_clean();
+
+        while ($inherit = array_pop($this->inherits)) {
+            $parent = new HaploTemplate($this->app, $inherit);
+            $parent->vars = $this->vars;
+            $parent->regionNames = $this->regionNames;
+            $parent->regions = $this->regions;
+            $output = $parent->render();
+        }
 
         // process content against defined post filters
         foreach ($this->postFilters as $postFilter) {

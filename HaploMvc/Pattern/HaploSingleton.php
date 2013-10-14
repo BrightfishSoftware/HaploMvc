@@ -4,7 +4,9 @@
  * @package HaploSingleton
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Pattern;
+
+use \HaploMvc\Exception\HaploCloningNotAllowedException;
 
 abstract class HaploSingleton {
     /**
