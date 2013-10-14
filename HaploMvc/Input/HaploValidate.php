@@ -4,7 +4,7 @@
  * @package HaploValidate
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Input;
  
 /**
  * Class HaploValidate

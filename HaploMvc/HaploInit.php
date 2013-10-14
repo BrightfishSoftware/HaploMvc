@@ -5,7 +5,7 @@
 
 namespace HaploMvc;
 
-require APP_BASE.'/HaploMvc/HaploExceptions.php';
+require APP_BASE.'/HaploMvc/Exception/HaploExceptions.php';
 require APP_BASE.'/HaploMvc/HaploLoader.php';
 
 // this can be disabled after successful setup

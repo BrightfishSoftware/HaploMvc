@@ -4,7 +4,13 @@
  * @package HaploAction
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Action;
+
+use \HaploMvc\Pattern\HaploSingleton,
+    \HaploMvc\HaploApp,
+    \HaploMvc\HaploRouter,
+    \HaploMvc\Exception\HaploMethodNotFoundException,
+    \HaploMvc\Exception\HaploActionNotFoundException;
 
 /**
  * Class HaploAction

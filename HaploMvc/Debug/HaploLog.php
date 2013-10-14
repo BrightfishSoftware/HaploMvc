@@ -4,7 +4,9 @@
  * @package HaploLog
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Debug;
+
+use \HaploMvc\Config\HaploConfig;
 
 /**
  * Class HaploLog

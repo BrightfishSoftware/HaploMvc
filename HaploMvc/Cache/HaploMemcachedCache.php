@@ -4,7 +4,7 @@
  * @package HaploMemcachedCache
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Cache;
 
 use \Memcached;
 

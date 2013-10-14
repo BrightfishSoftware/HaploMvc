@@ -4,7 +4,10 @@
  * @package HaploTemplateFactory
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Template;
+
+use \HaploMvc\Pattern\HaploSingleton,
+    \HaploMvc\HaploApp;
 
 /**
  * Class HaploTemplateFactory
