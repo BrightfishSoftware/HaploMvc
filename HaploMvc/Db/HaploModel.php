@@ -29,12 +29,9 @@ abstract class HaploModel {
         if ($db instanceof HaploDb) {
             $this->db = &$db;
         } else {
-            $this->db = HaploDb::get_instance(array(
-                'user' => $config->get_key($dbConfig, 'user'),
-                'pass' => $config->get_key($dbConfig, 'pass'),
-                'database' => $config->get_key($dbConfig, 'database'),
-                'host' => $config->get_key($dbConfig, 'host')
-            ));
+            $engine = $config->get_key($dbConfig, 'engine', 'MySql');
+            $driver = sprintf('Haplo%sDbDriver', $engine);
+            $this->db = HaploDb::get_instance(new $driver($config->get_section($dbConfig)));
         }
     }
 }

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright (C) 2008-2013, Brightfish Software Limited
+ * @package HaploPostgreSqlDbDriver
+ **/
 namespace HaploMvc\Db;
 
 use \PDO;
@@ -27,8 +31,7 @@ class HaploPostgreSqlDbDriver extends HaploDbDriver {
             'user' => '',
             'pass' => '',
             'database' => '',
-            'host' => '',
-            'port' => ''
+            'host' => ''
         );
     }
 

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright (C) 2008-2013, Brightfish Software Limited
+ * @package HaploDbDriverInterface
+ **/
 namespace HaploMvc\Db;
 
 /**
