@@ -18,6 +18,10 @@ HaploEscaper uses the Zend Escaper library which is licensed under the Zend Fram
 
 ## Change Log
 
+### 0.0.8 (15th October 2013)
+
+Restructured framework files, split out provider specific DB code into driver files, added initial code for query builder (unfinished).
+
 ### 0.0.7 (10th October 2013)
 
 Implemented dry run switch to enable outputting of generated queries rather than running.
