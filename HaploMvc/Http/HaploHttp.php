@@ -4,7 +4,7 @@
  * @package HaploHttp
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Http;
 
 /**
  * Class HaploHttp

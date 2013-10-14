@@ -4,7 +4,9 @@
  * @package HaploModel
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Db;
+
+use \HaploMvc\Config\HaploConfig;
 
 /**
  * Class HaploModel

@@ -4,7 +4,7 @@
  * @package HaploHttpOptions
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Http;
 
 
 class HaploHttpOptions {

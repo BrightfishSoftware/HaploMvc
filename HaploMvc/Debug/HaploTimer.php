@@ -4,7 +4,7 @@
  * @package HaploTimer
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Debug;
 
 class HaploTimer {
     protected static $startTime;

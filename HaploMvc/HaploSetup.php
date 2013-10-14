@@ -6,6 +6,12 @@
 
 namespace HaploMvc;
 
+use \HaploMvc\Exception\HaploDirNotFoundException,
+     \HaploMvc\Exception\HaploDirNotWritableException,
+     \HaploMvc\Exception\HaploException,
+     \HaploMvc\Exception\HaploPhpConfigException,
+     \HaploMvc\Exception\HaploClassNotFoundException;
+
 /**
  * Class HaploSetup
  * @package HaploMvc

@@ -22,7 +22,7 @@ class HaploLoader {
     );
 
     /**
-     * @param $appBase
+     * @param string $appBase
      */
     public static function register($appBase) {
         static::$appBase = $appBase;

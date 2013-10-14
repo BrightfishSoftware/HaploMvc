@@ -4,7 +4,7 @@
  * @package HaploInput
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Input;
 
 /**
  * Class HaploInput

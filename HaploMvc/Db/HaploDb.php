@@ -4,85 +4,41 @@
  * @package HaploDb
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Db;
 
 use \PDO,
     \PDOException,
-    \Exception;
+    \Exception,
+    \HaploMvc\Pattern\HaploSingleton,
+    \HaploMvc\Debug\HaploLog;
 
 /**
  * Class HaploDb
  * @package HaploMvc
  */
 class HaploDb extends HaploSingleton {
-    const DB_TYPE_MYSQL = 'mysql';
-    const DB_TYPE_POSTGRESQL = 'postgresql';
-    const DB_TYPE_SQLITE = 'sqlite';
-
-    /** @var string */
-    protected $dbType;
+    /** @var HaploDbDriver */
+    public $driver = null;
     /** @var PDO */
-    protected $db;
+    protected $db = null;
     /** @var bool */
     protected $useSqlCalcFoundRows = false;
     /** @var int */
     protected $lastRowCount = null;
 
     /**
-     * @param $params
+     * @param HaploDbDriver $driver
      */
-    protected function __construct($params) {
-        $this->connect($params);
+    protected function __construct(HaploDbDriver $driver) {
+        $this->driver = $driver;
     }
 
     /**
-     * @param array $params
-     * @param string $dbType
-     * @param array $driverOptions
      * @return bool
      */
-    protected function connect(array $params, $dbType, array $driverOptions) {
-        $this->dbType = $dbType;
-
-        switch ($this->dbType) {
-            case self::DB_TYPE_MYSQL:
-                $dsn = sprintf('mysql:dbname=%s;host=%s', $params['database'], $params['host']);
-                if (is_null($driverOptions)) {
-                    $driverOptions = array(
-                        PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8',
-                        PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
-                    );
-                }
-                break;
-            case self::DB_TYPE_POSTGRESQL:
-                $dsn = sprintf('pgsql:dbname=%s;host=%s', $params['database'], $params['host']);
-                if (is_null($driverOptions)) {
-                    $driverOptions = array();
-                }
-                break;
-            case self::DB_TYPE_SQLITE:
-                $dsn = sprintf('sqlite:%s', $params['file']);
-                if (is_null($driverOptions)) {
-                    $driverOptions = array(
-                        PDO::ATTR_PERSISTENT => true
-                    );
-                }
-                break;
-            default:
-                return false;
-        }
-        
+    protected function connect() {
         try {
-            switch ($this->dbType) {
-                case self::DB_TYPE_MYSQL:
-                case self::DB_TYPE_POSTGRESQL:
-                    $this->db = new PDO($dsn, $params['user'], $params['pass'], $driverOptions);
-                    break;
-                case self::DB_TYPE_SQLITE:
-                    $this->db = new PDO($dsn, null, null, $driverOptions);
-                    break;
-            }
-
+            $this->db = $this->driver->connect();
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             $this->log_error($e);
@@ -107,40 +63,14 @@ class HaploDb extends HaploSingleton {
     }
 
     /**
-     * @param array $params
-     * @param string $dbType
-     * @param array $driverOptions
+     * @param HaploDbDriver $driver
      * @return mixed
      */
-    public static function get_instance(
-        array $params = array(),
-        $dbType = self::DB_TYPE_MYSQL,
-        array $driverOptions = null
-    ) {
-        $defaultParams = array(
-            self::DB_TYPE_MYSQL => array(
-                'user' => 'root',
-                'pass' => '',
-                'database' => '',
-                'host' => '127.0.0.1'
-            ),
-            self::DB_TYPE_POSTGRESQL => array(
-                'user' => '',
-                'pass' => '',
-                'database' => '',
-                'host' => '',
-                'port' => ''
-            ),
-            self::DB_TYPE_SQLITE => array(
-                'file' => ':memory:'
-            )
-        );
-        $params = array_merge($defaultParams[$dbType], $params);
+    public static function get_instance(HaploDbDriver $driver = null) {
         $class = get_called_class();
-        $instanceKey = sha1($class.$dbType.serialize($params).serialize($driverOptions));
-        
+        $instanceKey = $driver->get_instance_hash();
         if (!isset(self::$instances[$instanceKey])) {
-            self::$instances[$instanceKey] = new $class($params, $dbType, $driverOptions);
+            self::$instances[$instanceKey] = new $class($driver);
         }
         return self::$instances[$instanceKey];
     }
@@ -170,6 +100,10 @@ class HaploDb extends HaploSingleton {
      * @return bool
      */
     public function get_array($stmt, array $params = array(), $start = 0, $count = 0) {
+        if (is_null($this->db) && !$this->connect()) {
+            return false;
+        }
+
         $this->lastRowCount = null;
 
         try {
@@ -178,7 +112,7 @@ class HaploDb extends HaploSingleton {
                     $stmt = preg_replace(
                         '/^SELECT\s+/i',
                         'SELECT SQL_CALC_FOUND_ROWS ',
-                        sprintf('%s limit %d, %d', trim($stmt), $start, $count)
+                        sprintf('%s %s', trim($stmt), $this->driver->get_limit($count, $start))
                     );
                 } else {
                     $countStmt = preg_replace(
@@ -187,7 +121,7 @@ class HaploDb extends HaploSingleton {
                         trim($stmt)
                     );
                     $this->lastRowCount = $this->get_column($countStmt, $params);
-                    $stmt = sprintf('%s LIMIT %d OFFSET %d', trim($stmt), $count, $start);
+                    $stmt = sprintf('%s %s', trim($stmt), $this->driver->get_limit($count, $start));
                 }
             }
         
@@ -209,6 +143,10 @@ class HaploDb extends HaploSingleton {
      * @return bool
      */
     public function get_row($stmt, array $params = array()) {
+        if (is_null($this->db) && !$this->connect()) {
+            return false;
+        }
+
         try {
             if (empty($params) && $result = $this->db->query($stmt)) {
                 return $result->fetch(PDO::FETCH_ASSOC);
@@ -229,6 +167,10 @@ class HaploDb extends HaploSingleton {
      * @return bool
      */
     public function get_column($stmt, array $params = array(), $column = 0) {
+        if (is_null($this->db) && !$this->connect()) {
+            return false;
+        }
+
         try {
             if (empty($params) && $result = $this->db->query($stmt)) {
                 return $result->fetchColumn($column);
@@ -250,9 +192,13 @@ class HaploDb extends HaploSingleton {
      * @return bool
      */
     public function get_recordset($stmt, array $params = array(), $start = 0, $count = 0) {
+        if (is_null($this->db) && !$this->connect()) {
+            return false;
+        }
+
         try {
             if ($count > 0) {
-                $stmt = sprintf('%s LIMIT %d, %d', $stmt, $start, $count);
+                $stmt = sprintf('%s %s', $stmt, $this->driver->get_limit($count, $start));
             }
         
             if (empty($params) && $result = $this->db->query($stmt)) {
@@ -273,6 +219,10 @@ class HaploDb extends HaploSingleton {
      * @return bool
      */
     public function run($stmt, array $params = array()) {
+        if (is_null($this->db) && !$this->connect()) {
+            return false;
+        }
+
         try {
             if (empty($params)) {
                 return $this->db->query($stmt);
@@ -291,6 +241,10 @@ class HaploDb extends HaploSingleton {
      * @return mixed
      */
     public function get_in_values(array $values) {
+        if (is_null($this->db) && !$this->connect()) {
+            return false;
+        }
+
         foreach ($values as &$value) {
             $value = $this->db->quote($value);
         }
@@ -302,6 +256,10 @@ class HaploDb extends HaploSingleton {
      * @return bool|int
      */
     public function get_total_rows() {
+        if (is_null($this->db) && !$this->connect()) {
+            return 0;
+        }
+
         if ($this->useSqlCalcFoundRows) {
             try {
                 if ($result = $this->db->query('SELECT FOUND_ROWS()')) {
@@ -390,7 +348,7 @@ class HaploDb extends HaploSingleton {
      * @param bool $useSqlCalcFoundRows
      */
     public function set_use_sql_calc_found_rows($useSqlCalcFoundRows) {
-        if ($this->dbType == self::DB_TYPE_MYSQL) {
+        if ($this->driver->driverName === 'mysql') {
             $this->useSqlCalcFoundRows = $useSqlCalcFoundRows;
         } else {
             $this->useSqlCalcFoundRows = false;
