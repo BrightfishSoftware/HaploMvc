@@ -4,7 +4,7 @@
  **/
 namespace Actions;
 
-use \HaploMvc\HaploAction;
+use \HaploMvc\Action\HaploAction;
 
 /**
  * Class Home

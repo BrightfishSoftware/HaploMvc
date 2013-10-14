@@ -2,7 +2,7 @@
 namespace HaploMvc\Tests;
 
 use PHPUnit_Framework_TestCase,
-    HaploMvc\HaploValidate;
+    HaploMvc\Input\HaploValidate;
 
 class HaploValidateTests extends PHPUnit_Framework_TestCase {
     public function test_is_alpha() {

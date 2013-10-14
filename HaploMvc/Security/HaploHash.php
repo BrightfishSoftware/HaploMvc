@@ -4,7 +4,7 @@
  * @package HaploHash
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Security;
 
 /**
  * Class HaploHash

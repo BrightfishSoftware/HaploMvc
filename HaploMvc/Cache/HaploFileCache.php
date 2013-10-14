@@ -4,7 +4,7 @@
  * @package HaploFileCache
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Cache;
 
 /**
  * Class HaploFileCache

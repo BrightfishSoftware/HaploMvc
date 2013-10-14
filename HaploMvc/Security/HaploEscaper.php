@@ -4,7 +4,7 @@
  * @package HaploEscaper
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Security;
 
 use Zend\Escaper\Escaper as Escaper;
 

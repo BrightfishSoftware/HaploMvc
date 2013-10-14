@@ -4,7 +4,11 @@
  * @package HaploConfig
  **/
 
-namespace HaploMvc;
+namespace HaploMvc\Config;
+
+use \HaploMvc\Pattern\HaploSingleton,
+    \HaploMvc\HaploApp,
+    \HaploMvc\Exception\HaploConfigParseFileException;
 
 class HaploConfig extends HaploSingleton {
     /**
@@ -28,7 +32,7 @@ class HaploConfig extends HaploSingleton {
      * Constructor for class
      *
      * @param HaploApp $app
-     * @return \HaploMvc\HaploConfig
+     * @return HaploConfig
      */
     protected function __construct(HaploApp $app) {
         $this->app = $app;
