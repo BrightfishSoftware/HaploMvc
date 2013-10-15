@@ -16,11 +16,10 @@ class HaploSqliteDbDriver extends HaploDbDriver {
     public $driverName = 'sqlite';
 
     /**
-     * @param array $params
      * @return string
      */
-    protected function get_dsn(array $params) {
-        return sprintf('sqlite:%s', $params['file']);
+    protected function get_dsn() {
+        return sprintf('sqlite:%s', $this->params['file']);
     }
 
     /**
@@ -49,7 +48,7 @@ class HaploSqliteDbDriver extends HaploDbDriver {
             $this->get_dsn($this->params),
             null,
             null,
-            !empty($this->driverOptions) ? $this->driverOptions : $this->get_default_options()
+            $this->driverOptions
         );
     }
 }

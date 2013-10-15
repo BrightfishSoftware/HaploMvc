@@ -24,8 +24,8 @@ abstract class HaploDbDriver implements HaploDbDriverInterface {
      * @param array $driverOptions
      */
     public function __construct(array $params, array $driverOptions = array()) {
-        $this->params = $params;
-        $this->driverOptions = $driverOptions;
+        $this->params = array_merge($this->get_default_params(), $params);
+        $this->driverOptions = array_merge($this->get_default_options(), $driverOptions);
     }
 
     /**
@@ -48,5 +48,13 @@ abstract class HaploDbDriver implements HaploDbDriverInterface {
      */
     public function get_instance_hash() {
         return sha1($this->driverName.$this->params.$this->driverOptions);
+    }
+
+    protected function get_default_params() {
+        return array();
+    }
+
+    protected function get_default_options() {
+        return array();
     }
 }

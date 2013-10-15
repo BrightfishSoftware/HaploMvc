@@ -18,11 +18,15 @@ class HaploMySqlDbDriver extends HaploDbDriver {
     public $hasSqlCalcFoundRows = true;
 
     /**
-     * @param array $params
      * @return string
      */
-    protected function get_dsn(array $params) {
-        return sprintf('mysql:dbname=%s;host=%s', $params['database'], $params['host']);
+    protected function get_dsn() {
+        return sprintf(
+            'mysql:dbname=%s;host=%s;charset=%s',
+            $this->params['database'],
+            $this->params['host'],
+            $this->params['charset']
+        );
     }
 
     /**
@@ -33,7 +37,8 @@ class HaploMySqlDbDriver extends HaploDbDriver {
             'user' => 'root',
             'pass' => '',
             'database' => '',
-            'host' => '127.0.0.1'
+            'host' => '127.0.0.1',
+            'charset' => 'utf8'
         );
     }
 
@@ -42,7 +47,7 @@ class HaploMySqlDbDriver extends HaploDbDriver {
      */
     protected function get_default_options() {
         return array(
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8',
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES '.$this->params['charset'],
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
         );
     }
@@ -67,10 +72,10 @@ class HaploMySqlDbDriver extends HaploDbDriver {
      */
     public function connect() {
         return new PDO(
-            $this->get_dsn($this->params),
+            $this->get_dsn(),
             $this->params['user'],
             $this->params['pass'],
-            !empty($this->driverOptions) ? $this->driverOptions : $this->get_default_options()
+            $this->driverOptions
         );
     }
 }

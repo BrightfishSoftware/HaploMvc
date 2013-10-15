@@ -66,7 +66,7 @@ class HaploQueryBuilder {
         'RIGHT OUTER JOIN'
     );
     /** @var bool */
-    protected $dryRun = false;
+    protected $returnSql = false;
 
     /**
      * @param HaploDb $db
@@ -76,11 +76,11 @@ class HaploQueryBuilder {
     }
 
     /**
-     * @param $dryRun
+     * @param bool $returnSql
      * @return HaploQueryBuilder $this
      */
-    public function dry_run($dryRun) {
-        $this->dryRun = $dryRun;
+    public function return_sql($returnSql) {
+        $this->returnSql = $returnSql;
         return $this;
     }
 
@@ -96,7 +96,6 @@ class HaploQueryBuilder {
      */
     public function select($fields, $dontQuote = false) {
         if (is_array($fields)) {
-            $fields = explode(',', $fields);
             foreach ($fields as $field) {
                 $field = $dontQuote ? $field : $this->db->quote_identifier($field);
                 $this->select .= $this->select === '' ? $field : ', '.$field;
@@ -373,11 +372,9 @@ class HaploQueryBuilder {
     }
 
     /**
-     * @param int $limit
-     * @param int $offset
      * @return HaploQueryBuilder $this
      */
-    public function limit($limit = null, $offset = null) {
+    public function limit() {
         $args = func_get_args();
         if (count($args) == 2) {
             $this->limit = sprintf(' LIMIT %d, %d', (int)$args[0], (int)$args[1]);
@@ -485,11 +482,33 @@ class HaploQueryBuilder {
     }
 
     /**
+     * @param string $andOr
+     * @return $this
+     * @throws Exception
+     */
+    public function bracket($andOr) {
+        $andOr = strtoupper($andOr);
+        if (!in_array($andOr, array('AND', 'OR'))) {
+            throw new Exception('Should be one of AND or OR in bracket()');
+        }
+        $this->where .= $andOr.' (';
+        return $this;
+    }
+
+    public function end_bracket() {
+        $this->where .= ')';
+        return $this;
+    }
+
+    /**
      * @param string $table
      * @param array $data
      * @return int|bool
      */
-    public function insert($table, array $data = array()) {
+    public function insert($table = '', array $data = array()) {
+        if ($table === '') {
+            $table = $this->from;
+        }
         $sql = 'INSERT INTO '.$this->db->quote_identifier($table);
         if (!empty($data)) {
             $names = array_keys($data);
@@ -506,9 +525,9 @@ class HaploQueryBuilder {
         }
         $names = implode(',', $names);
         $values = implode(',', $values);
-        $sql .= sprintf(' (%s) VALUES (%s)', $names, $values);
+        $sql .= sprintf(' (%s) VALUES (%s);', $names, $values);
         $this->reset();
-        if ($this->dryRun) {
+        if ($this->returnSql) {
             return $sql;
         } else {
             return $this->db->run($sql) ? $this->db->lastInsertId() : false;
@@ -520,8 +539,8 @@ class HaploQueryBuilder {
      * @param array $data
      * @return bool
      */
-    public function update($table, array $data = array()) {
-        $sql = sprintf('UPDATE %s SET ', $this->db->quote_identifier($table));
+    public function update($table = '', array $data = array()) {
+        $sql = sprintf('UPDATE %s SET ', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
         if (!empty($data)) {
             foreach ($data as $name => $value) {
                 $sql .= sprintf('%s = %s,', $this->db->quote_identifier($name), $this->db->quote($value));
@@ -541,8 +560,9 @@ class HaploQueryBuilder {
         if ($this->limit !== '') {
             $sql .= $this->limit;
         }
+        $sql .= ';';
         $this->reset();
-        if ($this->dryRun) {
+        if ($this->returnSql) {
             return $sql;
         } else {
             return (bool)$this->db->run($sql);
@@ -553,8 +573,8 @@ class HaploQueryBuilder {
      * @param string $table
      * @return bool
      */
-    public function delete($table) {
-        $sql = 'DELETE FROM'.$this->db->quote_identifier($table);
+    public function delete($table = '') {
+        $sql = sprintf('DELETE FROM %s;', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
         if ($this->where !== '') {
             $sql .= ' WHERE '.$this->where;
         }
@@ -564,8 +584,9 @@ class HaploQueryBuilder {
         if ($this->limit !== '') {
             $sql .= $this->limit;
         }
+        $sql .= ';';
         $this->reset();
-        if ($this->dryRun) {
+        if ($this->returnSql) {
             return $sql;
         } else {
             return (bool)$this->db->run($sql);
@@ -576,9 +597,9 @@ class HaploQueryBuilder {
      * @param string $table
      * @return bool
      */
-    public function delete_all($table) {
-        $sql = 'DELETE FROM '.$this->db->quote_identifier($table);
-        if ($this->dryRun) {
+    public function delete_all($table = '') {
+        $sql = sprintf('DELETE FROM %s;', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
+        if ($this->returnSql) {
             return $sql;
         } else {
             return $this->db->run($sql);
@@ -590,8 +611,8 @@ class HaploQueryBuilder {
      * @return bool
      */
     public function truncate($table) {
-        $sql = 'TRUNCATE '.$this->db->quote_identifier($table);
-        if ($this->dryRun) {
+        $sql = sprintf('TRUNCATE %s;', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
+        if ($this->returnSql) {
             return $sql;
         } else {
             return $this->db->run($sql);
@@ -602,8 +623,13 @@ class HaploQueryBuilder {
      * @param string $table
      * @return array|bool
      */
-    public function get($table) {
-        $sql = sprintf('SELECT %s%s FROM %s', $this->distinct, $this->select, $this->db->quote_identifier($table));
+    public function get($table = '') {
+        $sql = sprintf(
+            'SELECT %s%s FROM %s',
+            $this->distinct,
+            $this->select !== '' ? $this->select : '*',
+            $table !== '' ? $this->db->quote_identifier($table) : $this->from
+        );
         if ($this->where !== '') {
             $sql .= ' WHERE '.$this->where;
         }
@@ -619,8 +645,9 @@ class HaploQueryBuilder {
         if ($this->limit !== '') {
             $sql .= $this->limit;
         }
+        $sql .= ';';
         $this->reset();
-        if ($this->dryRun) {
+        if ($this->returnSql) {
             return $sql;
         } else {
             return $this->single ? $this->db->get_row($sql) : $this->db->get_array($sql);
@@ -631,8 +658,8 @@ class HaploQueryBuilder {
      * @param string $table
      * @return int
      */
-    public function count($table) {
-        $sql = 'SELECT COUNT(*) FROM %s'.$this->db->quote_identifier($table);
+    public function count($table = '') {
+        $sql = sprintf('SELECT COUNT(*) FROM %s', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
         if ($this->where !== '') {
             $sql .= ' WHERE '.$this->where;
         }
@@ -645,8 +672,9 @@ class HaploQueryBuilder {
         if ($this->orderBy !== '') {
             $sql .= ' ORDER BY '.$this->orderBy;
         }
+        $sql .= ';';
         $this->reset();
-        if ($this->dryRun) {
+        if ($this->returnSql) {
             return $sql;
         } else {
             return $this->db->get_column($sql);

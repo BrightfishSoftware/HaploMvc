@@ -16,11 +16,10 @@ class HaploPostgreSqlDbDriver extends HaploDbDriver {
     protected $driverName = 'postgresql';
 
     /**
-     * @param array $params
      * @return string
      */
-    public function get_dsn(array $params) {
-        return sprintf('pgsql:dbname=%s;host=%s', $params['database'], $params['host']);
+    public function get_dsn() {
+        return sprintf('pgsql:dbname=%s;host=%s', $this->params['database'], $this->params['host']);
     }
 
     /**
@@ -36,13 +35,6 @@ class HaploPostgreSqlDbDriver extends HaploDbDriver {
     }
 
     /**
-     * @return array
-     */
-    public function get_default_options() {
-        return array();
-    }
-
-    /**
      * @return PDO
      */
     public function connect() {
@@ -50,7 +42,7 @@ class HaploPostgreSqlDbDriver extends HaploDbDriver {
             $this->get_dsn($this->params),
             $this->params['user'],
             $this->params['pass'],
-            !empty($this->driverOptions) ? $this->driverOptions : $this->get_default_options()
+            $this->driverOptions
         );
     }
 }

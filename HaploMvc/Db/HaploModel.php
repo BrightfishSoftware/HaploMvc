@@ -15,6 +15,7 @@ use \HaploMvc\Config\HaploConfig;
 abstract class HaploModel {
     /** @var HaploDb */
     protected $db;
+    protected $builder;
 
     /**
      * @param HaploDb $db
@@ -30,8 +31,9 @@ abstract class HaploModel {
             $this->db = &$db;
         } else {
             $engine = $config->get_key($dbConfig, 'engine', 'MySql');
-            $driver = sprintf('Haplo%sDbDriver', $engine);
+            $driver = sprintf('\\HaploMvc\\Db\\Haplo%sDbDriver', $engine);
             $this->db = HaploDb::get_instance(new $driver($config->get_section($dbConfig)));
         }
+        $this->builder = new HaploQueryBuilder($this->db);
     }
 }

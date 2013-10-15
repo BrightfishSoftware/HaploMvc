@@ -82,6 +82,10 @@ class HaploDb extends HaploSingleton {
      * @return mixed
      */
     public function __call($name, $params) {
+        if (is_null($this->db) && !$this->connect()) {
+            return false;
+        }
+
         return call_user_func_array(array($this->db, $name), $params);
     }
 
