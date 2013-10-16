@@ -41,14 +41,14 @@ class HaploMemcachedCache {
      * @return bool
      */
     public function check() {
-        if (array_key_exists($this->key, self::$cache)) {
+        if (array_key_exists($this->key, static::$cache)) {
             return true;
         }
         
         $value = $this->memcached->get($this->key);
         
         if ($this->memcached->getResultCode() == Memcached::RES_SUCCESS) {
-            self::$cache[$this->key] = $value;
+            static::$cache[$this->key] = $value;
             return true;
         }
         
@@ -68,7 +68,7 @@ class HaploMemcachedCache {
      * @return bool
      */
     public function set($contents) {
-        self::$cache[$this->key] = $contents;
+        static::$cache[$this->key] = $contents;
         return $this->memcached->set($this->key, $contents, time() + $this->cacheTime);
     }
 
@@ -76,8 +76,8 @@ class HaploMemcachedCache {
      * @return mixed
      */
     public function get() {
-        if (isset(self::$cache[$this->key])) {
-            return self::$cache[$this->key];
+        if (isset(static::$cache[$this->key])) {
+            return static::$cache[$this->key];
         }
         
         return $this->memcached->get($this->key);

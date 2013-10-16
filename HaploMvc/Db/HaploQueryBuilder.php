@@ -621,9 +621,10 @@ class HaploQueryBuilder {
 
     /**
      * @param string $table
+     * @param bool $asObjects
      * @return array|bool
      */
-    public function get($table = '') {
+    public function get($table = '', $asObjects = false) {
         $sql = sprintf(
             'SELECT %s%s FROM %s',
             $this->distinct,
@@ -650,7 +651,7 @@ class HaploQueryBuilder {
         if ($this->returnSql) {
             return $sql;
         } else {
-            return $this->single ? $this->db->get_row($sql) : $this->db->get_array($sql);
+            return $this->single ? $this->db->get_row($sql, $asObjects) : $this->db->get_array($sql, $asObjects);
         }
     }
 

@@ -30,7 +30,7 @@ class HaploFileCache {
      * @return HaploFileCache
      */
     public function __construct($key, array $options) {
-        $this->shortKey = 'haplo-cache-'.sha1($key);
+        $this->shortKey = 'HaploCache-'.sha1($key);
         $this->file = $options['appBase']."/Cache/$this->shortKey.txt";
         $this->fileLock = "$this->file.lock";
         $this->cacheTime = $options['cacheTime'];
@@ -42,7 +42,7 @@ class HaploFileCache {
      * @return bool
      **/
     public function check() {
-        if (array_key_exists($this->shortKey, self::$cache) || file_exists($this->fileLock)) {
+        if (array_key_exists($this->shortKey, static::$cache) || file_exists($this->fileLock)) {
             return true;
         }
         return (file_exists($this->file) && ($this->cacheTime == -1 || time() - filemtime($this->file) <= $this->cacheTime));
@@ -54,7 +54,7 @@ class HaploFileCache {
      * @return bool
      **/
     public function exists() {
-        return (array_key_exists($this->shortKey, self::$cache)) || (file_exists($this->file) || file_exists($this->fileLock));
+        return (array_key_exists($this->shortKey, static::$cache)) || (file_exists($this->file) || file_exists($this->fileLock));
     }
 
     /**
@@ -74,7 +74,7 @@ class HaploFileCache {
             if (file_exists($this->fileLock)) {
                 unlink($this->fileLock);
             }
-            self::$cache[$this->shortKey] = $contents;
+            static::$cache[$this->shortKey] = $contents;
             return true;
         }     
         return false;
@@ -87,14 +87,14 @@ class HaploFileCache {
      **/
     public function get() {
         if ($this->exists()) {
-            if (array_key_exists($this->shortKey, self::$cache)) {
-                return self::$cache[$this->shortKey];
+            if (array_key_exists($this->shortKey, static::$cache)) {
+                return static::$cache[$this->shortKey];
             } else if (file_exists($this->fileLock)) {
-                self::$cache[$this->shortKey] = unserialize(file_get_contents($this->fileLock));
-                return self::$cache[$this->shortKey];
+                static::$cache[$this->shortKey] = unserialize(file_get_contents($this->fileLock));
+                return static::$cache[$this->shortKey];
             } else {
-                self::$cache[$this->shortKey] = unserialize(file_get_contents($this->file));
-                return self::$cache[$this->shortKey];
+                static::$cache[$this->shortKey] = unserialize(file_get_contents($this->file));
+                return static::$cache[$this->shortKey];
             }
         }
         return false;

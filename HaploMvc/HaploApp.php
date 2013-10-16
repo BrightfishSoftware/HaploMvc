@@ -7,11 +7,7 @@
 namespace HaploMvc;
 
 use \HaploMvc\Pattern\HaploSingleton,
-    \HaploMvc\Template\HaploTemplateFactory,
-    \HaploMvc\Config\HaploConfig,
-    \HaploMvc\Cache\HaploCacheFactory,
-    \HaploMvc\Security\HaploNonce,
-    \HaploMvc\Translation\HaploTranslations;
+    \HaploMvc\Exception\HaploClassNotFoundException;
 
 /**
  * Class HaploApp
@@ -20,18 +16,18 @@ use \HaploMvc\Pattern\HaploSingleton,
 class HaploApp extends HaploSingleton {
     /** @var string */
     public $appBase;
-    /** @var HaploConfig */
-    public $config;
-    /** @var HaploRouter */
-    public $router;
-    /** @var HaploConfig */
-    public $translations;
-    /** @var HaploCacheFactory */
-    public $cache;
-    /** @var HaploNonce */
-    public $nonce;
-    /** @var HaploTemplateFactory */
-    public $template;
+    /** @var \HaploMvc\Config\HaploConfig */
+    public $config = null;
+    /** @var \HaploMvc\HaploRouter */
+    public $router = null;
+    /** @var \HaploMvc\Translation\HaploTranslations */
+    public $translations = null;
+    /** @var \HaploMvc\Cache\HaploCache */
+    public $cache = null;
+    /** @var \HaploMvc\Security\HaploNonce */
+    public $nonce = null;
+    /** @var \HaploMvc\Template\HaploTemplateFactory */
+    public $template = null;
 
     /**
      * Static helper method used to ensure only one instance of the class is instantiated
@@ -42,10 +38,10 @@ class HaploApp extends HaploSingleton {
     static public function get_instance($appBase = null) {
         $class = get_called_class();
 
-        if (!isset(self::$instances[$class]) && !is_null($appBase)) {
-            self::$instances[$class] = new $class($appBase);
+        if (!isset(static::$instances[$class]) && !is_null($appBase)) {
+            static::$instances[$class] = new $class($appBase);
         }
-        return self::$instances[$class];
+        return static::$instances[$class];
     }
 
     /**
@@ -53,15 +49,44 @@ class HaploApp extends HaploSingleton {
      */
     protected function __construct($appBase) {
         $this->appBase = $appBase;
-        $this->config = HaploConfig::get_instance($this);
-        $this->router = HaploRouter::get_instance($this);
-        $this->translations = HaploTranslations::get_instance($this);
-        $this->cache = HaploCacheFactory::get_instance($this);
-        $this->nonce = HaploNonce::get_instance($this);
-        $this->template = HaploTemplateFactory::get_instance($this);
+    }
+
+    /**
+     * @param string $name
+     * @param string $class
+     * @return bool
+     */
+    public function load_class($name, $class) {
+        if (!isset($this->$name) || is_null($this->$name)) {
+            return false;
+        }
+        $this->$name = $this->get_class($class);
+        return true;
+    }
+
+    /**
+     * @param string $class
+     * @throws HaploClassNotFoundException
+     * @return mixed
+     */
+    public function get_class($class) {
+        if (!class_exists($class)) {
+            throw new HaploClassNotFoundException(sprintf("Class %s not found.", $class));
+        }
+        if (method_exists($class, 'get_instance')) {
+            return $class::get_instance($this);
+        } else {
+            return new $class($this);
+        }
     }
 
     public function run() {
+        $this->load_class('config', '\HaploMvc\Config\HaploConfig');
+        $this->load_class('router', '\HaploMvc\HaploRouter');
+        $this->load_class('translations', '\HaploMvc\Translation\HaploTranslations');
+        $this->load_class('cache', '\HaploMvc\Cache\HaploCache');
+        $this->load_class('nonce', '\HaploMvc\Security\Nonce');
+        $this->load_class('template', '\HaploMvc\Template\HaploTemplate');
         $this->router->get_action();
     }
 }

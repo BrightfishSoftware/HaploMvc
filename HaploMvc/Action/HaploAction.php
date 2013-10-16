@@ -54,8 +54,8 @@ abstract class HaploAction extends HaploSingleton {
     /**
      * Class constructor - not called directly as the class is instantiated as a Singleton
      *
-     * @param HaploApp $app
-     * @return HaploAction
+     * @param \HaploMvc\HaploApp $app
+     * @return \HaploMvc\Action\HaploAction
      */
     protected function __construct(HaploApp $app) {
         $this->app = $app;
@@ -129,7 +129,7 @@ abstract class HaploAction extends HaploSingleton {
     protected function do_404() {
         header('HTTP/1.1 404 Not Found');
             
-        if (class_exists('\\Actions\\PageNotFound')) {
+        if (class_exists('\Actions\PageNotFound')) {
             \Actions\PageNotFound::get_instance($this->app);
             exit;
         } else {

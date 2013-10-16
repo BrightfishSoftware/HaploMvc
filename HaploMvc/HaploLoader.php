@@ -36,7 +36,7 @@ class HaploLoader {
     public static function load_class($className) {
         foreach (static::$namespaces as $namespace) {
             if (substr($className, 0, strlen($namespace)) === $namespace) {
-                $filename = static::$appBase.'/'.preg_replace('#\\\|_(?!.*\\\)#','/',$className).'.php';
+                $filename = static::$appBase.'/'.preg_replace('#\\\|_(?!.*\\\)#', '/', $className).'.php';
                 if (is_readable($filename)) {
                     require $filename;
                     return true;

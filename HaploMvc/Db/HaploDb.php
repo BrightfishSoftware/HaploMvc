@@ -68,7 +68,7 @@ class HaploDb extends HaploSingleton {
      */
     public static function get_instance(HaploDbDriver $driver = null) {
         $class = get_called_class();
-        $instanceKey = $driver->get_instance_hash();
+        $instanceKey = $class.$driver->get_instance_hash();
         if (!isset(self::$instances[$instanceKey])) {
             self::$instances[$instanceKey] = new $class($driver);
         }
@@ -101,9 +101,10 @@ class HaploDb extends HaploSingleton {
      * @param array $params
      * @param int $start
      * @param int $count
-     * @return bool
+     * @param bool $asObjects
+     * @return bool|array|object
      */
-    public function get_array($stmt, array $params = array(), $start = 0, $count = 0) {
+    public function get_array($stmt, array $params = array(), $start = 0, $count = 0, $asObjects = false) {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
@@ -130,9 +131,9 @@ class HaploDb extends HaploSingleton {
             }
         
             if (empty($params) && $result = $this->db->query($stmt)) {
-                return $result->fetchAll(PDO::FETCH_ASSOC);
+                return $result->fetchAll($asObjects ? PDO::FETCH_CLASS : PDO::FETCH_ASSOC);
             } elseif (($stmt = $this->db->prepare($stmt)) && $stmt->execute($params)) {
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                return $stmt->fetchAll($asObjects ? PDO::FETCH_CLASS : PDO::FETCH_ASSOC);
             }
         } catch (PDOException $e) {
             $this->log_error($e);
@@ -144,18 +145,19 @@ class HaploDb extends HaploSingleton {
     /**
      * @param string $stmt
      * @param array $params
-     * @return bool
+     * @param bool $asObject
+     * @return bool|array|object
      */
-    public function get_row($stmt, array $params = array()) {
+    public function get_row($stmt, array $params = array(), $asObject = false) {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
 
         try {
             if (empty($params) && $result = $this->db->query($stmt)) {
-                return $result->fetch(PDO::FETCH_ASSOC);
+                return $asObject ? $result->fetchObject() : $result->fetch(PDO::FETCH_ASSOC);
             } elseif (($stmt = $this->db->prepare($stmt)) && $stmt->execute($params)) {
-                return $stmt->fetch(PDO::FETCH_ASSOC);
+                return $asObject ? $stmt->fetchObject() : $stmt->fetch(PDO::FETCH_ASSOC);
             }
         } catch (PDOException $e) {
             $this->log_error($e);

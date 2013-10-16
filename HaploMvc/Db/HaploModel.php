@@ -6,7 +6,7 @@
 
 namespace HaploMvc\Db;
 
-use \HaploMvc\Config\HaploConfig;
+use \HaploMvc\HaploApp;
 
 /**
  * Class HaploModel
@@ -14,26 +14,19 @@ use \HaploMvc\Config\HaploConfig;
  */
 abstract class HaploModel {
     /** @var HaploDb */
+    protected $app;
     protected $db;
     protected $builder;
 
     /**
-     * @param HaploDb $db
-     * @param HaploConfig $config
+     * @param HaploApp $app
      * @param string $dbConfig
      */
-    public function __construct(HaploDb $db = null, HaploConfig $config = null, $dbConfig = 'db') {
-        if (!$config instanceof HaploConfig) {
-            $config = HaploConfig::get_instance();
-        }
-
-        if ($db instanceof HaploDb) {
-            $this->db = &$db;
-        } else {
-            $engine = $config->get_key($dbConfig, 'engine', 'MySql');
-            $driver = sprintf('\\HaploMvc\\Db\\Haplo%sDbDriver', $engine);
-            $this->db = HaploDb::get_instance(new $driver($config->get_section($dbConfig)));
-        }
+    public function __construct(HaploApp $app, $dbConfig = 'db') {
+        $this->app = $app;
+        $engine = $app->config->get_key($dbConfig, 'engine', 'MySql');
+        $driver = sprintf('\HaploMvc\Db\Haplo%sDbDriver', $engine);
+        $this->db = HaploDb::get_instance(new $driver($app->config->get_section($dbConfig)));
         $this->builder = new HaploQueryBuilder($this->db);
     }
 }

@@ -11,10 +11,10 @@ use HaploMvc\Pattern\HaploSingleton,
     HaploMvc\Exception\HaploLibraryNotFoundException;
 
 /**
- * Class HaploCacheFactory
+ * Class HaploCache
  * @package HaploMvc
  */
-class HaploCacheFactory extends HaploSingleton {
+class HaploCache extends HaploSingleton {
     const CACHE_TYPE_FILE = 'file';
     const CACHE_TYPE_MEMCACHED = 'memcached';
     /** @var HaploApp */
@@ -58,7 +58,7 @@ class HaploCacheFactory extends HaploSingleton {
             'appBase' => $this->app->appBase
         );
         $options = array_merge($defaultOptions, $options);
-        $className = '\HaploMvc\Haplo'.ucfirst($options['type']).'Cache';
+        $className = '\HaploMvc\Cache\Haplo'.ucfirst($options['type']).'Cache';
         
         if (class_exists($className)) {
             return new $className($key, $options);
