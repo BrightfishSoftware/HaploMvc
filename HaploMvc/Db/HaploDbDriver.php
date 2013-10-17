@@ -23,7 +23,7 @@ abstract class HaploDbDriver implements HaploDbDriverInterface {
      * @param array $params
      * @param array $driverOptions
      */
-    public function __construct(array $params, array $driverOptions = array()) {
+    public function __construct(array $params = array(), array $driverOptions = array()) {
         $this->params = array_merge($this->get_default_params(), $params);
         $this->driverOptions = array_merge($this->get_default_options(), $driverOptions);
     }
