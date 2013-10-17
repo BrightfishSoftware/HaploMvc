@@ -18,6 +18,10 @@ HaploEscaper uses the Zend Escaper library which is licensed under the Zend Fram
 
 ## Change Log
 
+### 0.0.10 (17th October 2013)
+
+Some more restructuring, hooked up db and builder to app.
+
 ### 0.0.9 (16th October 2013)
 
 Added basic Active Record class.
