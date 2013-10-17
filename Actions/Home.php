@@ -13,7 +13,7 @@ use \HaploMvc\Action\HaploAction,
  */
 class Home extends HaploAction {
     protected function do_all() {
-        $booksModel = new BooksModel();
+        $booksModel = $this->app->get_class('\Models\BooksModel');
         $booksModel->get(1);
         $template = $this->app->template->create('Home.php');
         $template->display();

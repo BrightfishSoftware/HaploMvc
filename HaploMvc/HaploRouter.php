@@ -67,21 +67,21 @@ class HaploRouter extends HaploSingleton {
     }
 
     /**
-     * @param $mappings
+     * @param $routes
      */
-    public function add_mappings($mappings) {
-        foreach ($mappings as $pattern => $destination) {
-            $this->add_mapping($pattern, $destination);
+    public function add_routes(array $routes) {
+        foreach ($routes as $pattern => $destination) {
+            $this->add_route($pattern, $destination);
         }
     }
 
     /**
-     * Adds a URL mapping
+     * Adds a URL route
      *
      * @param string $pattern Key/value pair containing URL pattern and action to map to
      * @param array|string $destination
      */
-    public function add_mapping($pattern, $destination) {
+    public function add_route($pattern, $destination) {
         $this->urls[$pattern] = $destination;
     }
     

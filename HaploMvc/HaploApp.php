@@ -6,10 +6,10 @@
 
 namespace HaploMvc;
 
-use HaploMvc\Db\HaploMySqlDbDriver;
 use \HaploMvc\Pattern\HaploSingleton,
     \HaploMvc\Db\HaploActiveRecord,
-    \HaploMvc\Exception\HaploClassNotFoundException;
+    \HaploMvc\Exception\HaploClassNotFoundException,
+    \ReflectionClass;
 
 /**
  * Class HaploApp
@@ -31,9 +31,9 @@ class HaploApp extends HaploSingleton {
     /** @var \HaploMvc\Template\HaploTemplateFactory */
     public $template = null;
     /** @var \HaploMvc\Db\HaploDb */
-    public $db;
+    public $db = null;
     /** @var \HaploMvc\Db\HaploSqlBuilder */
-    public $sqlBuilder;
+    public $sqlBuilder = null;
 
     /**
      * Static helper method used to ensure only one instance of the class is instantiated
@@ -63,8 +63,8 @@ class HaploApp extends HaploSingleton {
      * @param array $args
      * @return bool
      */
-    public function load_class($name, $class, $args = array()) {
-        if (!isset($this->$name) || is_null($this->$name)) {
+    public function load_class($name, $class, array $args = array()) {
+        if (isset($this->$name) && !is_null($this->$name)) {
             return false;
         }
         $this->$name = $this->get_class($class, $args);
@@ -74,35 +74,49 @@ class HaploApp extends HaploSingleton {
     /**
      * @param string $class
      * @param array $args
-     * @throws Exception\HaploClassNotFoundException
+     * @throws HaploClassNotFoundException
      * @return mixed
      */
-    public function get_class($class, $args = array()) {
+    public function get_class($class, array $args = array()) {
         if (!class_exists($class)) {
             throw new HaploClassNotFoundException(sprintf("Class %s not found.", $class));
         }
         if (method_exists($class, 'get_instance')) {
             return !empty($args) ? call_user_func_array("$class::get_instance", $args) : $class::get_instance($this);
         } else {
-            return !empty($args) ? call_user_func_array(array($this, $class), new $class($this)) : new $class($this);
+            if (!empty($args)) {
+                $reflection = new ReflectionClass($class);
+                return $reflection->newInstanceArgs($args);
+            } else {
+                return new $class($this);
+            }
         }
     }
 
-    public function run() {
+    public function init() {
         $this->load_class('config', '\HaploMvc\Config\HaploConfig');
         $this->load_class('router', '\HaploMvc\HaploRouter');
         $this->load_class('translations', '\HaploMvc\Translation\HaploTranslations');
         $this->load_class('cache', '\HaploMvc\Cache\HaploCache');
-        $this->load_class('nonce', '\HaploMvc\Security\Nonce');
-        $this->load_class('template', '\HaploMvc\Template\HaploTemplate');
-        if (!isset($this->db) || is_null($this->db)) {
-            $dbDriver = new HaploMySqlDbDriver($this->config->get_section('db'));
+        $this->load_class('nonce', '\HaploMvc\Security\HaploNonce');
+        $this->load_class('template', '\HaploMvc\Template\HaploTemplateFactory');
+        if (is_null($this->db)) {
+            $dbConfig = $this->config->get_section('db');
+            $class = sprintf(
+                '\HaploMvc\Db\Haplo%sDbDriver',
+                isset($dbConfig['driver']) ? $dbConfig['driver'] : 'MySql'
+            );
             $this->load_class('db', '\HaploMvc\Db\HaploDb', array(
-                'driver' => $dbDriver
+                'driver' => new $class($dbConfig)
             ));
         }
-        $this->load_class('sqlBuilder', '\HaploMvc\Db\HaploSqlBuilder');
+        $this->load_class('sqlBuilder', '\HaploMvc\Db\HaploSqlBuilder', array(
+            'db' => $this->db
+        ));
         HaploActiveRecord::set_dependencies($this->db, $this->sqlBuilder);
+    }
+
+    public function run() {
         $this->router->get_action();
     }
 }
