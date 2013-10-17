@@ -47,7 +47,7 @@ abstract class HaploDbDriver implements HaploDbDriverInterface {
      * @return string
      */
     public function get_instance_hash() {
-        return sha1($this->driverName.serialize($this->params).$this->driverOptions);
+        return sha1($this->driverName.serialize($this->params).serialize($this->driverOptions));
     }
 
     protected function get_default_params() {
