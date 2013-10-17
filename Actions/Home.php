@@ -4,8 +4,7 @@
  **/
 namespace Actions;
 
-use \HaploMvc\Action\HaploAction,
-    \Models\BooksModel;
+use \HaploMvc\Action\HaploAction;
 
 /**
  * Class Home
