@@ -25,6 +25,6 @@ class HaploSqlBuilderTests extends PHPUnit_Framework_TestCase {
     public function test_simple_get() {
         $this->sqlBuilder->select(array('id', 'title', 'body'));
         $sql = $this->sqlBuilder->get('posts');
-        $this->assertEquals('SELECT `id`, `title`, `body` FROM `posts`', $sql);
+        $this->assertEquals('SELECT `id`, `title`, `body` FROM `posts`;', $sql);
     }
 }
