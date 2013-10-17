@@ -205,3 +205,45 @@ class HaploTemplateFunctionNotFound extends Exception {}
  * @package HaploMvc
  */
 class HaploRegionModeException extends Exception {}
+
+/**
+ * Class HaploInvalidComparisonOperatorException
+ * @package HaploMvc\Exception
+ */
+class HaploInvalidComparisonOperatorException extends Exception {}
+
+/**
+ * Class HaploInvalidSortOrderException
+ * @package HaploMvc\Exception
+ */
+class HaploInvalidSortOrderException extends Exception {}
+
+/**
+ * Class HaploInvalidJoinTypeException
+ * @package HaploMvc\Exception
+ */
+class HaploInvalidJoinTypeException extends Exception {}
+
+/**
+ * Class HaploInvalidLogicalOperatorException
+ * @package HaploMvc\Exception
+ */
+class HaploInvalidLogicalOperatorException extends Exception {}
+
+/**
+ * Class HaploDbIdNotFoundException
+ * @package HaploMvc\Exception
+ */
+class HaploDbIdNotFoundException extends Exception {}
+
+/**
+ * Class HaploDbColumnDoesNotExistException
+ * @package HaploMvc\Exception
+ */
+class HaploDbColumnDoesNotExistException extends Exception {}
+
+/**
+ * Class HaploDbTableNameNotSetException
+ * @package HaploMvc\Exception
+ */
+class HaploDbTableNameNotSetException extends Exception {}

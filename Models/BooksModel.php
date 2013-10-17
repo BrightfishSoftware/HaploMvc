@@ -5,7 +5,7 @@ use \HaploMvc\Db\HaploModel;
 
 class BooksModel extends HaploModel {
     public function get($bookId) {
-        $this->builder->return_sql(true);
+        $this->app->builder->return_sql(true);
         echo $this->builder
             ->select(array('book_id', 'title', 'publish_date'))
             ->where('book_id', '=', $bookId)

@@ -5,13 +5,16 @@
  **/
 namespace HaploMvc\Db;
 
-use \Exception;
+use \HaploMvc\Exception\HaploInvalidComparisonOperatorException,
+    \HaploMvc\Exception\HaploInvalidSortOrderException,
+    \HaploMvc\Exception\HaploInvalidJoinTypeException,
+    \HaploMvc\Exception\HaploInvalidLogicalOperatorException;
 
 /**
- * Class HaploQueryBuilder
+ * Class HaploSqlBuilder
  * @package HaploMvc
  */
-class HaploQueryBuilder {
+class HaploSqlBuilder {
     /** @var HaploDb */
     protected $db;
     /** @var string */
@@ -77,7 +80,7 @@ class HaploQueryBuilder {
 
     /**
      * @param bool $returnSql
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function return_sql($returnSql) {
         $this->returnSql = $returnSql;
@@ -92,7 +95,7 @@ class HaploQueryBuilder {
      *
      * @param array|string $fields
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function select($fields, $dontQuote = false) {
         if (is_array($fields)) {
@@ -110,7 +113,7 @@ class HaploQueryBuilder {
     /**
      * @param string $table
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function from($table, $dontQuote = false) {
         $table = $dontQuote ? $table : $this->db->quote_identifier($table);
@@ -124,12 +127,12 @@ class HaploQueryBuilder {
      * @param string $comparison
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
-     * @throws \Exception
+     * @throws \HaploMvc\Exception\HaploInvalidComparisonOperatorException
+     * @return HaploSqlBuilder $this
      */
     protected function _where($andOr, $field, $comparison, $value, $dontQuote) {
         if (!in_array($comparison, $this->comparisonOperators)) {
-            throw new Exception('Invalid comparison operator specified.');
+            throw new HaploInvalidComparisonOperatorException('Invalid comparison operator specified.');
         }
         if (!is_array($value) || !empty($value)) {
             if (is_array($value)) {
@@ -152,7 +155,7 @@ class HaploQueryBuilder {
      * @param string $comparison
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function where($field, $comparison, $value, $dontQuote = false) {
         return $this->_where('AND', $field, $comparison, $value, $dontQuote);
@@ -163,7 +166,7 @@ class HaploQueryBuilder {
      * @param string $comparison
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function or_where($field, $comparison, $value, $dontQuote = false) {
         return $this->_where('OR', $field, $comparison, $value, $dontQuote);
@@ -175,7 +178,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param array $values
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     protected function _where_in($andOr, $inNotIn, $field, array $values, $dontQuote) {
         if (!empty($values)) {
@@ -194,7 +197,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param array $values
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function where_in($field, array $values, $dontQuote = false) {
         return $this->_where_in('AND', 'IN', $field, $values, $dontQuote);
@@ -204,7 +207,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param array $values
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function where_not_in($field, array $values, $dontQuote = false) {
         return $this->_where_in('AND', 'NOT IN', $field, $values, $dontQuote);
@@ -214,7 +217,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param array $values
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function or_where_in($field, array $values, $dontQuote = false) {
         return $this->_where_in('OR', 'IN', $field, $values, $dontQuote);
@@ -224,7 +227,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param array $values
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function or_where_not_in($field, array $values, $dontQuote = false) {
         return $this->_where_in('OR', 'NOT IN', $field, $values, $dontQuote);
@@ -236,7 +239,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     protected function _where_like($andOr, $likeNotLike, $field, $value, $dontQuote) {
         $field = $dontQuote ? $field : $this->db->quote_identifier($field);
@@ -250,7 +253,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function where_like($field, $value, $dontQuote = false) {
         return $this->_where_like('AND', 'LIKE', $field, $value, $dontQuote);
@@ -260,7 +263,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function where_not_like($field, $value, $dontQuote = false) {
         return $this->_where_like('AND', 'NOT LIKE', $field, $value, $dontQuote);
@@ -270,7 +273,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function or_where_like($field, $value, $dontQuote = false) {
         return $this->_where_like('OR', 'LIKE', $field, $value, $dontQuote);
@@ -280,7 +283,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function or_where_not_like($field, $value, $dontQuote = false) {
         return $this->_where_like('OR', 'NOT LIKE', $field, $value, $dontQuote);
@@ -289,7 +292,7 @@ class HaploQueryBuilder {
     /**
      * @param string $field
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function group_by($field, $dontQuote = false) {
         $field = $dontQuote ? $field : $this->db->quote_identifier($field);
@@ -298,7 +301,7 @@ class HaploQueryBuilder {
     }
 
     /**
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function distinct() {
         $this->distinct = 'DISTINCT ';
@@ -311,12 +314,12 @@ class HaploQueryBuilder {
      * @param string $comparison
      * @param mixed $value
      * @param bool $dontQuote
-     * @throws \Exception
-     * @return HaploQueryBuilder $this
+     * @throws \HaploMvc\Exception\HaploInvalidComparisonOperatorException
+     * @return HaploSqlBuilder $this
      */
     protected function _having($andOr, $field, $comparison, $value, $dontQuote) {
         if (!in_array($comparison, $this->comparisonOperators)) {
-            throw new Exception('Invalid comparison operator specified.');
+            throw new HaploInvalidComparisonOperatorException('Invalid comparison operator specified.');
         }
         if (!is_array($value) || !empty($value)) {
             if (is_array($value)) {
@@ -339,7 +342,7 @@ class HaploQueryBuilder {
      * @param string $comparison
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function having($field, $comparison, $value, $dontQuote = false) {
         return $this->_having('AND', $field, $comparison, $value, $dontQuote);
@@ -350,7 +353,7 @@ class HaploQueryBuilder {
      * @param string $comparison
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function or_having($field, $comparison, $value, $dontQuote = false) {
         return $this->_having('OR', $field, $comparison, $value, $dontQuote);
@@ -359,12 +362,12 @@ class HaploQueryBuilder {
     /**
      * @param string $field
      * @param string $order
-     * @return HaploQueryBuilder $this
-     * @throws \Exception
+     * @return HaploSqlBuilder $this
+     * @throws \HaploMvc\Exception\HaploInvalidSortOrderException
      */
     public function order_by($field, $order = 'ASC') {
         if (!in_array($order, array('ASC', 'DESC'))) {
-            throw new Exception('Invalid sort order specified.');
+            throw new HaploInvalidSortOrderException('Invalid sort order specified.');
         }
         $sql = $this->db->quote_identifier($field).' '.$order;
         $this->orderBy = $this->orderBy === '' ? $sql : ', '.$sql;
@@ -372,7 +375,7 @@ class HaploQueryBuilder {
     }
 
     /**
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function limit() {
         $args = func_get_args();
@@ -390,7 +393,7 @@ class HaploQueryBuilder {
      * @param string $field
      * @param mixed $value
      * @param bool $dontQuote
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function set($field, $value, $dontQuote = false) {
         $field = $dontQuote ? $field : $this->db->quote_identifier($field);
@@ -405,13 +408,13 @@ class HaploQueryBuilder {
      * @param string $table
      * @param string $on
      * @param string $type
-     * @return HaploQueryBuilder $this
-     * @throws \Exception
+     * @throws HaploInvalidJoinTypeException
+     * @return HaploSqlBuilder $this
      */
     protected function _join($table, $on, $type = 'JOIN') {
         $type = strtoupper($type);
         if (!in_array($type, $this->joinTypes)) {
-            throw new Exception('Invalid join type specified.');
+            throw new HaploInvalidJoinTypeException('Invalid join type specified.');
         }
         $sql = sprintf('%s %s ON %s', $type, $table, $on);
         $this->join = $this->join === '' ? $sql : ', '.$sql;
@@ -421,7 +424,7 @@ class HaploQueryBuilder {
     /**
      * @param string $table
      * @param string $on
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function join($table, $on) {
         return $this->_join($table, $on, 'JOIN');
@@ -430,7 +433,7 @@ class HaploQueryBuilder {
     /**
      * @param string $table
      * @param string $on
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function left_join($table, $on) {
         return $this->_join($table, $on, 'LEFT JOIN');
@@ -439,7 +442,7 @@ class HaploQueryBuilder {
     /**
      * @param string $table
      * @param string $on
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function right_join($table, $on) {
         return $this->_join($table, $on, 'RIGHT JOIN');
@@ -448,7 +451,7 @@ class HaploQueryBuilder {
     /**
      * @param string $table
      * @param string $on
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function outer_join($table, $on) {
         return $this->_join($table, $on, 'OUTER JOIN');
@@ -457,7 +460,7 @@ class HaploQueryBuilder {
     /**
      * @param string $table
      * @param string $on
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function inner_join($table, $on) {
         return $this->_join($table, $on, 'INNER JOIN');
@@ -466,7 +469,7 @@ class HaploQueryBuilder {
     /**
      * @param string $table
      * @param string $on
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function left_outer_join($table, $on) {
         return $this->_join($table, $on, 'LEFT OUTER JOIN');
@@ -475,7 +478,7 @@ class HaploQueryBuilder {
     /**
      * @param string $table
      * @param string $on
-     * @return HaploQueryBuilder $this
+     * @return HaploSqlBuilder $this
      */
     public function right_outer_join($table, $on) {
         return $this->_join($table, $on, 'RIGHT OUTER JOIN');
@@ -484,12 +487,12 @@ class HaploQueryBuilder {
     /**
      * @param string $andOr
      * @return $this
-     * @throws Exception
+     * @throws HaploInvalidLogicalOperatorException
      */
     public function bracket($andOr) {
         $andOr = strtoupper($andOr);
         if (!in_array($andOr, array('AND', 'OR'))) {
-            throw new Exception('Should be one of AND or OR in bracket()');
+            throw new HaploInvalidLogicalOperatorException('Should be one of AND or OR in bracket()');
         }
         $this->where .= $andOr.' (';
         return $this;

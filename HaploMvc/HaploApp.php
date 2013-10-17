@@ -7,6 +7,7 @@
 namespace HaploMvc;
 
 use \HaploMvc\Pattern\HaploSingleton,
+    \HaploMvc\Db\HaploActiveRecord,
     \HaploMvc\Exception\HaploClassNotFoundException;
 
 /**
@@ -28,6 +29,10 @@ class HaploApp extends HaploSingleton {
     public $nonce = null;
     /** @var \HaploMvc\Template\HaploTemplateFactory */
     public $template = null;
+    /** @var \HaploMvc\Db\HaploDb */
+    public $db;
+    /** @var \HaploMvc\Db\HaploSqlBuilder */
+    public $sqlBuilder;
 
     /**
      * Static helper method used to ensure only one instance of the class is instantiated
@@ -87,6 +92,9 @@ class HaploApp extends HaploSingleton {
         $this->load_class('cache', '\HaploMvc\Cache\HaploCache');
         $this->load_class('nonce', '\HaploMvc\Security\Nonce');
         $this->load_class('template', '\HaploMvc\Template\HaploTemplate');
+        $this->load_class('db', '\HaploMvc\Db\HaploDb');
+        $this->load_class('sqlBuilder', '\HaploMvc\Db\HaploSqlBuilder');
+        HaploActiveRecord::set_dependencies($this->db, $this->sqlBuilder);
         $this->router->get_action();
     }
 }
