@@ -86,6 +86,69 @@ class HaploRouter extends HaploSingleton {
     }
     
     /**
+     * Adds a URL route for a specific HTTP request type
+     *
+     * @param string $verb - HTTP request type to add route for
+     * @param string $pattern Key/value pair containing URL pattern and action to map to
+     * @param array|string $destination
+     */
+    protected function add_verb_route($verb, $pattern, $destination) {
+        if (static::get_request_method() === 'get') {
+            $this->add_route($pattern, $destination);
+        }
+    }
+    
+    /**
+     * Adds a HTTP GET URL route
+     *
+     * @param string $pattern Key/value pair containing URL pattern and action to map to
+     * @param array|string $destination
+     */
+    public function add_get_route($pattern, $destination) {
+        $this->add_verb_route('get', $pattern, $destination);
+    }
+    
+    /**
+     * Adds a HTTP POST URL route
+     *
+     * @param string $pattern Key/value pair containing URL pattern and action to map to
+     * @param array|string $destination
+     */
+    public function add_post_route($pattern, $destination) {
+        $this->add_verb_route('post', $pattern, $destination);
+    }
+    
+    /**
+     * Adds a HTTP HEAD URL route
+     *
+     * @param string $pattern Key/value pair containing URL pattern and action to map to
+     * @param array|string $destination
+     */
+    public function add_head_route($pattern, $destination) {
+        $this->add_verb_route('head', $pattern, $destination);
+    }
+    
+    /**
+     * Adds a HTTP PUT URL route
+     *
+     * @param string $pattern Key/value pair containing URL pattern and action to map to
+     * @param array|string $destination
+     */
+    public function add_put_route($pattern, $destination) {
+        $this->add_verb_route('put', $pattern, $destination);
+    }
+    
+    /**
+     * Adds a HTTP DELETE URL route
+     *
+     * @param string $pattern Key/value pair containing URL pattern and action to map to
+     * @param array|string $destination
+     */
+    public function add_delete_route($pattern, $destination) {
+        $this->add_verb_route('delete', $pattern, $destination);
+    }
+    
+    /**
      * Returns the selected action based on URL pattern matched against URL
      *
      * @return string|bool The name of the selected action
