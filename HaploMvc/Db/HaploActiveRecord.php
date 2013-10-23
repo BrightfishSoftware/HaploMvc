@@ -19,7 +19,7 @@ abstract class HaploActiveRecord {
     /** @var int */
     public $id = null;
     /** @var bool */
-    public $changed = false;
+    public $dirty = false;
 
     /**
      * @param HaploDb $db
@@ -64,7 +64,7 @@ abstract class HaploActiveRecord {
             throw new HaploDbColumnDoesNotExistException(sprintf('Column %s does not exist in table %s.', $name, static::table_name()));
         }
         $this->fields[$name] = $value;
-        $this->changed = true;
+        $this->dirty = true;
         return $this;
     }
 
@@ -101,7 +101,7 @@ abstract class HaploActiveRecord {
      * @return bool|int
      */
     public function save() {
-        if (!$this->changed) {
+        if (!$this->dirty) {
             return false;
         }
         if (!is_null($this->id)) { // update
@@ -110,7 +110,7 @@ abstract class HaploActiveRecord {
         } else { // insert
             $result = self::$sqlBuilder->insert(static::table_name(), $this->fields);
         }
-        $this->changed = false;
+        $this->dirty = false;
         return $result;
     }
 
@@ -132,9 +132,6 @@ abstract class HaploActiveRecord {
      * @return HaploActiveRecord|bool
      */
     public static function __callStatic($name, $args) {
-        if (substr($name, 0, strlen('find_by_sql')) === 'find_by_sql') {
-            return call_user_func_array('static::find_by_sql', $args);
-        }
         if (substr($name, 0, strlen('find_by_')) === 'find_by_') {
             return static::find_by($name, $args);
         }
@@ -142,29 +139,38 @@ abstract class HaploActiveRecord {
     }
 
     /**
+     * Alias to calling new Class($id) directly
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public static function find($id) {
+        $class = get_called_class();
+        return new $class($id);
+    }
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param int $page
+     * @param int $numPerPage
      * @return array|bool
      */
-    protected function find_by_sql() {
-        $args = func_get_args();
-        if (!isset($args[0])) {
-            return false;
-        }
-        $sql = $args[0];
-        $params = isset($args[1]) ? $args[1] : array();
-        $page = isset($args[2]) ? $args[2] : 0;
-        $numPerPage = isset($args[3]) ? $args[3] : 0;
-        $processed = array();
-        foreach ($params as $key => $value) {
-            $processed[':'.$key] = $value;
-        }
+    public static function find_by_sql($sql, $params = array(), $page = 0, $numPerPage = 0) {
+        $params = static::format_bind_params($params);
         list($start, $count) = self::$db->get_offsets_from_page($page, $numPerPage);
-        $results = self::$db->get_array($sql, $processed, $start, $count, true);
+        $results = self::$db->get_array($sql, $params, $start, $count, true);
         $paging = self::$db->get_paging($page, $numPerPage);
         $objects = array();
         foreach ($results as $result) {
             $objects[] = static::hydrate($result);
         }
         return $page !== 0 && $numPerPage !== 0 ? array($objects, $paging) : $objects;
+    }
+
+    public static function find_one_by_sql($sql, $params = array()) {
+        $params = static::format_bind_params($params);
+        return self::$db->get_row($sql, $params);
     }
 
     /**
@@ -199,5 +205,13 @@ abstract class HaploActiveRecord {
         }
         $object->id = $result->$primaryKey;
         return $object;
+    }
+
+    protected static function format_bind_params($params) {
+        $processed = array();
+        foreach ($params as $key => $value) {
+            $processed[':'.$key] = $value;
+        }
+        return $processed;
     }
 }

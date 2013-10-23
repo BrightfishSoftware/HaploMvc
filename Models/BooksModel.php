@@ -5,10 +5,23 @@ use \HaploMvc\Db\HaploModel;
 
 class BooksModel extends HaploModel {
     public function get($bookId) {
-        $this->app->sqlBuilder->return_sql(true);
         echo $this->app->sqlBuilder
-            ->select(array('book_id', 'title', 'publish_date'))
+            ->select(array('b.book_id', 'title', 'publish_date'))
             ->where('book_id', '=', $bookId)
+            ->where(function($sqlBuilder) {
+                $sqlBuilder
+                    ->where('author_id', '=', 1)
+                    ->or_where('author_id', '=', 3)
+                    ->or_where(function($sqlBuilder) {
+                        $sqlBuilder
+                            ->where('author_id', '=', 3)
+                            ->or_where('author_id', '=', 9);
+                    });
+            })
+            ->where('publish_date', '=', '2013-10-10')
+            ->order_by('book_id', 'ASC')
+            ->order_by('publish_date', 'DESC')
+            ->limit(50)
             ->get('books');
 
         echo '<br>';

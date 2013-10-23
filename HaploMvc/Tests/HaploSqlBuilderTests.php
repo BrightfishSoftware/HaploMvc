@@ -15,7 +15,6 @@ class HaploSqlBuilderTests extends PHPUnit_Framework_TestCase {
     public function setUp() {
         $this->db = HaploDb::get_instance(new HaploMySqlDbDriver());
         $this->sqlBuilder = new HaploSqlBuilder($this->db);
-        $this->sqlBuilder->return_sql(true);
     }
 
     public function tearDown() {

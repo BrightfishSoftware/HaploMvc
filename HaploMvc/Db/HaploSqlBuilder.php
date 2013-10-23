@@ -8,7 +8,7 @@ namespace HaploMvc\Db;
 use \HaploMvc\Exception\HaploInvalidComparisonOperatorException,
     \HaploMvc\Exception\HaploInvalidSortOrderException,
     \HaploMvc\Exception\HaploInvalidJoinTypeException,
-    \HaploMvc\Exception\HaploInvalidLogicalOperatorException;
+    \HaploMvc\Exception\HaploInvalidParameterException;
 
 /**
  * Class HaploSqlBuilder
@@ -29,6 +29,8 @@ class HaploSqlBuilder {
     protected $having = '';
     /** @var string */
     protected $groupBy = '';
+    /** @var string */
+    protected $on = '';
     /** @var string */
     protected $join = '';
     /** @var string */
@@ -69,22 +71,13 @@ class HaploSqlBuilder {
         'RIGHT OUTER JOIN'
     );
     /** @var bool */
-    protected $returnSql = false;
+    protected $isSubWhere = false;
 
     /**
      * @param HaploDb $db
      */
     public function __construct(HaploDb $db) {
         $this->db = $db;
-    }
-
-    /**
-     * @param bool $returnSql
-     * @return HaploSqlBuilder $this
-     */
-    public function return_sql($returnSql) {
-        $this->returnSql = $returnSql;
-        return $this;
     }
 
     /**
@@ -122,18 +115,44 @@ class HaploSqlBuilder {
     }
 
     /**
-     * @param string $andOr
-     * @param string $field
-     * @param string $comparison
-     * @param mixed $value
-     * @param bool $dontQuote
+     * _where($andOr, $callable);
+     * _where($andOr, $field, $comparison, $value, $dontQuote = false)
+     *
      * @throws \HaploMvc\Exception\HaploInvalidComparisonOperatorException
+     * @throws \HaploMvc\Exception\HaploInvalidParameterException
      * @return HaploSqlBuilder $this
      */
-    protected function _where($andOr, $field, $comparison, $value, $dontQuote) {
+    protected function _where() {
+        $args = func_get_args();
+
+        if (count($args) === 0) {
+            throw new HaploInvalidParameterException('Invalid parameters specified.');
+        }
+
+        $andOr = $args[0];
+
+        if (isset($args[1]) && is_callable($args[1])) {
+            $this->isSubWhere = true;
+            $this->where .= $this->where === '' ? '(' : sprintf(' %s (', $andOr);
+            $args[1]($this);
+            $this->where .= ')';
+            $this->isSubWhere = false;
+            return $this;
+        }
+
+        $field = isset($args[1]) ? $args[1] : '';
+        $comparison = isset($args[2]) ? $args[2] : '';
+        $value = isset($args[3]) ? $args[3] : '';
+        $dontQuote = isset($args[4]) ? (bool)$args[4] : false;
+
+        if ($field === '' || $comparison === '' || $value === '') {
+            throw new HaploInvalidParameterException('Invalid parameters specified.');
+        }
+
         if (!in_array($comparison, $this->comparisonOperators)) {
             throw new HaploInvalidComparisonOperatorException('Invalid comparison operator specified.');
         }
+
         if (!is_array($value) || !empty($value)) {
             if (is_array($value)) {
                 foreach ($value as &$current) {
@@ -145,31 +164,36 @@ class HaploSqlBuilder {
             }
             $field = $dontQuote ? $field : $this->db->quote_identifier($field);
             $sql = sprintf('%s %s %s', $field, $comparison, $value);
-            $this->where = $this->where === '' ? $sql : sprintf(' %s %s', $andOr, $sql);
+            if ($this->where === '' || $this->isSubWhere) {
+                $this->where .= $sql;
+                $this->isSubWhere = false;
+            } else {
+                $this->where .= sprintf(' %s %s', $andOr, $sql);
+            }
         }
         return $this;
     }
 
     /**
-     * @param string $field
-     * @param string $comparison
-     * @param mixed $value
-     * @param bool $dontQuote
+     * where($callable);
+     * where($field, $comparison, $value, $dontQuote = false)
+     *
      * @return HaploSqlBuilder $this
      */
-    public function where($field, $comparison, $value, $dontQuote = false) {
-        return $this->_where('AND', $field, $comparison, $value, $dontQuote);
+    public function where() {
+        $args = array_merge(array('AND'), func_get_args());
+        return call_user_func_array(array($this, '_where'), $args);
     }
 
     /**
-     * @param string $field
-     * @param string $comparison
-     * @param mixed $value
-     * @param bool $dontQuote
+     * where($callable);
+     * where($field, $comparison, $value, $dontQuote = false)
+     *
      * @return HaploSqlBuilder $this
      */
-    public function or_where($field, $comparison, $value, $dontQuote = false) {
-        return $this->_where('OR', $field, $comparison, $value, $dontQuote);
+    public function or_where() {
+        $args = array_merge(array('OR'), func_get_args());
+        return call_user_func_array(array($this, '_where'), $args);
     }
 
     /**
@@ -188,7 +212,7 @@ class HaploSqlBuilder {
             $values = implode(',', $values);
             $field = $dontQuote ? $field : $this->db->quote_identifier($field);
             $sql = sprintf('%s %s (%s)', $field, $inNotIn, $values);
-            $this->where = $this->where === '' ? $sql : sprintf(' %s %s', $andOr, $sql);
+            $this->where .= $this->where === '' ? $sql : sprintf(' %s %s', $andOr, $sql);
         }
         return $this;
     }
@@ -245,7 +269,7 @@ class HaploSqlBuilder {
         $field = $dontQuote ? $field : $this->db->quote_identifier($field);
         $value = $dontQuote ? $value : $this->db->quote($value);
         $sql = sprintf('%s %s %s', $field, $likeNotLike, $value);
-        $this->where = $this->where === '' ? $sql : sprintf(' %s %s', $andOr, $sql);
+        $this->where .= $this->where === '' ? $sql : sprintf(' %s %s', $andOr, $sql);
         return $this;
     }
 
@@ -296,7 +320,7 @@ class HaploSqlBuilder {
      */
     public function group_by($field, $dontQuote = false) {
         $field = $dontQuote ? $field : $this->db->quote_identifier($field);
-        $this->groupBy = $this->groupBy === '' ? $field : ', '.$field;
+        $this->groupBy .= $this->groupBy === '' ? $field : ', '.$field;
         return $this;
     }
 
@@ -332,7 +356,7 @@ class HaploSqlBuilder {
             }
             $field = $dontQuote ? $field : $this->db->quote_identifier($field);
             $sql = sprintf('%s %s %s', $field, $comparison, $value);
-            $this->having = $this->having === '' ? $sql : sprintf(' %s %s', $andOr, $sql);
+            $this->having .= $this->having === '' ? $sql : sprintf(' %s %s', $andOr, $sql);
         }
         return $this;
     }
@@ -370,7 +394,7 @@ class HaploSqlBuilder {
             throw new HaploInvalidSortOrderException('Invalid sort order specified.');
         }
         $sql = $this->db->quote_identifier($field).' '.$order;
-        $this->orderBy = $this->orderBy === '' ? $sql : ', '.$sql;
+        $this->orderBy .= $this->orderBy === '' ? $sql : ', '.$sql;
         return $this;
     }
 
@@ -402,59 +426,72 @@ class HaploSqlBuilder {
         return $this;
     }
 
+    protected function _on($andOr, $field, $comparison, $value, $dontQuote) {
+        if (!in_array($comparison, $this->comparisonOperators)) {
+            throw new HaploInvalidComparisonOperatorException('Invalid comparison operator specified.');
+        }
+        $field = $dontQuote ? $field : $this->db->quote_identifier($field);
+        $value = $dontQuote ? $value : $this->db->quote_identifier($value);
+        $sql = sprintf('%s %s %s', $field, $comparison, $value);
+        $this->on = $this->on === '' ? $sql : sprintf(' %s %s', $andOr, $sql);
+        return $this;
+    }
+
+    public function on($field, $comparison, $value, $dontQuote = false) {
+        return $this->_on('AND', $field, $comparison, $value, $dontQuote);
+    }
+
+    public function or_on($field, $comparison, $value, $dontQuote = false) {
+        return $this->_on('OR', $field, $comparison, $value, $dontQuote);
+    }
+
     /**
-     * TODO: work out how to filter to prevent possible SQL injection
-     *
      * @param string $table
-     * @param string $on
      * @param string $type
      * @throws HaploInvalidJoinTypeException
      * @return HaploSqlBuilder $this
      */
-    protected function _join($table, $on, $type = 'JOIN') {
+    protected function _join($table, $type = 'JOIN') {
         $type = strtoupper($type);
         if (!in_array($type, $this->joinTypes)) {
             throw new HaploInvalidJoinTypeException('Invalid join type specified.');
         }
-        $sql = sprintf('%s %s ON %s', $type, $table, $on);
-        $this->join = $this->join === '' ? $sql : ', '.$sql;
+        $sql = sprintf('%s %s ON %s', $type, $table, $this->on);
+        $this->join .= $this->join === '' ? $sql : ', '.$sql;
+        $this->on = '';
         return $this;
     }
 
     /**
      * @param string $table
-     * @param string $on
      * @return HaploSqlBuilder $this
      */
-    public function join($table, $on) {
-        return $this->_join($table, $on, 'JOIN');
+    public function join($table) {
+        return $this->_join($table, 'JOIN');
     }
 
     /**
      * @param string $table
-     * @param string $on
      * @return HaploSqlBuilder $this
      */
-    public function left_join($table, $on) {
-        return $this->_join($table, $on, 'LEFT JOIN');
+    public function left_join($table) {
+        return $this->_join($table, 'LEFT JOIN');
     }
 
     /**
      * @param string $table
-     * @param string $on
      * @return HaploSqlBuilder $this
      */
-    public function right_join($table, $on) {
-        return $this->_join($table, $on, 'RIGHT JOIN');
+    public function right_join($table) {
+        return $this->_join($table, 'RIGHT JOIN');
     }
 
     /**
      * @param string $table
-     * @param string $on
      * @return HaploSqlBuilder $this
      */
-    public function outer_join($table, $on) {
-        return $this->_join($table, $on, 'OUTER JOIN');
+    public function outer_join($table) {
+        return $this->_join($table, 'OUTER JOIN');
     }
 
     /**
@@ -468,39 +505,18 @@ class HaploSqlBuilder {
 
     /**
      * @param string $table
-     * @param string $on
      * @return HaploSqlBuilder $this
      */
-    public function left_outer_join($table, $on) {
-        return $this->_join($table, $on, 'LEFT OUTER JOIN');
+    public function left_outer_join($table) {
+        return $this->_join($table, 'LEFT OUTER JOIN');
     }
 
     /**
      * @param string $table
-     * @param string $on
      * @return HaploSqlBuilder $this
      */
-    public function right_outer_join($table, $on) {
-        return $this->_join($table, $on, 'RIGHT OUTER JOIN');
-    }
-
-    /**
-     * @param string $andOr
-     * @return $this
-     * @throws HaploInvalidLogicalOperatorException
-     */
-    public function bracket($andOr) {
-        $andOr = strtoupper($andOr);
-        if (!in_array($andOr, array('AND', 'OR'))) {
-            throw new HaploInvalidLogicalOperatorException('Should be one of AND or OR in bracket()');
-        }
-        $this->where .= $andOr.' (';
-        return $this;
-    }
-
-    public function end_bracket() {
-        $this->where .= ')';
-        return $this;
+    public function right_outer_join($table) {
+        return $this->_join($table, 'RIGHT OUTER JOIN');
     }
 
     /**
@@ -530,11 +546,7 @@ class HaploSqlBuilder {
         $values = implode(',', $values);
         $sql .= sprintf(' (%s) VALUES (%s);', $names, $values);
         $this->reset();
-        if ($this->returnSql) {
-            return $sql;
-        } else {
-            return $this->db->run($sql) ? $this->db->lastInsertId() : false;
-        }
+        return $sql;
     }
 
     /**
@@ -565,11 +577,7 @@ class HaploSqlBuilder {
         }
         $sql .= ';';
         $this->reset();
-        if ($this->returnSql) {
-            return $sql;
-        } else {
-            return (bool)$this->db->run($sql);
-        }
+        return $sql;
     }
 
     /**
@@ -589,11 +597,7 @@ class HaploSqlBuilder {
         }
         $sql .= ';';
         $this->reset();
-        if ($this->returnSql) {
-            return $sql;
-        } else {
-            return (bool)$this->db->run($sql);
-        }
+        return $sql;
     }
 
     /**
@@ -601,12 +605,7 @@ class HaploSqlBuilder {
      * @return bool
      */
     public function delete_all($table = '') {
-        $sql = sprintf('DELETE FROM %s;', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
-        if ($this->returnSql) {
-            return $sql;
-        } else {
-            return $this->db->run($sql);
-        }
+        return sprintf('DELETE FROM %s;', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
     }
 
     /**
@@ -614,20 +613,14 @@ class HaploSqlBuilder {
      * @return bool
      */
     public function truncate($table) {
-        $sql = sprintf('TRUNCATE %s;', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
-        if ($this->returnSql) {
-            return $sql;
-        } else {
-            return $this->db->run($sql);
-        }
+        return sprintf('TRUNCATE %s;', $table !== '' ? $this->db->quote_identifier($table) : $this->from);
     }
 
     /**
      * @param string $table
-     * @param bool $asObjects
      * @return array|bool
      */
-    public function get($table = '', $asObjects = false) {
+    public function get($table = '') {
         $sql = sprintf(
             'SELECT %s%s FROM %s',
             $this->distinct,
@@ -651,11 +644,7 @@ class HaploSqlBuilder {
         }
         $sql .= ';';
         $this->reset();
-        if ($this->returnSql) {
-            return $sql;
-        } else {
-            return $this->single ? $this->db->get_row($sql, $asObjects) : $this->db->get_array($sql, $asObjects);
-        }
+        return $sql;
     }
 
     /**
@@ -678,11 +667,7 @@ class HaploSqlBuilder {
         }
         $sql .= ';';
         $this->reset();
-        if ($this->returnSql) {
-            return $sql;
-        } else {
-            return $this->db->get_column($sql);
-        }
+        return $sql;
     }
 
     public function reset() {
