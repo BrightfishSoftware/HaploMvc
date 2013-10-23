@@ -101,10 +101,9 @@ class HaploDb extends HaploSingleton {
      * @param array $params
      * @param int $start
      * @param int $count
-     * @param bool $asObjects
-     * @return bool|array|object
+     * @return bool|object
      */
-    public function get_array($stmt, array $params = array(), $start = 0, $count = 0, $asObjects = false) {
+    public function get_array($stmt, array $params = array(), $start = 0, $count = 0) {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
@@ -121,7 +120,7 @@ class HaploDb extends HaploSingleton {
                     );
                 } else {
                     $countStmt = preg_replace(
-                        '/^select.*from/is',
+                        '/^SELECT.*FROM/is',
                         'SELECT COUNT(*) FROM ',
                         trim($stmt)
                     );
@@ -131,9 +130,9 @@ class HaploDb extends HaploSingleton {
             }
         
             if (empty($params) && $result = $this->db->query($stmt)) {
-                return $result->fetchAll($asObjects ? PDO::FETCH_CLASS : PDO::FETCH_ASSOC);
+                return $result->fetchAll(PDO::FETCH_CLASS);
             } elseif (($stmt = $this->db->prepare($stmt)) && $stmt->execute($params)) {
-                return $stmt->fetchAll($asObjects ? PDO::FETCH_CLASS : PDO::FETCH_ASSOC);
+                return $stmt->fetchAll(PDO::FETCH_CLASS);
             }
         } catch (PDOException $e) {
             $this->log_error($e);
@@ -145,19 +144,33 @@ class HaploDb extends HaploSingleton {
     /**
      * @param string $stmt
      * @param array $params
-     * @param bool $asObject
-     * @return bool|array|object
+     * @param int $page
+     * @param int $numPerPage
+     * @param int $numEitherSide
+     * @return array
      */
-    public function get_row($stmt, array $params = array(), $asObject = false) {
+    public function get_paged_array($stmt, array $params, $page = 1, $numPerPage = 50, $numEitherSide = 4) {
+        list($start, $count) = $this->get_offsets_from_page($page, $numPerPage);
+        $results = $this->get_array($stmt, $params, $start, $count);
+        $paging = $this->get_paging($page, $numPerPage, $numEitherSide);
+        return array($results, $paging);
+    }
+
+    /**
+     * @param string $stmt
+     * @param array $params
+     * @return bool|object
+     */
+    public function get_row($stmt, array $params = array()) {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
 
         try {
             if (empty($params) && $result = $this->db->query($stmt)) {
-                return $asObject ? $result->fetchObject() : $result->fetch(PDO::FETCH_ASSOC);
+                return $result->fetchObject();
             } elseif (($stmt = $this->db->prepare($stmt)) && $stmt->execute($params)) {
-                return $asObject ? $stmt->fetchObject() : $stmt->fetch(PDO::FETCH_ASSOC);
+                return $stmt->fetchObject();
             }
         } catch (PDOException $e) {
             $this->log_error($e);
@@ -287,8 +300,10 @@ class HaploDb extends HaploSingleton {
      * @return array
      */
     public function get_offsets_from_page($page, $numPerPage = 50) {
+        if ($page === 0 && $numPerPage === 0) {
+            return array(0, 0);
+        }
         $start = ($page - 1) * $numPerPage;
-        
         return array($start, $numPerPage);
     }
 
@@ -299,6 +314,10 @@ class HaploDb extends HaploSingleton {
      * @return array|bool
      */
     public function get_paging($page, $numPerPage = 50, $numEitherSide = 4) {
+        if ($page === 0 && $numPerPage === 0) {
+            return false;
+        }
+
         $numRows = $this->get_total_rows();
         $numPages = ceil($numRows / $numPerPage);
         

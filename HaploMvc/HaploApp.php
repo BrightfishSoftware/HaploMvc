@@ -102,17 +102,11 @@ class HaploApp extends HaploSingleton {
         $this->load_class('template', '\HaploMvc\Template\HaploTemplateFactory');
         if (is_null($this->db)) {
             $dbConfig = $this->config->get_section('db');
-            $class = sprintf(
-                '\HaploMvc\Db\Haplo%sDbDriver',
-                isset($dbConfig['driver']) ? $dbConfig['driver'] : 'MySql'
-            );
-            $this->load_class('db', '\HaploMvc\Db\HaploDb', array(
-                'driver' => new $class($dbConfig)
-            ));
+            $dbDriver = isset($dbConfig['driver']) ? $dbConfig['driver'] : 'MySql';
+            $class = sprintf('\HaploMvc\Db\Haplo%sDbDriver', $dbDriver);
+            $this->load_class('db', '\HaploMvc\Db\HaploDb', array('driver' => new $class($dbConfig)));
         }
-        $this->load_class('sqlBuilder', '\HaploMvc\Db\HaploSqlBuilder', array(
-            'db' => $this->db
-        ));
+        $this->load_class('sqlBuilder', '\HaploMvc\Db\HaploSqlBuilder', array('db' => $this->db));
         HaploActiveRecord::set_dependencies($this->db, $this->sqlBuilder);
     }
 
