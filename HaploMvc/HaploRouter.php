@@ -93,7 +93,7 @@ class HaploRouter extends HaploSingleton {
      * @param array|string $destination
      */
     protected function add_verb_route($verb, $pattern, $destination) {
-        if (static::get_request_method() === 'get') {
+        if (static::get_request_method() === $verb) {
             $this->add_route($pattern, $destination);
         }
     }
