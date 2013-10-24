@@ -18,6 +18,10 @@ HaploEscaper uses the Zend Escaper library which is licensed under the Zend Fram
 
 ## Change Log
 
+### 0.0.12 (24th October 2013)
+
+Added optional slim action class and general tidy up of code.
+
 ### 0.0.11 (23rd October 2013)
 
 Updated SQL builder to support where conditions in brackets, added paged_array method to DB class and updated other interfaces.
