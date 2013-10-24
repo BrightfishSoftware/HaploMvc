@@ -1,6 +1,6 @@
 # HaploMvc
 
-HaploMvc is a lighweight PHP development framework. It goal is to help you build clear, well structured web sites and applications.
+HaploMvc is a lighweight PHP development framework. It goal is to help you build clear, well structured web sites and applications as quickly and simply as possible. I've tried to make the implementation as simple and predictable as possible and have extensively used phpdoc comments to enable extensive code completion functionality in PHP IDE such as PHP Storm (my personal favourite). 
 
 ## Key Features
 
