@@ -17,7 +17,7 @@ class HaploLog {
      * @param string $msg
      * @param HaploConfig $config
      */
-    static public function log_error($msg, HaploConfig $config = null) {
+    public static function log_error($msg, HaploConfig $config = null) {
         if (!$config instanceof HaploConfig) {
             $config = HaploConfig::get_instance();
         }
@@ -30,7 +30,7 @@ class HaploLog {
      * @param string $msg
      * @param HaploConfig $config
      */
-    static public function log_info($msg, HaploConfig $config = null) {
+     public static function log_info($msg, HaploConfig $config = null) {
         if (!$config instanceof HaploConfig) {
             $config = HaploConfig::get_instance();
         }

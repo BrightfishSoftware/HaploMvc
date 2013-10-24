@@ -15,7 +15,7 @@ class HaploHttp {
      * @param HaploHttpOptions $options
      * @return array
      */
-    static protected function options(HaploHttpOptions $options) {
+    protected static function options(HaploHttpOptions $options) {
         $allOptions = array(
             CURLOPT_HEADER => 0,
             CURLOPT_RETURNTRANSFER => 1
@@ -37,7 +37,7 @@ class HaploHttp {
      * @param HaploHttpOptions $options
      * @return array
      */
-    static public function get($url, HaploHttpOptions $options = null) {
+    public static function get($url, HaploHttpOptions $options = null) {
         $options = self::options($options);
         
         // initiate session
@@ -59,7 +59,7 @@ class HaploHttp {
      * @param HaploHttpOptions $options
      * @return array
      */
-    static public function post($url, array $params = array(), HaploHttpOptions $options = null) {
+    public static function post($url, array $params = array(), HaploHttpOptions $options = null) {
         $options = self::options($options);
 
         // initiate session
@@ -83,7 +83,7 @@ class HaploHttp {
      * @param HaploHttpOptions $options
      * @return mixed
      */
-    static public function head($url, HaploHttpOptions $options = null) {
+    public static function head($url, HaploHttpOptions $options = null) {
         $options = self::options($options);
         
         // initiate session

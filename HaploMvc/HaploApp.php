@@ -39,22 +39,26 @@ class HaploApp extends HaploSingleton {
      * Static helper method used to ensure only one instance of the class is instantiated
      *
      * @param string $appBase
+     * @param bool $doInit
      * @return HaploApp
      */
-    static public function get_instance($appBase = null) {
+    static public function get_instance($appBase = null, $doInit = true) {
         $class = get_called_class();
-
         if (!isset(static::$instances[$class]) && !is_null($appBase)) {
-            static::$instances[$class] = new $class($appBase);
+            static::$instances[$class] = new $class($appBase, $doInit);
         }
         return static::$instances[$class];
     }
 
     /**
      * @param string $appBase
+     * @param bool $doInit
      */
-    protected function __construct($appBase) {
+    protected function __construct($appBase, $doInit) {
         $this->appBase = $appBase;
+        if ($doInit) {
+            $this->init();
+        }
     }
 
     /**
