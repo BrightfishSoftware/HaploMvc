@@ -22,7 +22,16 @@ HaploEscaper uses the Zend Escaper library which is licensed under the Zend Fram
 
 ## Installation
 
-TBD
+The easiest way to install HaploMvc is via [Composer](http://getcomposer.org/).
+
+Step 1: Install Composer (assuming you haven't already got it):
+
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+
+Step 2: Install HaploMvc
+
+composer create-project brightfishsoftware/haplomvc --stability="dev"
 
 ## Getting Started
 
