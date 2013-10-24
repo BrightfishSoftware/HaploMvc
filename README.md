@@ -11,6 +11,7 @@ HaploMvc is a lighweight PHP development framework. It goal is to help you build
    * Simple wrapper to PDO and a SQL Query Builder
    * ActiveRecord library (in progress)
    * Support for localisation
+   * A growing suite of tests (utilising PHPUnit)
 
 ## License
 
