@@ -1,20 +1,29 @@
 # HaploMvc
 
-A simple and lightweight PHP MVC development framework.
+HaploMvc is a lighweight PHP development framework. It goal is to help you build clear, well structured web sites and applications.
 
 ## Key Features
 
    * User/SEO friendly URLs based on regex pattern matching
-   * Basic built in protection for XSS and helpers to prevent CSRF
-   * PHP templating
+   * Basic built in protection for XSS via context specific escaping methods as well as helpers to prevent CSRF
+   * Fast PHP templating with support for inheritance and overridable regions
    * Caching (file or memcached)
-   * Simple DB layer (wrapper to PDO)
+   * Simple wrapper to PDO and a SQL Query Builder
+   * ActiveRecord library (in progress)
    * Support for localisation
 
 ## License
 
-BSD License (see LICENSE for conditions of use).
+HaploMvc uses a liberal BSD License (see LICENSE for conditions of use).
 HaploEscaper uses the Zend Escaper library which is licensed under the Zend Framework license (http://framework.zend.com/license)
+
+## Installation
+
+TBD
+
+## Getting Started
+
+TBD
 
 ## Change Log
 
