@@ -17,9 +17,7 @@ use \HaploMvc\Pattern\HaploSingleton,
  * @package HaploMvc
  */
 abstract class HaploAction extends HaploSingleton {
-    /**
-     * @var HaploApp
-     */
+    /** @var HaploApp */
     protected $app;
 
     /**
@@ -91,7 +89,6 @@ abstract class HaploAction extends HaploSingleton {
      */
     public static function get_instance(HaploApp $app = null) {
         $class = get_called_class();
-
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);
         }

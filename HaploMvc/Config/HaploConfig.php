@@ -138,7 +138,6 @@ class HaploConfig extends HaploSingleton {
      */
     static public function get_instance(HaploApp $app = null) {
         $class = get_called_class();
-
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);
         }
