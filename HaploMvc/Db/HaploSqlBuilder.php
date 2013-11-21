@@ -64,9 +64,9 @@ class HaploSqlBuilder {
     protected $joinTypes = array(
         'JOIN',
         'LEFT JOIN',
-        'RIGHT_JOIN',
-        'OUTER_JOIN',
-        'INNER_JOIN',
+        'RIGHT JOIN',
+        'OUTER JOIN',
+        'INNER JOIN',
         'LEFT OUTER JOIN',
         'RIGHT OUTER JOIN'
     );

@@ -122,12 +122,28 @@ class HaploConfig extends HaploSingleton {
             $config = parse_ini_file("$path/$file", true);
 
             if (!empty($config)) {
-                $this->config = array_merge_recursive($this->config, $config);
+                $this->config = $this->merge_config($this->config, $config);
                 $this->config['_files'][] = "$path/$file";
             } else {
                 throw new HaploConfigParseFileException("Couldn't parse configuration file ($path/$file)");
             }
         }
+    }
+
+    /**
+     * @param array $config1
+     * @param array $config2
+     * @return array
+     */
+    protected function merge_config(array $config1, array $config2) {
+        foreach ($config2 as $key => $value) {
+            if (is_array($value) && isset($config1[$key]) && is_array($config1[$key])) {
+                $config1[$key] = $this->merge_config($config1[$key], $value);
+            } else {
+                $config1[$key] = $value;
+            }
+        }
+        return $config1;
     }
 
     /**
