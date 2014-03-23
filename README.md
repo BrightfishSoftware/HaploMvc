@@ -2,9 +2,7 @@
 
 ## Build Statuses
 
-Develop: [![Build Status](https://travis-ci.org/BrightfishSoftware/HaploMvc.png?branch=develop)](https://travis-ci.org/BrightfishSoftware/HaploMvc)
-
-Master: [![Build Status](https://travis-ci.org/BrightfishSoftware/HaploMvc.png?branch=master)](https://travis-ci.org/BrightfishSoftware/HaploMvc)
+Develop: [![Build Status](https://travis-ci.org/BrightfishSoftware/HaploMvc.png?branch=develop)](https://travis-ci.org/BrightfishSoftware/HaploMvc), Master: [![Build Status](https://travis-ci.org/BrightfishSoftware/HaploMvc.png?branch=master)](https://travis-ci.org/BrightfishSoftware/HaploMvc)
 
 ## Introduction
 
