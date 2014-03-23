@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2013, Brightfish Software Limited
- * @package HaploLog
- **/
-
 namespace HaploMvc\Debug;
 
 use HaploMvc\Config\HaploConfig;

@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2013, Brightfish Software Limited
- * @package HaploMysqlDbDriver
- **/
 namespace HaploMvc\Db;
 
 use PDO;

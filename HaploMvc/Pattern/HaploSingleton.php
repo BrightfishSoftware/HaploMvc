@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2013, Brightfish Software Limited
- * @package HaploSingleton
- **/
-
 namespace HaploMvc\Pattern;
 
 use HaploMvc\Exception\HaploCloningNotAllowedException;

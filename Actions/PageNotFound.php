@@ -1,8 +1,4 @@
 <?php
-/**
- * @package PageNotFound
- **/
-
 namespace Actions;
 
 use HaploMvc\Action\HaploAction;

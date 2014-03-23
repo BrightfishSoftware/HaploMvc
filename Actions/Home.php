@@ -1,7 +1,4 @@
 <?php
-/**
- * @package Home
- **/
 namespace Actions;
 
 use HaploMvc\Action\HaploAction;

@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2013, Brightfish Software Limited
- * @package HaploTemplate
- **/
-
 namespace HaploMvc\Template;
 
 use HaploMvc\HaploApp;

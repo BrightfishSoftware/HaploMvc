@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2013, Brightfish Software Limited/Ed Eliot
- * @package HaploInput
- **/
-
 namespace HaploMvc\Input;
 
 /**

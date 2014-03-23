@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2014, Brightfish Software Limited
- **/
-
 namespace HaploMvc;
 
 require APP_BASE.'/HaploMvc/Exception/HaploExceptions.php';

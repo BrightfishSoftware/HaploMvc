@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2013, Brightfish Software Limited
- * @package HaploCacheFactory
- **/
-
 namespace HaploMvc\Cache;
 
 use HaploMvc\Pattern\HaploSingleton;

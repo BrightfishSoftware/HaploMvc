@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2013, Brightfish Software Limited
- * @package HaploQueryBuilder
- **/
 namespace HaploMvc\Db;
 
 use HaploMvc\Exception\HaploInvalidComparisonOperatorException;

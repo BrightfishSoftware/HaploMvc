@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright (C) 2008-2013, Brightfish Software Limited
- * @package HaploEscaper
- **/
-
 namespace HaploMvc\Security;
 
 use Zend\Escaper\Escaper as Escaper;
