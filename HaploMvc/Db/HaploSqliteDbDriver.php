@@ -5,27 +5,30 @@
  **/
 namespace HaploMvc\Db;
 
-use \PDO;
+use PDO;
 
 /**
  * Class HaploSqliteDbDriver
  * @package HaploMvc
  */
-class HaploSqliteDbDriver extends HaploDbDriver {
+class HaploSqliteDbDriver extends HaploDbDriver
+{
     /** @var string */
     public $driverName = 'sqlite';
 
     /**
      * @return string
      */
-    protected function get_dsn() {
+    protected function getDsn()
+    {
         return sprintf('sqlite:%s', $this->params['file']);
     }
 
     /**
      * @return array
      */
-    protected function get_default_params() {
+    protected function getDefaultParams()
+    {
         return array(
             'file' => ':memory:'
         );
@@ -34,7 +37,8 @@ class HaploSqliteDbDriver extends HaploDbDriver {
     /**
      * @return array
      */
-    protected function get_default_options() {
+    protected function getDefaultOptions()
+    {
         return array(
             PDO::ATTR_PERSISTENT => true
         );
@@ -43,9 +47,10 @@ class HaploSqliteDbDriver extends HaploDbDriver {
     /**
      * @return PDO
      */
-    public function connect() {
+    public function connect()
+    {
         return new PDO(
-            $this->get_dsn($this->params),
+            $this->getDsn($this->params),
             null,
             null,
             $this->driverOptions

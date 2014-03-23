@@ -6,12 +6,13 @@
 
 namespace HaploMvc\Translation;
 
-use \HaploMvc\Pattern\HaploSingleton,
-    \HaploMvc\HaploApp,
-    \HaploMvc\Exception\HaploLangFileNotFoundException,
-    \HaploMvc\Exception\HaploTranslationKeyNotFoundException;
+use HaploMvc\Pattern\HaploSingleton,
+    HaploMvc\HaploApp,
+    HaploMvc\Exception\HaploLangFileNotFoundException,
+    HaploMvc\Exception\HaploTranslationKeyNotFoundException;
 
-class HaploTranslations extends HaploSingleton {
+class HaploTranslations extends HaploSingleton
+{
     /**
      * Stores a reference to application object
      *
@@ -67,7 +68,8 @@ class HaploTranslations extends HaploSingleton {
      * @param $app
      * @return HaploTranslations
      */
-    static public function get_instance(HaploApp $app = null) {
+    static public function getInstance(HaploApp $app = null)
+    {
         $class = get_called_class();
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);
@@ -82,11 +84,12 @@ class HaploTranslations extends HaploSingleton {
      * @throws HaploLangFileNotFoundException
      * @return HaploTranslations
      */
-    protected function __construct(HaploApp $app) {
+    protected function __construct(HaploApp $app)
+    {
         $this->app = $app;
-        $this->lang = $this->app->config->get_key('translations', 'lang', 'en-US');
-        $this->defaultLang = $this->app->config->get_key('translations', 'defaultLang', 'en-US');
-        $this->allowShowKeys = $this->app->config->get_key('translations', 'allowShowKeys', false);
+        $this->lang = $this->app->config->getKey('translations', 'lang', 'en-US');
+        $this->defaultLang = $this->app->config->getKey('translations', 'defaultLang', 'en-US');
+        $this->allowShowKeys = $this->app->config->getKey('translations', 'allowShowKeys', false);
         $this->translationsDir = $this->app->appBase.'/Translations';
         $this->translationsCacheDir = $this->app->appBase.'/Cache';
         $this->file = $this->translationsDir.'/'.$this->lang.'.txt';
@@ -128,7 +131,8 @@ class HaploTranslations extends HaploSingleton {
     /**
      * Processes selected translation file
      **/
-    protected function process() {
+    protected function process()
+    {
         // create array for serialising
         $cache = array();
         
@@ -175,7 +179,8 @@ class HaploTranslations extends HaploSingleton {
      * @throws HaploTranslationKeyNotFoundException
      * @return string
      */
-    public function get($key) {
+    public function get($key)
+    {
         if (array_key_exists($key, $this->translations)) { // key / value pair exists
             $translation = $this->translations[$key];
             

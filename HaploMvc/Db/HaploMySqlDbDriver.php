@@ -5,13 +5,14 @@
  **/
 namespace HaploMvc\Db;
 
-use \PDO;
+use PDO;
 
 /**
  * Class HaploMySqlDbDriver
  * @package HaploMvc
  */
-class HaploMySqlDbDriver extends HaploDbDriver {
+class HaploMySqlDbDriver extends HaploDbDriver
+{
     /** @var string */
     public $driverName = 'mysql';
     /** @var bool */
@@ -20,7 +21,8 @@ class HaploMySqlDbDriver extends HaploDbDriver {
     /**
      * @return string
      */
-    protected function get_dsn() {
+    protected function getDsn()
+    {
         return sprintf(
             'mysql:dbname=%s;host=%s;charset=%s',
             $this->params['database'],
@@ -32,7 +34,8 @@ class HaploMySqlDbDriver extends HaploDbDriver {
     /**
      * @return array
      */
-    protected function get_default_params() {
+    protected function getDefaultParams()
+    {
         return array(
             'user' => 'root',
             'pass' => '',
@@ -45,7 +48,8 @@ class HaploMySqlDbDriver extends HaploDbDriver {
     /**
      * @return array
      */
-    protected function get_default_options() {
+    protected function getDefaultOptions()
+    {
         return array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES '.$this->params['charset'],
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
@@ -57,7 +61,8 @@ class HaploMySqlDbDriver extends HaploDbDriver {
      * @param int $offset
      * @return string
      */
-    public function get_limit($limit = null, $offset = null) {
+    public function getLimit($limit = null, $offset = null)
+    {
         if (!is_null($offset) && !is_null($limit)) {
             return sprintf('LIMIT %d, %d', (int)$offset, (int)$limit);
         } elseif (!is_null($limit)) {
@@ -70,9 +75,10 @@ class HaploMySqlDbDriver extends HaploDbDriver {
     /**
      * @return PDO
      */
-    public function connect() {
+    public function connect()
+    {
         return new PDO(
-            $this->get_dsn(),
+            $this->getDsn(),
             $this->params['user'],
             $this->params['pass'],
             $this->driverOptions

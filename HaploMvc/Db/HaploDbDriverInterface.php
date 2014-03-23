@@ -9,7 +9,8 @@ namespace HaploMvc\Db;
  * Class HaploDbDriverInterface
  * @package HaploMvc
  */
-interface HaploDbDriverInterface {
+interface HaploDbDriverInterface
+{
     /**
      * @param array $params
      * @param array $driverOptions
@@ -24,10 +25,10 @@ interface HaploDbDriverInterface {
     /**
      * @return mixed
      */
-    public function get_limit();
+    public function getLimit();
 
     /**
      * @return mixed
      */
-    public function get_instance_hash();
+    public function getInstanceHash();
 }

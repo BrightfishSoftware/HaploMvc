@@ -6,14 +6,15 @@
 
 namespace HaploMvc\Security;
 
-use \HaploMvc\Pattern\HaploSingleton,
-    \HaploMvc\HaploApp;
+use HaploMvc\Pattern\HaploSingleton,
+    HaploMvc\HaploApp;
 
 /**
  * Class HaploNonce
  * @package HaploMvc
  */
-class HaploNonce extends HaploSingleton {
+class HaploNonce extends HaploSingleton
+{
     /**
      * @var string
      */
@@ -27,7 +28,8 @@ class HaploNonce extends HaploSingleton {
      * @param HaploApp $app
      * @return mixed
      */
-    public static function get_instance(HaploApp $app = null) {
+    public static function getInstance(HaploApp $app = null)
+    {
         $class = get_called_class();
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);
@@ -41,9 +43,10 @@ class HaploNonce extends HaploSingleton {
      * @param HaploApp $app
      * @return HaploNonce
      */
-    protected function __construct(HaploApp $app) {
-        $this->secret = $app->config->get_key('nonce', 'secret');
-        $this->name = $app->config->get_key('nonce', 'name');
+    protected function __construct(HaploApp $app)
+    {
+        $this->secret = $app->config->getKey('nonce', 'secret');
+        $this->name = $app->config->getKey('nonce', 'name');
         $this->create();
     }
     
@@ -53,7 +56,8 @@ class HaploNonce extends HaploSingleton {
      *
      * @return boolean
      **/
-    public function check() {
+    public function check()
+    {
         $result = (
             !empty($_SESSION[$this->name]) &&
             !empty($_REQUEST[$this->name]) && 
@@ -69,7 +73,8 @@ class HaploNonce extends HaploSingleton {
      *
      * @return string
      **/
-    public function get() {
+    public function get()
+    {
         return !empty($_SESSION[$this->name]) ? $_SESSION[$this->name] : false;
     }
     
@@ -79,7 +84,8 @@ class HaploNonce extends HaploSingleton {
      * @param boolean $force Force creation of a new token even if one already exists
      * @return boolean
      **/
-    protected function create($force = false) {
+    protected function create($force = false)
+    {
         if (empty($_SESSION[$this->name]) || $force) {
             $_SESSION[$this->name] = hash_hmac('sha512', uniqid(), $this->secret);
         

@@ -1,12 +1,14 @@
 <?php
 namespace HaploMvc\Db;
 
-use \HaploMvc\HaploApp;
+use HaploMvc\HaploApp;
 
-abstract class HaploModel {
+abstract class HaploModel
+{
     protected $app;
 
-    public function __construct(HaploApp $app) {
+    public function __construct(HaploApp $app)
+    {
         $this->app = $app;
     }
 }

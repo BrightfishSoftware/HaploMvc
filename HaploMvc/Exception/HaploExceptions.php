@@ -12,238 +12,358 @@ use Exception;
  * Class HaploUndefinedException
  * @package HaploMvc
  */
-class HaploUndefinedException extends Exception {}
+class HaploUndefinedException extends Exception
+{
+
+}
 
 /**
  * Class HaploMethodNotFoundException
  * @package HaploMvc
  */
-class HaploMethodNotFoundException extends Exception {}
+class HaploMethodNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploActionNotFoundException
  * @package HaploMvc
  */
-class HaploActionNotFoundException extends Exception {}
+class HaploActionNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploLibraryNotFoundException
  * @package HaploMvc
  */
-class HaploLibraryNotFoundException extends Exception {}
+class HaploLibraryNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploConfigParseFileException
  * @package HaploMvc
  */
-class HaploConfigParseFileException extends Exception {}
+class HaploConfigParseFileException extends Exception
+{
+
+}
 
 /**
  * Class HaploRouterNoActionDefinedException
  * @package HaploMvc
  */
-class HaploRouterNoActionDefinedException extends Exception {}
+class HaploRouterNoActionDefinedException extends Exception
+{
+
+}
 
 /**
  * Class HaploRouterNoRedirectUrlDefinedException
  * @package HaploMvc
  */
-class HaploRouterNoRedirectUrlDefinedException extends Exception {}
+class HaploRouterNoRedirectUrlDefinedException extends Exception
+{
+
+}
 
 /**
  * Class HaploRouterActionTypeNotSupportedException
  * @package HaploMvc
  */
-class HaploRouterActionTypeNotSupportedException extends Exception {}
+class HaploRouterActionTypeNotSupportedException extends Exception
+{
+
+}
 
 /**
  * Class HaploNoDefault404DefinedException
  * @package HaploMvc
  */
-class HaploNoDefault404DefinedException extends Exception {}
+class HaploNoDefault404DefinedException extends Exception
+{
+
+}
 
 /**
  * Class HaploPhpConfigException
  * @package HaploMvc
  */
-class HaploPhpConfigException extends Exception {}
+class HaploPhpConfigException extends Exception
+{
+
+}
 
 /**
  * Class HaploDirNotFoundException
  * @package HaploMvc
  */
-class HaploDirNotFoundException extends Exception {}
+class HaploDirNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploDirNotWriteableException
  * @package HaploMvc
  */
-class HaploDirNotWriteableException extends Exception {}
+class HaploDirNotWriteableException extends Exception
+{
+
+}
 
 /**
  * Class HaploCloningNotAllowedEception
  * @package HaploMvc
  */
-class HaploCloningNotAllowedEception extends Exception {}
+class HaploCloningNotAllowedEception extends Exception
+{
+
+}
 
 /**
  * Class HaploInvalidTemplateException
  * @package HaploMvc
  */
-class HaploInvalidTemplateException extends Exception {}
+class HaploInvalidTemplateException extends Exception
+{
+
+}
 
 /**
  * Class HaploPostFilterFunctionNotFoundException
  * @package HaploMvc
  */
-class HaploPostFilterFunctionNotFoundException extends Exception {}
+class HaploPostFilterFunctionNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploTemplateNotFoundException
  * @package HaploMvc
  */
-class HaploTemplateNotFoundException extends Exception {}
+class HaploTemplateNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploLangFileNotFoundException
  * @package HaploMvc
  */
-class HaploLangFileNotFoundException extends Exception {}
+class HaploLangFileNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploClassFileNotFoundException
  * @package HaploMvc
  */
-class HaploClassFileNotFoundException extends Exception {}
+class HaploClassFileNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploFileNotFoundException
  * @package HaploMvc
  */
-class HaploFileNotFoundException extends Exception {}
+class HaploFileNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploTranslationKeyNotFoundException
  * @package HaploMvc
  */
-class HaploTranslationKeyNotFoundException extends Exception {}
+class HaploTranslationKeyNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploMethodNotImplementedException
  * @package HaploMvc
  */
-class HaploMethodNotImplementedException extends Exception {}
+class HaploMethodNotImplementedException extends Exception
+{
+
+}
 
 /**
  * Class HaploNonceMismatchException
  * @package HaploMvc
  */
-class HaploNonceMismatchException extends Exception {}
+class HaploNonceMismatchException extends Exception
+{
+
+}
 
 /**
  * Class HaploEmptyParameterException
  * @package HaploMvc
  */
-class HaploEmptyParameterException extends Exception {}
+class HaploEmptyParameterException extends Exception
+{
+
+}
 
 /**
  * Class HaploInvalidParameterException
  * @package HaploMvc
  */
-class HaploInvalidParameterException extends Exception {}
+class HaploInvalidParameterException extends Exception
+{
+
+}
 
 /**
  * Class HaploClassNotFoundException
  * @package HaploMvc
  */
-class HaploClassNotFoundException extends Exception {}
+class HaploClassNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploDirNotWritableException
  * @package HaploMvc
  */
-class HaploDirNotWritableException extends Exception {}
+class HaploDirNotWritableException extends Exception
+{
+
+}
 
 /**
  * Class HaploNoActionDefinedException
  * @package HaploMvc
  */
-class HaploNoActionDefinedException extends Exception {}
+class HaploNoActionDefinedException extends Exception
+{
+
+}
 
 /**
  * Class HaploNoRedirectUrlDefinedException
  * @package HaploMvc
  */
-class HaploNoRedirectUrlDefinedException extends Exception {}
+class HaploNoRedirectUrlDefinedException extends Exception
+{
+
+}
 
 /**
  * Class HaploActionTypeNotSupportedException
  * @package HaploMvc
  */
-class HaploActionTypeNotSupportedException extends Exception {}
+class HaploActionTypeNotSupportedException extends Exception
+{
+
+}
 
 /**
  * Class HaploCloningNotAllowedException
  * @package HaploMvc
  */
-class HaploCloningNotAllowedException extends Exception {}
+class HaploCloningNotAllowedException extends Exception
+{
+
+}
 
 /**
  * Class HaploException
  * @package HaploMvc
  */
-class HaploException extends Exception {}
+class HaploException extends Exception
+{
+
+}
 
 /**
  * Class HaploTemplateFunctionNotFound
  * @package HaploMvc
  */
-class HaploTemplateFunctionNotFound extends Exception {}
+class HaploTemplateFunctionNotFound extends Exception
+{
+
+}
 
 /**
  * Class HaploRegionModeException
  * @package HaploMvc
  */
-class HaploRegionModeException extends Exception {}
+class HaploRegionModeException extends Exception
+{
+
+}
 
 /**
  * Class HaploInvalidComparisonOperatorException
  * @package HaploMvc\Exception
  */
-class HaploInvalidComparisonOperatorException extends Exception {}
+class HaploInvalidComparisonOperatorException extends Exception
+{
+
+}
 
 /**
  * Class HaploInvalidSortOrderException
  * @package HaploMvc\Exception
  */
-class HaploInvalidSortOrderException extends Exception {}
+class HaploInvalidSortOrderException extends Exception
+{
+
+}
 
 /**
  * Class HaploInvalidJoinTypeException
  * @package HaploMvc\Exception
  */
-class HaploInvalidJoinTypeException extends Exception {}
+class HaploInvalidJoinTypeException extends Exception
+{
+
+}
 
 /**
  * Class HaploInvalidLogicalOperatorException
  * @package HaploMvc\Exception
  */
-class HaploInvalidLogicalOperatorException extends Exception {}
+class HaploInvalidLogicalOperatorException extends Exception
+{
+
+}
 
 /**
  * Class HaploDbIdNotFoundException
  * @package HaploMvc\Exception
  */
-class HaploDbIdNotFoundException extends Exception {}
+class HaploDbIdNotFoundException extends Exception
+{
+
+}
 
 /**
  * Class HaploDbColumnDoesNotExistException
  * @package HaploMvc\Exception
  */
-class HaploDbColumnDoesNotExistException extends Exception {}
+class HaploDbColumnDoesNotExistException extends Exception
+{
+
+}
 
 /**
  * Class HaploDbTableNameNotSetException
  * @package HaploMvc\Exception
  */
-class HaploDbTableNameNotSetException extends Exception {}
+class HaploDbTableNameNotSetException extends Exception
+{
+
+}

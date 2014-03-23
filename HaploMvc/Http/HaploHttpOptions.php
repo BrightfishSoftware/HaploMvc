@@ -11,7 +11,8 @@ namespace HaploMvc\Http;
  * Class HaploHttpOptions
  * @package Http
  */
-class HaploHttpOptions {
+class HaploHttpOptions
+{
     /** @var int */
     public $connectTimeout = 5;
     /** @var int */

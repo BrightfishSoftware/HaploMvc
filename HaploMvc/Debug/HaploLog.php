@@ -6,23 +6,25 @@
 
 namespace HaploMvc\Debug;
 
-use \HaploMvc\Config\HaploConfig;
+use HaploMvc\Config\HaploConfig;
 
 /**
  * Class HaploLog
  * @package HaploMvc
  */
-class HaploLog {
+class HaploLog
+{
     /**
      * @param string $msg
      * @param HaploConfig $config
      */
-    public static function log_error($msg, HaploConfig $config = null) {
+    public static function logError($msg, HaploConfig $config = null)
+    {
         if (!$config instanceof HaploConfig) {
-            $config = HaploConfig::get_instance();
+            $config = HaploConfig::getInstance();
         }
-        if ($config->get_key('logging', 'logErrors', true)) {
-            error_log($msg, 3, $config->get_key('logging', 'errorFile'));
+        if ($config->getKey('logging', 'logErrors', true)) {
+            error_log($msg, 3, $config->getKey('logging', 'errorFile'));
         }
     }
 
@@ -30,12 +32,13 @@ class HaploLog {
      * @param string $msg
      * @param HaploConfig $config
      */
-     public static function log_info($msg, HaploConfig $config = null) {
+     public static function logInfo($msg, HaploConfig $config = null)
+     {
         if (!$config instanceof HaploConfig) {
-            $config = HaploConfig::get_instance();
+            $config = HaploConfig::getInstance();
         }
-        if ($config->get_key('logging', 'logInfo', true)) {
-            error_log($msg, 3, $config->get_key('logging', 'infoFile'));
+        if ($config->getKey('logging', 'logInfo', true)) {
+            error_log($msg, 3, $config->getKey('logging', 'infoFile'));
         }
     }
 }

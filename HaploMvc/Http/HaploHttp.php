@@ -10,12 +10,14 @@ namespace HaploMvc\Http;
  * Class HaploHttp
  * @package HaploMvc
  */
-class HaploHttp {
+class HaploHttp
+{
     /**
      * @param HaploHttpOptions $options
      * @return array
      */
-    protected static function options(HaploHttpOptions $options) {
+    protected static function options(HaploHttpOptions $options)
+    {
         $allOptions = array(
             CURLOPT_HEADER => 0,
             CURLOPT_RETURNTRANSFER => 1
@@ -37,7 +39,8 @@ class HaploHttp {
      * @param HaploHttpOptions $options
      * @return array
      */
-    public static function get($url, HaploHttpOptions $options = null) {
+    public static function get($url, HaploHttpOptions $options = null)
+    {
         $options = self::options($options);
         
         // initiate session
@@ -59,7 +62,8 @@ class HaploHttp {
      * @param HaploHttpOptions $options
      * @return array
      */
-    public static function post($url, array $params = array(), HaploHttpOptions $options = null) {
+    public static function post($url, array $params = array(), HaploHttpOptions $options = null)
+    {
         $options = self::options($options);
 
         // initiate session
@@ -83,7 +87,8 @@ class HaploHttp {
      * @param HaploHttpOptions $options
      * @return mixed
      */
-    public static function head($url, HaploHttpOptions $options = null) {
+    public static function head($url, HaploHttpOptions $options = null)
+    {
         $options = self::options($options);
         
         // initiate session

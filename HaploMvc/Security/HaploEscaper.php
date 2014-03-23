@@ -12,7 +12,8 @@ use Zend\Escaper\Escaper as Escaper;
  * Class HaploEscaper
  * @package HaploMvc
  */
-class HaploEscaper {
+class HaploEscaper
+{
     /** @var string */
     protected static $encoding = 'UTF-8';
     /** @var Escaper */
@@ -22,7 +23,8 @@ class HaploEscaper {
      * @param mixed $input
      * @return mixed
      */
-    public static function escape_html($input) {
+    public static function escapeHtml($input)
+    {
         self::init();
         return self::$escaper->escapeHtml($input);
     }
@@ -31,7 +33,8 @@ class HaploEscaper {
      * @param mixed $input
      * @return mixed
      */
-    public static function escape_attr($input) {
+    public static function escapeAttr($input)
+    {
         self::init();
         return self::$escaper->escapeHtmlAttr($input);
     }
@@ -40,7 +43,8 @@ class HaploEscaper {
      * @param mixed $input
      * @return mixed
      */
-    public static function escape_js($input) {
+    public static function escapeJs($input)
+    {
         self::init();
         return self::$escaper->escapeJs($input);
     }
@@ -49,7 +53,8 @@ class HaploEscaper {
      * @param mixed $input
      * @return mixed
      */
-    public static function escape_css($input) {
+    public static function escapeCss($input)
+    {
         self::init();
         return self::$escaper->escapeCss($input);
     }
@@ -58,12 +63,14 @@ class HaploEscaper {
      * @param mixed $input
      * @return mixed
      */
-    public static function escape_url($input) {
+    public static function escapeUrl($input)
+    {
         self::init();
         return self::$escaper->escapeUrl($input);
     }
 
-    protected static function init() {
+    protected static function init()
+    {
         if (is_null(self::$escaper)) {
             self::$escaper = new Escaper(self::$encoding);
         }
@@ -73,7 +80,8 @@ class HaploEscaper {
      * @param string $encoding
      * @return string
      */
-    public static function set_encoding($encoding) {
+    public static function setEncoding($encoding)
+    {
         self::$encoding = $encoding;
     }
 }

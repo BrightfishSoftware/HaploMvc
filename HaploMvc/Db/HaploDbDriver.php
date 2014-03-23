@@ -9,7 +9,8 @@ namespace HaploMvc\Db;
  * Class HaploDbDriver
  * @package HaploMvc
  */
-abstract class HaploDbDriver implements HaploDbDriverInterface {
+abstract class HaploDbDriver implements HaploDbDriverInterface
+{
     /** @var array */
     protected $params;
     /** @var $driverOptions */
@@ -23,9 +24,10 @@ abstract class HaploDbDriver implements HaploDbDriverInterface {
      * @param array $params
      * @param array $driverOptions
      */
-    public function __construct(array $params = array(), array $driverOptions = array()) {
-        $this->params = array_merge($this->get_default_params(), $params);
-        $this->driverOptions = array_merge($this->get_default_options(), $driverOptions);
+    public function __construct(array $params = array(), array $driverOptions = array())
+    {
+        $this->params = array_merge($this->getDefaultParams(), $params);
+        $this->driverOptions = array_merge($this->getDefaultOptions(), $driverOptions);
     }
 
     /**
@@ -33,7 +35,8 @@ abstract class HaploDbDriver implements HaploDbDriverInterface {
      * @param int $offset
      * @return string
      */
-    public function get_limit($limit = null, $offset = null) {
+    public function getLimit($limit = null, $offset = null)
+    {
         if (!is_null($offset) && !is_null($limit)) {
             return sprintf('LIMIT %d OFFSET %d', (int)$limit, (int)$offset);
         } elseif (!is_null($limit)) {
@@ -46,15 +49,18 @@ abstract class HaploDbDriver implements HaploDbDriverInterface {
     /**
      * @return string
      */
-    public function get_instance_hash() {
+    public function getInstanceHash()
+    {
         return sha1($this->driverName.serialize($this->params).serialize($this->driverOptions));
     }
 
-    protected function get_default_params() {
+    protected function getDefaultParams()
+    {
         return array();
     }
 
-    protected function get_default_options() {
+    protected function getDefaultOptions()
+    {
         return array();
     }
 }

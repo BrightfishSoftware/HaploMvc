@@ -5,27 +5,30 @@
  **/
 namespace HaploMvc\Db;
 
-use \PDO;
+use PDO;
 
 /**
  * Class HaploPostgreSqlDbDriver
  * @package HaploMvc
  */
-class HaploPostgreSqlDbDriver extends HaploDbDriver {
+class HaploPostgreSqlDbDriver extends HaploDbDriver
+{
     /** @var string */
     protected $driverName = 'postgresql';
 
     /**
      * @return string
      */
-    public function get_dsn() {
+    public function getDsn()
+    {
         return sprintf('pgsql:dbname=%s;host=%s', $this->params['database'], $this->params['host']);
     }
 
     /**
      * @return array
      */
-    public function get_default_params() {
+    public function getDefaultParams()
+    {
         return array(
             'user' => '',
             'pass' => '',
@@ -37,9 +40,10 @@ class HaploPostgreSqlDbDriver extends HaploDbDriver {
     /**
      * @return PDO
      */
-    public function connect() {
+    public function connect()
+    {
         return new PDO(
-            $this->get_dsn($this->params),
+            $this->getDsn($this->params),
             $this->params['user'],
             $this->params['pass'],
             $this->driverOptions

@@ -6,19 +6,20 @@
 
 namespace HaploMvc;
 
-use \Closure,
-    \HaploMvc\Pattern\HaploSingleton,
-    \HaploMvc\Exception\HaploActionTypeNotSupportedException,
-    \HaploMvc\Exception\HaploNoDefault404DefinedException,
-    \HaploMvc\Exception\HaploNoActionDefinedException,
-    \HaploMvc\Exception\HaploNoRedirectUrlDefinedException,
-    \HaploMvc\Exception\HaploClassNotFoundException;
+use Closure,
+    HaploMvc\Pattern\HaploSingleton,
+    HaploMvc\Exception\HaploActionTypeNotSupportedException,
+    HaploMvc\Exception\HaploNoDefault404DefinedException,
+    HaploMvc\Exception\HaploNoActionDefinedException,
+    HaploMvc\Exception\HaploNoRedirectUrlDefinedException,
+    HaploMvc\Exception\HaploClassNotFoundException;
 
 /**
  * Class HaploRouter
  * @package HaploMvc
  */
-class HaploRouter extends HaploSingleton {
+class HaploRouter extends HaploSingleton
+{
     /** @var HaploApp */
     protected $app;
     /**
@@ -45,7 +46,8 @@ class HaploRouter extends HaploSingleton {
     /**
      * @param HaploApp $app
      */
-    protected function __construct(HaploApp $app) {
+    protected function __construct(HaploApp $app)
+    {
         $this->app = $app;
     }
 
@@ -57,7 +59,8 @@ class HaploRouter extends HaploSingleton {
      * @param HaploApp $app
      * @return HaploRouter
      */
-    public static function get_instance(HaploApp $app = null) {
+    public static function getInstance(HaploApp $app = null)
+    {
         $class = get_called_class();
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);
@@ -68,9 +71,10 @@ class HaploRouter extends HaploSingleton {
     /**
      * @param $routes
      */
-    public function add_routes(array $routes) {
+    public function addAoutes(array $routes)
+    {
         foreach ($routes as $pattern => $destination) {
-            $this->add_route($pattern, $destination);
+            $this->addRoute($pattern, $destination);
         }
     }
 
@@ -80,7 +84,8 @@ class HaploRouter extends HaploSingleton {
      * @param string $pattern Key/value pair containing URL pattern and action to map to
      * @param array|string $destination
      */
-    public function add_route($pattern, $destination) {
+    public function addRoute($pattern, $destination)
+    {
         $this->urls[$pattern] = $destination;
     }
     
@@ -91,9 +96,10 @@ class HaploRouter extends HaploSingleton {
      * @param string $pattern Key/value pair containing URL pattern and action to map to
      * @param array|string $destination
      */
-    protected function add_verb_route($verb, $pattern, $destination) {
-        if (static::get_request_method() === $verb) {
-            $this->add_route($pattern, $destination);
+    protected function addVerbRoute($verb, $pattern, $destination)
+    {
+        if (static::getRequestMethod() === $verb) {
+            $this->addRoute($pattern, $destination);
         }
     }
     
@@ -103,8 +109,9 @@ class HaploRouter extends HaploSingleton {
      * @param string $pattern Key/value pair containing URL pattern and action to map to
      * @param array|string $destination
      */
-    public function add_get_route($pattern, $destination) {
-        $this->add_verb_route('get', $pattern, $destination);
+    public function addGetRoute($pattern, $destination)
+    {
+        $this->addVerbRoute('get', $pattern, $destination);
     }
     
     /**
@@ -113,8 +120,9 @@ class HaploRouter extends HaploSingleton {
      * @param string $pattern Key/value pair containing URL pattern and action to map to
      * @param array|string $destination
      */
-    public function add_post_route($pattern, $destination) {
-        $this->add_verb_route('post', $pattern, $destination);
+    public function addPostRoute($pattern, $destination)
+    {
+        $this->addVerbRoute('post', $pattern, $destination);
     }
     
     /**
@@ -123,8 +131,9 @@ class HaploRouter extends HaploSingleton {
      * @param string $pattern Key/value pair containing URL pattern and action to map to
      * @param array|string $destination
      */
-    public function add_head_route($pattern, $destination) {
-        $this->add_verb_route('head', $pattern, $destination);
+    public function addHeadRoute($pattern, $destination)
+    {
+        $this->addVerbRoute('head', $pattern, $destination);
     }
     
     /**
@@ -133,8 +142,9 @@ class HaploRouter extends HaploSingleton {
      * @param string $pattern Key/value pair containing URL pattern and action to map to
      * @param array|string $destination
      */
-    public function add_put_route($pattern, $destination) {
-        $this->add_verb_route('put', $pattern, $destination);
+    public function addPutRoute($pattern, $destination)
+    {
+        $this->addVerbRoute('put', $pattern, $destination);
     }
     
     /**
@@ -143,8 +153,9 @@ class HaploRouter extends HaploSingleton {
      * @param string $pattern Key/value pair containing URL pattern and action to map to
      * @param array|string $destination
      */
-    public function add_delete_route($pattern, $destination) {
-        $this->add_verb_route('delete', $pattern, $destination);
+    public function addDeleteRoute($pattern, $destination)
+    {
+        $this->addVerbRoute('delete', $pattern, $destination);
     }
     
     /**
@@ -152,7 +163,8 @@ class HaploRouter extends HaploSingleton {
      *
      * @return string|bool The name of the selected action
      **/
-    public function get_action() {
+    public function getAction()
+    {
         $this->process($this->urls);
     }
     
@@ -164,7 +176,8 @@ class HaploRouter extends HaploSingleton {
      * @param mixed $default Default value to use if the parameter hasn't been set
      * @return mixed|null
      */
-    public function get_request_var($name, $default = null) {
+    public function getRequestVar($name, $default = null)
+    {
         return array_key_exists($name, $this->requestVars) ? $this->requestVars[$name] : $default;
     }
     
@@ -174,7 +187,8 @@ class HaploRouter extends HaploSingleton {
      * @param string $default default locale to use
      * @return string locale - if not set use a default
      **/
-    public static function get_browser_locale($default = 'en-us') {
+    public static function getBrowserLocale($default = 'en-us')
+    {
         if (
             !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) && 
             preg_match('/^[a-z-]+$/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'])
@@ -189,8 +203,9 @@ class HaploRouter extends HaploSingleton {
      *
      * @return string
      **/
-    public static function get_request_uri() {
-        return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+    public static function getRequestUri()
+    {
+        return array_key_exists('REQUEST_URI', $_SERVER) ? $_SERVER['REQUEST_URI'] : '';
     }
     
     /**
@@ -198,7 +213,8 @@ class HaploRouter extends HaploSingleton {
      *
      * @return string
      **/
-    public static function get_remote_addr() {
+    public static function getRemoteAddr()
+    {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
 
@@ -217,8 +233,9 @@ class HaploRouter extends HaploSingleton {
      *
      * @return string
      **/
-    public static function get_referer() {
-        return isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+    public static function getReferer()
+    {
+        return array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER'] : '';
     }
     
     /**
@@ -226,8 +243,9 @@ class HaploRouter extends HaploSingleton {
      *
      * @return string
      **/
-    public static function get_request_method() {
-        return isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD']) : '';
+    public static function getRequestMethod()
+    {
+        return array_key_exists('REQUEST_METHOD', $_SERVER) ? strtolower($_SERVER['REQUEST_METHOD']) : '';
     }
     
     /**
@@ -235,9 +253,10 @@ class HaploRouter extends HaploSingleton {
      *
      * @return boolean
      **/
-    public static function is_ajax() {
+    public static function isAjax()
+    {
         return (
-            isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            array_key_exists('HTTP_X_REQUESTED_WITH', $_SERVER) &&
             strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'
         );
     }
@@ -252,7 +271,8 @@ class HaploRouter extends HaploSingleton {
      * @throws HaploNoRedirectUrlDefinedException
      * @return bool
      */
-    protected function process($urls) {
+    protected function process($urls)
+    {
         // by default assume no match
         $match = false;
         
@@ -261,14 +281,14 @@ class HaploRouter extends HaploSingleton {
         // should be ordered with the most important first
         foreach ($urls as $regEx => $dest) {
             // does the current URL match - if so capture matched sub-groups
-            if (preg_match("#^$regEx(\?.*)?$#", static::get_request_uri(), $this->requestVars)) {
+            if (preg_match("#^$regEx(\?.*)?$#", static::getRequestUri(), $this->requestVars)) {
                 // the first match is the full URL - we not really 
                 // interested in that so drop
                 array_shift($this->requestVars);
                 
                 // simple form
                 if (!is_array($dest)) {
-                    $this->run_action($dest);
+                    $this->runAction($dest);
                     $match = true;
                     break;
                 }
@@ -279,7 +299,7 @@ class HaploRouter extends HaploSingleton {
                         // sets name of action in class property
                         case 'action':
                             if (!empty($dest['action'])) {
-                                $this->run_action($dest['action']);
+                                $this->runAction($dest['action']);
                             } else {
                                 throw new HaploNoActionDefinedException("No action defined for $regEx.");
                             }
@@ -311,7 +331,7 @@ class HaploRouter extends HaploSingleton {
             
             // check for existence of a 404 action
             if (class_exists('\\Actions\\PageNotFound')) {
-                $this->run_action('PageNotFound');
+                $this->runAction('PageNotFound');
             } else {
                 throw new HaploNoDefault404DefinedException('No default 404 action found.');
             }
@@ -326,7 +346,8 @@ class HaploRouter extends HaploSingleton {
      * @param string $action Name of action to set as selected
      * @throws HaploClassNotFoundException
      */
-    protected function run_action($action) {
+    protected function runAction($action)
+    {
         if ($action instanceof Closure) {
             $action($this->app);
         } else {
@@ -336,7 +357,7 @@ class HaploRouter extends HaploSingleton {
             }
             $action = '\\Actions\\'.$action;
             if (class_exists($action)) {
-                $action::get_instance($this->app);
+                $action::getInstance($this->app);
             } else {
                 throw new HaploClassNotFoundException(sprintf("%s not found", $action));
             }
@@ -349,7 +370,8 @@ class HaploRouter extends HaploSingleton {
      * @param string $url URL to redirect to
      * @param integer $code HTTP code to send - probably 301 (permanently modified) or 302 (temporarily moved)
      **/
-    protected function redirect($url, $code = 302) {
+    protected function redirect($url, $code = 302)
+    {
         // map request variables to URL if applicable
         foreach ($this->requestVars as $key => $value) {
             $url = str_replace("<$key>", $value, $url);

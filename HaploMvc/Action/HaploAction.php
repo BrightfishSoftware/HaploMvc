@@ -6,17 +6,18 @@
 
 namespace HaploMvc\Action;
 
-use \HaploMvc\Pattern\HaploSingleton,
-    \HaploMvc\HaploApp,
-    \HaploMvc\HaploRouter,
-    \HaploMvc\Exception\HaploMethodNotFoundException,
-    \HaploMvc\Exception\HaploActionNotFoundException;
+use HaploMvc\Pattern\HaploSingleton,
+    HaploMvc\HaploApp,
+    HaploMvc\HaploRouter,
+    HaploMvc\Exception\HaploMethodNotFoundException,
+    HaploMvc\Exception\HaploActionNotFoundException;
 
 /**
  * Class HaploAction
  * @package HaploMvc
  */
-abstract class HaploAction extends HaploSingleton {
+abstract class HaploAction extends HaploSingleton
+{
     /** @var HaploApp */
     protected $app;
 
@@ -27,12 +28,12 @@ abstract class HaploAction extends HaploSingleton {
      * @var array
      **/
     protected $methodOrder = array(
-        'do_get',
-        'do_post',
-        'do_head',
-        'do_put',
-        'do_delete',
-        'do_all'
+        'doGet',
+        'doPost',
+        'doHead',
+        'doPut',
+        'doDelete',
+        'doAll'
     );
     
     /**
@@ -55,25 +56,26 @@ abstract class HaploAction extends HaploSingleton {
      * @param \HaploMvc\HaploApp $app
      * @return \HaploMvc\Action\HaploAction
      */
-    protected function __construct(HaploApp $app) {
+    protected function __construct(HaploApp $app)
+    {
         $this->app = $app;
-        $requestMethod = HaploRouter::get_request_method();
+        $requestMethod = HaploRouter::getRequestMethod();
 
-        if (!method_exists($this, 'do_init') || $this->do_init()) {
+        if (!method_exists($this, 'doInit') || $this->doInit()) {
             foreach ($this->methodOrder as $methodType) {
                 $methodName = $methodType;
 
-                if (in_array($methodType, array('do_get', 'do_post', 'do_head', 'do_put', 'do_delete'))) {
-                    if ("do_$requestMethod" == $methodType) {
+                if (in_array($methodType, array('doGet', 'doPost', 'doHead', 'doPut', 'doDelete'))) {
+                    if ('do'.ucfirst($requestMethod) == $methodType) {
                         $this->$methodName();
 
                         if (in_array($requestMethod, array('get', 'post'))) {
-                            $methodName = 'do_'.$requestMethod.'_validate';
-                            $methodName = 'do_'.$requestMethod.($this->$methodName() ? '_success' : '_failure');
+                            $methodName = 'do'.ucfirst($requestMethod).'Validate';
+                            $methodName = 'do'.ucfirst($requestMethod).($this->$methodName() ? 'Success' : 'Failure');
                             $this->$methodName();
                         }
                     } else {
-                        $methodName = str_replace('do_', 'do_all_except_', $methodName);
+                        $methodName = str_replace('do', 'doAllExcept', $methodName);
                         $this->$methodName();
                     }
                 } else {
@@ -87,7 +89,8 @@ abstract class HaploAction extends HaploSingleton {
      * @param HaploApp $app
      * @return mixed
      */
-    public static function get_instance(HaploApp $app = null) {
+    public static function getInstance(HaploApp $app = null)
+    {
         $class = get_called_class();
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);
@@ -102,13 +105,14 @@ abstract class HaploAction extends HaploSingleton {
      * @param array $args
      * @throws HaploMethodNotFoundException
      */
-    public function __call($name, $args) {
+    public function __call($name, $args)
+    {
         if (!in_array($name, array(
-            'do_init', 'do_get', 'do_post', 'do_head', 'do_put', 'do_delete', 
-            'do_all_except_get', 'do_all_except_post', 'do_all_except_head', 
-            'do_all_except_put', 'do_all_except_delete', 'do_all', 'do_get_validate', 
-            'do_get_success', 'do_get_failure', 'do_post_validate', 
-            'do_post_success', 'do_post_failure'
+            'doInit', 'doGet', 'doPost', 'doHead', 'doPut', 'doDelete',
+            'doAllExceptGet', 'doAllExceptPost', 'doAllExceptHead',
+            'doAllExceptPut', 'doAllExceptDelete', 'doAll', 'doGetValidate',
+            'doGetSuccess', 'doGetFailure', 'doPostValidate',
+            'doPostSuccess', 'doPostFailure'
         ))) {
             throw new HaploMethodNotFoundException(sprintf(
                 'Method %s not defined in %s.',
@@ -123,11 +127,12 @@ abstract class HaploAction extends HaploSingleton {
      *
      * @throws HaploActionNotFoundException
      */
-    protected function do_404() {
+    protected function do404()
+    {
         header('HTTP/1.1 404 Not Found');
             
         if (class_exists('\Actions\PageNotFound')) {
-            \Actions\PageNotFound::get_instance($this->app);
+            \Actions\PageNotFound::getInstance($this->app);
             exit;
         } else {
             throw new HaploActionNotFoundException('No default 404 action found. Add \Actions\PageNotFound to suppress this message.');
@@ -140,7 +145,8 @@ abstract class HaploAction extends HaploSingleton {
      * @param string $url URL to redirect to
      * @param integer $code HTTP code to send
      **/
-    protected function do_redirect($url, $code = 302) {
+    protected function doRedirect($url, $code = 302)
+    {
         header("Location: $url", true, $code);
         exit;
     }
@@ -150,8 +156,9 @@ abstract class HaploAction extends HaploSingleton {
      *
      * @param string $url URL to redirect to
      **/
-    protected function do_301($url) {
-        $this->do_redirect($url, 301);
+    protected function do301($url)
+    {
+        $this->doRedirect($url, 301);
     }
     
     /**
@@ -159,7 +166,8 @@ abstract class HaploAction extends HaploSingleton {
      *
      * @param string $url URL to redirect to
      **/
-    protected function do_302($url) {
-        $this->do_redirect($url, 302);
+    protected function do302($url)
+    {
+        $this->doRedirect($url, 302);
     }
 }

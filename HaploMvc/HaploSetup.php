@@ -6,17 +6,18 @@
 
 namespace HaploMvc;
 
-use \HaploMvc\Exception\HaploDirNotFoundException,
-     \HaploMvc\Exception\HaploDirNotWritableException,
-     \HaploMvc\Exception\HaploException,
-     \HaploMvc\Exception\HaploPhpConfigException,
-     \HaploMvc\Exception\HaploClassNotFoundException;
+use HaploMvc\Exception\HaploDirNotFoundException,
+    HaploMvc\Exception\HaploDirNotWritableException,
+    HaploMvc\Exception\HaploException,
+    HaploMvc\Exception\HaploPhpConfigException,
+    HaploMvc\Exception\HaploClassNotFoundException;
 
 /**
  * Class HaploSetup
  * @package HaploMvc
  */
-class HaploSetup {
+class HaploSetup
+{
     /**
      * Run checks
      *
@@ -26,7 +27,8 @@ class HaploSetup {
      * @throws HaploPhpConfigException
      * @throws HaploClassNotFoundException
      */
-    public static function validate($appBase) {
+    public static function validate($appBase)
+    {
         if (ini_get('register_globals')) {
             throw new HaploPhpConfigException('Please disable register_globals in your php.ini file.');
         }

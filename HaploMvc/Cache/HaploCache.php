@@ -14,7 +14,8 @@ use HaploMvc\Pattern\HaploSingleton,
  * Class HaploCache
  * @package HaploMvc
  */
-class HaploCache extends HaploSingleton {
+class HaploCache extends HaploSingleton
+{
     const CACHE_TYPE_FILE = 'file';
     const CACHE_TYPE_MEMCACHED = 'memcached';
     /** @var HaploApp */
@@ -24,7 +25,8 @@ class HaploCache extends HaploSingleton {
      * @param HaploApp $app
      * @return mixed
      */
-    public static function get_instance(HaploApp $app = null) {
+    public static function getInstance(HaploApp $app = null)
+    {
         $class = get_called_class();
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);
@@ -35,7 +37,8 @@ class HaploCache extends HaploSingleton {
     /**
      * @param HaploApp $app
      */
-    protected function __construct(HaploApp $app) {
+    protected function __construct(HaploApp $app)
+    {
         $this->app = $app;
     }
 
@@ -47,7 +50,8 @@ class HaploCache extends HaploSingleton {
      * @throws HaploLibraryNotFoundException
      * @return object
      */
-    public function create($key, array $options = array()) {
+    public function create($key, array $options = array())
+    {
         $defaultOptions = array(
             'type' => static::CACHE_TYPE_FILE,
             'cacheTime' => 300,

@@ -6,18 +6,19 @@
 
 namespace HaploMvc\Template;
 
-use \HaploMvc\HaploApp,
-    \HaploMvc\Security\HaploEscaper,
-    \HaploMvc\Exception\HaploInvalidTemplateException,
-    \HaploMvc\Exception\HaploTemplateFunctionNotFound,
-    \HaploMvc\Exception\HaploPostFilterFunctionNotFoundException,
-    \HaploMvc\Exception\HaploTemplateNotFoundException;
+use HaploMvc\HaploApp,
+    HaploMvc\Security\HaploEscaper,
+    HaploMvc\Exception\HaploInvalidTemplateException,
+    HaploMvc\Exception\HaploTemplateFunctionNotFound,
+    HaploMvc\Exception\HaploPostFilterFunctionNotFoundException,
+    HaploMvc\Exception\HaploTemplateNotFoundException;
 
 /**
  * Class HaploTemplate
  * @package HaploMvc
  */
-class HaploTemplate {
+class HaploTemplate
+{
     /** @var HaploApp */
     protected $app;
     /**
@@ -48,7 +49,7 @@ class HaploTemplate {
     /**
      * Stores variables to pass to template
      *
-     * @var string
+     * @var array
      **/
     public $vars = array();
     /**
@@ -67,7 +68,8 @@ class HaploTemplate {
      * @param string $filename Filename of template to render
      * @throws HaploInvalidTemplateException
      */
-    public function __construct(HaploApp $app, $filename) {
+    public function __construct(HaploApp $app, $filename)
+    {
         if (!preg_match('/^[a-z0-9\/_-]+\.(php|html|tpl)$/i', $filename)) {
             throw new HaploInvalidTemplateException("Invalid template filename specified ($filename). Characters allowed in the filename are a-z, 0-9, _ and -. The filename must also end in .php, .html or .tpl");
         }
@@ -85,7 +87,8 @@ class HaploTemplate {
      * @param string $filename Filename for template to include - uses the same file paths as the parent
      * @param array $vars Optionally pass additional variables to the template
      **/
-    protected function inc_template($filename, array $vars = array()) {
+    protected function incTemplate($filename, array $vars = array())
+    {
         $template = new HaploTemplate($this->app, $filename);
         $template->vars = $this->vars;
         
@@ -101,7 +104,8 @@ class HaploTemplate {
     /**
      * @param string $filename
      */
-    public function inherits($filename) {
+    public function inherits($filename)
+    {
         $this->inherits[] = $filename;
     }
 
@@ -109,12 +113,14 @@ class HaploTemplate {
      * @param string $name
      * @param string $mode
      */
-    public function region($name, $mode = 'replace') {
+    public function region($name, $mode = 'replace')
+    {
         $this->regionNames[] = array($name, $mode);
         ob_start();
     }
 
-    public function end_region() {
+    public function endRegion()
+    {
         list($name, $mode) = array_pop($this->regionNames);
 
         if (!isset($this->regions[$name])) {
@@ -152,19 +158,16 @@ class HaploTemplate {
      * @param mixed $value Value to give to variable
      * @param array $options
      */
-    public function set(
-        $name, 
-        $value, 
-        array $options = array()
-    ) {
+    public function set($name, $value, array $options = array())
+    {
         $defaultOptions = array(
-            'stripHtml' => $this->app->config->get_key('templates', 'stripHtml', true),
-            'escape' => $this->app->config->get_key('templates', 'escape', true),
-            'escapeMethod' => $this->app->config->get_key('templates', 'escapeMethod', 'escape_html'),
-            'encoding' => $this->app->config->get_key('templates', 'encoding', 'UTF-8')
+            'stripHtml' => $this->app->config->getKey('templates', 'stripHtml', true),
+            'escape' => $this->app->config->getKey('templates', 'escape', true),
+            'escapeMethod' => $this->app->config->getKey('templates', 'escapeMethod', 'escape_html'),
+            'encoding' => $this->app->config->getKey('templates', 'encoding', 'UTF-8')
         );
         $options = array_merge($defaultOptions, $options);
-        HaploEscaper::set_encoding($options['encoding']);
+        HaploEscaper::setEncoding($options['encoding']);
 
         // is variable a scalar
         if (is_scalar($value)) {
@@ -202,7 +205,8 @@ class HaploTemplate {
      * @param callable|string $value
      * @throws HaploTemplateFunctionNotFound
      */
-    public function add_function($name, $value) {
+    public function addFunction($name, $value)
+    {
         if (is_callable($value)) {
             $this->templateFunctions[$name] = $value;
         } else {
@@ -223,7 +227,8 @@ class HaploTemplate {
      * @param callable|string $postFilter
      * @throws HaploPostFilterFunctionNotFoundException
      */
-    public function add_post_filter($postFilter) {
+    public function addPostFilter($postFilter)
+    {
         if (is_callable($postFilter)) {
             $this->postFilters[] = $postFilter;
         } else {
@@ -244,7 +249,8 @@ class HaploTemplate {
      * @throws HaploTemplateNotFoundException
      * @return string
      */
-    public function render() {
+    public function render()
+    {
         $output = '';
 
         // looping rather than using extract because we need to determine the value type before assigning
@@ -297,7 +303,8 @@ class HaploTemplate {
      * @return void
      * @author Ed Eliot
      **/
-    public function display() {
+    public function display()
+    {
         echo $this->render();
     }
 }

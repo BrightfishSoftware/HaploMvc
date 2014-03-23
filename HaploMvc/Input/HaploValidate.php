@@ -10,7 +10,8 @@ namespace HaploMvc\Input;
  * Class HaploValidate
  * @package HaploMvc
  */
-class HaploValidate {
+class HaploValidate
+{
     /**
      * @param string $pattern
      * @param mixed $input
@@ -18,7 +19,8 @@ class HaploValidate {
      * @param int $max
      * @return int
      */
-    protected static function is_alpha_helper($pattern, $input, $min = null, $max = null) {
+    protected static function isAlphaHelper($pattern, $input, $min = null, $max = null)
+    {
         if (!is_null($min) && strlen($input) < $min) {
             return false;
         }
@@ -34,8 +36,9 @@ class HaploValidate {
      * @param int $max
      * @return int
      */
-    public static function is_alpha($input, $min = null, $max = null) {
-        return (bool)static::is_alpha_helper('[a-z0-9]', $input, $min, $max);
+    public static function isAlpha($input, $min = null, $max = null)
+    {
+        return (bool)static::isAlphaHelper('[a-z0-9]', $input, $min, $max);
     }
 
     /**
@@ -44,8 +47,9 @@ class HaploValidate {
      * @param int $max
      * @return int
      */
-    public static function is_alpha_dashes($input, $min = null, $max = null) {
-        return (bool)static::is_alpha_helper('[a-z0-9\s_-]', $input, $min, $max);
+    public static function isAlphaDashes($input, $min = null, $max = null)
+    {
+        return (bool)static::isAlphaHelper('[a-z0-9\s_-]', $input, $min, $max);
     }
 
     /**
@@ -54,15 +58,17 @@ class HaploValidate {
      * @param int $max
      * @return int
      */
-    public static function is_alpha_dashes_quotes($input, $min = null, $max = null) {
-        return (bool)static::is_alpha_helper('[a-z0-9\s\'\"\._-]', $input, $min, $max);
+    public static function isAlphaDashesQuotes($input, $min = null, $max = null)
+    {
+        return (bool)static::isAlphaHelper('[a-z0-9\s\'\"\._-]', $input, $min, $max);
     }
 
     /**
      * @param mixed $input
      * @return bool
      */
-    public static function is_yes_no($input) {
+    public static function isYesNo($input)
+    {
         return in_array(strtolower($input), array('yes', 'no'));
     }
 
@@ -72,7 +78,8 @@ class HaploValidate {
      * @param int $max
      * @return bool
      */
-    public static function in_range($input, $min = null, $max = null) {
+    public static function inRange($input, $min = null, $max = null)
+    {
         if (is_numeric($input)) {
             return (($input >= $min || is_null($min)) && ($input <= $max || is_null($max)));
         }
@@ -86,7 +93,8 @@ class HaploValidate {
      * @param int $max
      * @return bool
      */
-    public static function has_length($input, $min = null, $max = null) {
+    public static function hasLength($input, $min = null, $max = null)
+    {
         return ((strlen($input) >= $min || is_null($min)) && (strlen($input) <= $max || is_null($max)));
     }
 
@@ -94,7 +102,8 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_email($input) {
+    public static function isEmail($input)
+    {
         return (bool)filter_var($input, FILTER_VALIDATE_EMAIL);
     }
 
@@ -103,7 +112,8 @@ class HaploValidate {
      * @param array $allowedSchemes
      * @return bool
      */
-    public static function is_url($input, $allowedSchemes = array('http://', 'https://')) {
+    public static function isUrl($input, $allowedSchemes = array('http://', 'https://'))
+    {
         $schemeOk = false;
         foreach ($allowedSchemes as $scheme) {
             if (substr(trim(strtolower($input)), 0, strlen($scheme)) === strtolower($scheme)) {
@@ -121,7 +131,8 @@ class HaploValidate {
      * @param bool $allowHash
      * @return int
      */
-    public static function is_hex_color($input, $sixDigitOnly = false, $allowHash = true) {
+    public static function isHexColor($input, $sixDigitOnly = false, $allowHash = true)
+    {
         if ($sixDigitOnly) {
             return (bool)($allowHash ?
                 preg_match('/^#?[0-9a-f]{6}$/i', $input) : preg_match('/^[0-9a-f]{6}$/i', $input));
@@ -135,7 +146,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_en_day_of_week($input) {
+    public static function isEnDayOfWeek($input)
+    {
         return (bool)preg_match('/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)$/i', $input);
     }
 
@@ -143,7 +155,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_en_abbr_day_of_week($input) {
+    public static function isEnAbbrDayOfWeek($input)
+    {
         return (bool)preg_match('/^(Mo|Tu|We|Th|Fr|Sa|Su)$/i', $input);
     }
 
@@ -151,7 +164,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_en_month($input) {
+    public static function isEnMonth($input)
+    {
         return (bool)preg_match('/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/i', $input);
     }
 
@@ -159,7 +173,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_en_abbr_month($input) {
+    public static function isEnAbbrMonth($input)
+    {
         return (bool)preg_match('/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/i', $input);
     }
 
@@ -167,7 +182,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_en_digit_word($input) {
+    public static function isEnDigitWord($input)
+    {
         return (bool)preg_match('/^(zero|one|two|three|four|five|six|seven|eight|nine)$/i', $input);
     }
 
@@ -175,7 +191,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_iso3_country_code($input) {
+    public static function isIso3CountryCode($input)
+    {
         return (bool)preg_match(
             '/^('.
             'ABW|AFG|AGO|AIA|ALA|ALB|AND|ARE|ARG|ARM|ASM|ATA|ATF|ATG|AUS|AUT|AZE|BDI|BEL|BEN|BES|BFA|BGD|'.
@@ -197,7 +214,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_iso2_country_code($input) {
+    public static function isIso2CountryCode($input)
+    {
         return (bool)preg_match(
             '/^('.
             'AD|AE|AF|AG|AI|AL|AM|AO|AQ|AR|AS|AT|AU|AW|AX|AZ|BA|BB|BD|BE|BF|BG|BH|BI|BJ|BL|BM|BN|BO|BQ|BQ|'.
@@ -217,7 +235,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_us_state_code($input) {
+    public static function isUsStateCode($input)
+    {
         return (bool)preg_match(
             '/^('.
             'AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|'.
@@ -230,7 +249,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_us_zip($input) {
+    public static function isUsZip($input)
+    {
         // source - https://www.owasp.org/index.php/OWASP_Validation_Regex_Repository
         return (bool)preg_match('/^\d{5}(-\d{4})?$/', $input);
     }
@@ -239,7 +259,8 @@ class HaploValidate {
      * @param mixed $input
      * @return int
      */
-    public static function is_uk_postcode($input) {
+    public static function isUkPostcode($input)
+    {
         // source - http://en.wikipedia.org/wiki/Postcodes_in_the_United_Kingdom
         // not perfect but good enough to match all valid postcodes (may match a few invalid ones also)
         // modified to allow no spaces or more than one space between the two postcode parts
@@ -251,7 +272,8 @@ class HaploValidate {
      * @param string $separator
      * @return bool
      */
-    public static function is_reversed_date($input, $separator = '/') {
+    public static function isReversedDate($input, $separator = '/')
+    {
         // format - yyyy/mm/dd
         if (
             !preg_match("#^(?<year>[0-9]{4})$separator(?<month>[0-9]{1,2})$separator(?<day>[0-9]{1,2})$#", $input, $matches) || 
@@ -269,7 +291,8 @@ class HaploValidate {
      * @param string $separator
      * @return bool
      */
-    public static function is_us_date($input, $separator = '/') {
+    public static function isUsDate($input, $separator = '/')
+    {
         // format mm/dd/yyyy
         if (
             !preg_match("#^(?<month>[0-9]{1,2})$separator(?<day>[0-9]{1,2})$separator(?<year>[0-9]{4})$#", $input, $matches) || 
@@ -287,7 +310,8 @@ class HaploValidate {
      * @param string $separator
      * @return bool
      */
-    public static function is_uk_date($input, $separator = '/') {
+    public static function isUkDate($input, $separator = '/')
+    {
         // format dd/mm/yyyy
         if (
             !preg_match("#^(?<day>[0-9]{1,2})$separator(?<month>[0-9]{1,2})$separator(?<year>[0-9]{4})$#", $input, $matches) || 
@@ -304,7 +328,8 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_ip($input) {
+    public static function isIp($input)
+    {
         return (bool)filter_var($input, FILTER_VALIDATE_IP);
     }
 
@@ -312,7 +337,8 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_ipv4($input) {
+    public static function isIpv4($input)
+    {
         return (bool)filter_var($input, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
     }
 
@@ -320,7 +346,8 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_ipv6($input) {
+    public static function isIpv6($input)
+    {
         return (bool)filter_var($input, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
     }
 
@@ -328,7 +355,8 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_private_ip($input) {
+    public static function isPrivateIp($input)
+    {
         return !filter_var($input, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE);
     }
 
@@ -336,7 +364,8 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_reserved_ip($input) {
+    public static function isReservedIp($input)
+    {
         return !filter_var($input, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
     }
 
@@ -344,15 +373,17 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_public_ip($input) {
-        return !self::is_private_ip($input) && !self::is_reserved_ip($input);
+    public static function isPublicIp($input)
+    {
+        return !self::isPrivateIp($input) && !self::isReservedIp($input);
     }
 
     /**
      * @param mixed $input
      * @return bool
      */
-    public static function is_gender($input) {
+    public static function isGender($input)
+    {
         return in_array(strtolower($input), array('male', 'female'));
     }
 
@@ -360,7 +391,8 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_en_letter($input) {
+    public static function isEnLetter($input)
+    {
         return in_array(strtolower($input), range('a', 'z'));
     }
 
@@ -368,7 +400,8 @@ class HaploValidate {
      * @param mixed $input
      * @return bool
      */
-    public static function is_empty_string($input) {
+    public static function isEmptyString($input)
+    {
         return trim($input) == '';
     }
 }

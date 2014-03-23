@@ -10,7 +10,8 @@ namespace HaploMvc\Security;
  * Class HaploHash
  * @package HaploMvc
  */
-class HaploHash {
+class HaploHash
+{
     const HASH_BLOWFISH = '$2y$12$'; // use for PHP 5.3.7 and above
     const HASH_SHA512 = '$6$rounds=1000000$'; // use for < PHP 5.3.7
 
@@ -29,7 +30,8 @@ class HaploHash {
      * @param string $secret
      * @param string $algorithm
      */
-    public function __construct($secret, $algorithm = self::HASH_BLOWFISH) {
+    public function __construct($secret, $algorithm = self::HASH_BLOWFISH)
+    {
         $this->secret = $secret;
         $this->algorithm = $algorithm;
     }
@@ -39,8 +41,9 @@ class HaploHash {
      * @param string $salt
      * @return string
      */
-    public function generate_hash($password, $salt = null) {
-        $salt = is_null($salt) ? $this->algorithm.$this->generate_salt(
+    public function generateHash($password, $salt = null)
+    {
+        $salt = is_null($salt) ? $this->algorithm.$this->generateSalt(
             $this->saltLengths[$this->algorithm]
         ).'$' : $salt;
         return crypt($this->secret.$password, $salt);
@@ -51,15 +54,17 @@ class HaploHash {
      * @param string $hash
      * @return bool
      */
-    public function check_hash($password, $hash) {
-        return $this->generate_hash($password, $hash) == $hash;
+    public function checkHash($password, $hash)
+    {
+        return $this->generateHash($password, $hash) == $hash;
     }
 
     /**
      * @param int $length
      * @return string
      */
-    protected function generate_salt($length) {
+    protected function generateSalt($length)
+    {
         return substr(sha1(uniqid(true)), 0, $length);
     }
 }

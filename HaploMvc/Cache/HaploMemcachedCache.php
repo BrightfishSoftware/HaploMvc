@@ -6,13 +6,14 @@
 
 namespace HaploMvc\Cache;
 
-use \Memcached;
+use Memcached;
 
 /**
  * Class HaploMemcachedCache
  * @package HaploMvc
  */
-class HaploMemcachedCache {
+class HaploMemcachedCache
+{
     protected $key;
     protected $cacheTime;
     protected static $cache = array();
@@ -21,7 +22,8 @@ class HaploMemcachedCache {
      * @param string $key
      * @param $options
      */
-    public function __construct($key, array $options) {
+    public function __construct($key, array $options)
+    {
         $this->memcached = new Memcached();
         
         if (!empty($options['servers'])) {
@@ -40,7 +42,8 @@ class HaploMemcachedCache {
     /**
      * @return bool
      */
-    public function check() {
+    public function check()
+    {
         if (array_key_exists($this->key, static::$cache)) {
             return true;
         }
@@ -58,7 +61,8 @@ class HaploMemcachedCache {
     /**
      * @return bool
      */
-    public function exists() {
+    public function exists()
+    {
         // unable to check expired cache item
         return false;
     }
@@ -67,7 +71,8 @@ class HaploMemcachedCache {
      * @param mixed $contents
      * @return bool
      */
-    public function set($contents) {
+    public function set($contents)
+    {
         static::$cache[$this->key] = $contents;
         return $this->memcached->set($this->key, $contents, time() + $this->cacheTime);
     }
@@ -75,7 +80,8 @@ class HaploMemcachedCache {
     /**
      * @return mixed
      */
-    public function get() {
+    public function get()
+    {
         if (isset(static::$cache[$this->key])) {
             return static::$cache[$this->key];
         }
@@ -86,7 +92,8 @@ class HaploMemcachedCache {
     /**
      * @return bool
      */
-    public function re_validate() {
+    public function reValidate()
+    {
         // unable to re-validate expired cache item
         return false;
     }

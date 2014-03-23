@@ -10,7 +10,8 @@ namespace HaploMvc\Cache;
  * Class HaploFileCache
  * @package HaploMvc
  */
-class HaploFileCache {
+class HaploFileCache
+{
     /** @var string */
     protected $file;
     /** @var string */
@@ -29,7 +30,8 @@ class HaploFileCache {
      * @param array $options
      * @return HaploFileCache
      */
-    public function __construct($key, array $options) {
+    public function __construct($key, array $options)
+    {
         $this->shortKey = 'HaploCache-'.sha1($key);
         $this->file = $options['appBase']."/Cache/$this->shortKey.txt";
         $this->fileLock = "$this->file.lock";
@@ -41,7 +43,8 @@ class HaploFileCache {
      *
      * @return bool
      **/
-    public function check() {
+    public function check()
+    {
         if (array_key_exists($this->shortKey, static::$cache) || file_exists($this->fileLock)) {
             return true;
         }
@@ -53,7 +56,8 @@ class HaploFileCache {
      *
      * @return bool
      **/
-    public function exists() {
+    public function exists()
+    {
         return (array_key_exists($this->shortKey, static::$cache)) || (file_exists($this->file) || file_exists($this->fileLock));
     }
 
@@ -63,7 +67,8 @@ class HaploFileCache {
      * @param mixed $contents Data to cache
      * @return bool
      **/
-    public function set($contents) {
+    public function set($contents)
+    {
         if (!file_exists($this->fileLock)) {
             if (file_exists($this->file)) {
                 copy($this->file, $this->fileLock);
@@ -85,7 +90,8 @@ class HaploFileCache {
      *
      * @return bool
      **/
-    public function get() {
+    public function get()
+    {
         if ($this->exists()) {
             if (array_key_exists($this->shortKey, static::$cache)) {
                 return static::$cache[$this->shortKey];
@@ -105,7 +111,8 @@ class HaploFileCache {
      * Re-validates stale content in cache
      *
      **/
-    public function re_validate() {
+    public function reValidate()
+    {
         touch($this->file);
     }
 }

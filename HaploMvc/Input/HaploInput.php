@@ -10,7 +10,8 @@ namespace HaploMvc\Input;
  * Class HaploInput
  * @package HaploMvc
  */
-class HaploInput {
+class HaploInput
+{
     const FILTER_TAGS = 1;
     const FILTER_SPECIAL_CHARS = 2;
     const FILTER_INT = 3;
@@ -32,8 +33,9 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function get($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
-        return static::process_input($_GET, $key, $default, $filter);
+    public static function get($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES)
+    {
+        return static::processInput($_GET, $key, $default, $filter);
     }
 
     /**
@@ -42,8 +44,9 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function post($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
-        return static::process_input($_POST, $key, $default, $filter);
+    public static function post($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES)
+    {
+        return static::processInput($_POST, $key, $default, $filter);
     }
 
     /**
@@ -52,8 +55,9 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function request($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
-        return static::process_input($_REQUEST, $key, $default, $filter);
+    public static function request($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES)
+    {
+        return static::processInput($_REQUEST, $key, $default, $filter);
     }
 
     /**
@@ -62,8 +66,9 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function session($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
-        return static::process_input($_SESSION, $key, $default, $filter);
+    public static function session($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES)
+    {
+        return static::processInput($_SESSION, $key, $default, $filter);
     }
 
     /**
@@ -72,8 +77,9 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function cookie($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
-        return static::process_input($_COOKIE, $key, $default, $filter);
+    public static function cookie($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES)
+    {
+        return static::processInput($_COOKIE, $key, $default, $filter);
     }
 
     /**
@@ -82,8 +88,9 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function server($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
-        return static::process_input($_SERVER, $key, $default, $filter);
+    public static function server($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES)
+    {
+        return static::processInput($_SERVER, $key, $default, $filter);
     }
 
     /**
@@ -93,13 +100,14 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    protected static function process_input($input, $key, $default, $filter) {
+    protected static function processInput($input, $key, $default, $filter)
+    {
         if (array_key_exists($key, $input)) {
             switch ($filter) {
                 case static::FILTER_TAGS:
-                    return static::strip_tags_recursive($input[$key]);
+                    return static::stripTagsRecursive($input[$key]);
                 case static::FILTER_SPECIAL_CHARS:
-                    return static::html_special_chars_recursive($input[$key]);
+                    return static::htmlSpecialCharsRecursive($input[$key]);
                 case static::FILTER_INT:
                     return (int)$input[$key];
                 case static::FILTER_FLOAT:
@@ -128,12 +136,13 @@ class HaploInput {
      * @param mixed $input
      * @return string
      */
-    protected static function strip_tags_recursive($input) {
+    protected static function stripTagsRecursive($input)
+    {
         if (is_scalar($input)) {
             $input = strip_tags($input);
         } elseif (!empty($input)) {
             foreach ($input as &$component) {
-                $component = static::strip_tags_recursive($component);
+                $component = static::stripTagsRecursive($component);
             }
         }
 
@@ -144,12 +153,13 @@ class HaploInput {
      * @param mixed $input
      * @return string
      */
-    protected static function html_special_chars_recursive($input) {
+    protected static function htmlSpecialCharsRecursive($input)
+    {
         if (is_scalar($input)) {
             $input = htmlspecialchars($input, ENT_QUOTES, static::$encoding);
         } elseif (!empty($input)) {
             foreach ($input as &$component) {
-                $component = static::html_special_chars_recursive($component);
+                $component = static::htmlSpecialCharsRecursive($component);
             }
         }
 

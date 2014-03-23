@@ -6,14 +6,15 @@
 
 namespace HaploMvc\Action;
 
-use \HaploMvc\HaploApp,
-    \HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\HaploApp,
+    HaploMvc\Pattern\HaploSingleton;
 
 /**
  * Class HaploSlimAction
  * @package HaploMvc
  */
-abstract class HaploSlimAction extends HaploSingleton {
+abstract class HaploSlimAction extends HaploSingleton
+{
     /** @var HaploApp */
     protected $app;
 
@@ -23,7 +24,8 @@ abstract class HaploSlimAction extends HaploSingleton {
      * @param \HaploMvc\HaploApp $app
      * @return \HaploMvc\Action\HaploSlimAction
      */
-    public function __construct(HaploApp $app) {
+    public function __construct(HaploApp $app)
+    {
         $this->app = $app;
     }
 
@@ -31,7 +33,8 @@ abstract class HaploSlimAction extends HaploSingleton {
      * @param HaploApp $app
      * @return mixed
      */
-    public static function get_instance(HaploApp $app = null) {
+    public static function getInstance(HaploApp $app = null)
+    {
         $class = get_called_class();
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);

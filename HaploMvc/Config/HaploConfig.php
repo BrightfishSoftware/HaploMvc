@@ -6,11 +6,12 @@
 
 namespace HaploMvc\Config;
 
-use \HaploMvc\Pattern\HaploSingleton,
-    \HaploMvc\HaploApp,
-    \HaploMvc\Exception\HaploConfigParseFileException;
+use HaploMvc\Pattern\HaploSingleton,
+    HaploMvc\HaploApp,
+    HaploMvc\Exception\HaploConfigParseFileException;
 
-class HaploConfig extends HaploSingleton {
+class HaploConfig extends HaploSingleton
+{
     /**
      * @var HaploApp
      */
@@ -34,19 +35,20 @@ class HaploConfig extends HaploSingleton {
      * @param HaploApp $app
      * @return HaploConfig
      */
-    protected function __construct(HaploApp $app) {
+    protected function __construct(HaploApp $app)
+    {
         $this->app = $app;
         $this->config['_files'] = array();
 
         if (is_dir($this->app->appBase.'/Config')) {
-            $this->get_environments();
+            $this->getEnvironments();
 
             if (!empty($this->environment)) {
-                $this->parse_files($this->app->appBase.'/Config', $this->environment['files']);
+                $this->parseFiles($this->app->appBase.'/Config', $this->environment['files']);
                 $this->config['environment']['name'] = $this->environment['name'];
             } else {
-                $files = $this->get_files($this->app->appBase.'/Config');
-                $this->parse_files($this->app->appBase.'/Config', $files);
+                $files = $this->getFiles($this->app->appBase.'/Config');
+                $this->parseFiles($this->app->appBase.'/Config', $files);
             }
         }
     }
@@ -58,7 +60,8 @@ class HaploConfig extends HaploSingleton {
      * @throws HaploConfigParseFileException
      * @return array
      */
-    protected function get_environments() {
+    protected function getEnvironments()
+    {
         $environmentsFile = $this->app->appBase.'/Config/Environments.ini';
         $server = gethostname();
 
@@ -94,7 +97,8 @@ class HaploConfig extends HaploSingleton {
      * @param string $path Path to config directory
      * @return array
      **/
-    protected function get_files($path) {
+    protected function getFiles($path)
+    {
         $files = array();
         $dir = dir($path);
 
@@ -117,12 +121,13 @@ class HaploConfig extends HaploSingleton {
      * @param array $files Files to process
      * @throws HaploConfigParseFileException
      */
-    protected function parse_files($path, $files) {
+    protected function parseFiles($path, $files)
+    {
         foreach ($files as $file) {
             $config = parse_ini_file("$path/$file", true);
 
             if (!empty($config)) {
-                $this->config = $this->merge_config($this->config, $config);
+                $this->config = $this->mergeConfig($this->config, $config);
                 $this->config['_files'][] = "$path/$file";
             } else {
                 throw new HaploConfigParseFileException("Couldn't parse configuration file ($path/$file)");
@@ -135,10 +140,11 @@ class HaploConfig extends HaploSingleton {
      * @param array $config2
      * @return array
      */
-    protected function merge_config(array $config1, array $config2) {
+    protected function mergeConfig(array $config1, array $config2)
+    {
         foreach ($config2 as $key => $value) {
-            if (is_array($value) && isset($config1[$key]) && is_array($config1[$key])) {
-                $config1[$key] = $this->merge_config($config1[$key], $value);
+            if (is_array($value) && array_key_exists($key, $config1) && is_array($config1[$key])) {
+                $config1[$key] = $this->mergeConfig($config1[$key], $value);
             } else {
                 $config1[$key] = $value;
             }
@@ -152,7 +158,8 @@ class HaploConfig extends HaploSingleton {
      * @param HaploApp $app
      * @return HaploConfig
      */
-    static public function get_instance(HaploApp $app = null) {
+    static public function getInstance(HaploApp $app = null)
+    {
         $class = get_called_class();
         if (!isset(self::$instances[$class]) && !is_null($app)) {
             self::$instances[$class] = new $class($app);
@@ -168,7 +175,8 @@ class HaploConfig extends HaploSingleton {
      * @param string $default
      * @return string
      */
-    public function get_key($section, $key, $default = '') {
+    public function getKey($section, $key, $default = '')
+    {
         if (isset($this->config[$section][$key])) {
             return $this->config[$section][$key];
         } else {
@@ -184,7 +192,8 @@ class HaploConfig extends HaploSingleton {
      * @param $value
      * @return boolean
      */
-    public function set_key($section, $key, $value) {
+    public function setKey($section, $key, $value)
+    {
         return ($this->config[$section][$key] = $value);
     }
 
@@ -195,7 +204,8 @@ class HaploConfig extends HaploSingleton {
      * @param array $default
      * @return string
      */
-    public function get_section($section, $default = array()) {
+    public function getSection($section, $default = array())
+    {
         if (isset($this->config[$section])) {
             return $this->config[$section];
         } else {
@@ -208,7 +218,8 @@ class HaploConfig extends HaploSingleton {
      *
      * @return array
      **/
-    public function get_all() {
+    public function getAll()
+    {
         return $this->config;
     }
 }

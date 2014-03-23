@@ -6,17 +6,18 @@
 
 namespace HaploMvc\Db;
 
-use \PDO,
-    \PDOException,
-    \Exception,
-    \HaploMvc\Pattern\HaploSingleton,
-    \HaploMvc\Debug\HaploLog;
+use PDO,
+    PDOException,
+    Exception,
+    HaploMvc\Pattern\HaploSingleton,
+    HaploMvc\Debug\HaploLog;
 
 /**
  * Class HaploDb
  * @package HaploMvc
  */
-class HaploDb extends HaploSingleton {
+class HaploDb extends HaploSingleton
+{
     /** @var HaploDbDriver */
     public $driver = null;
     /** @var PDO */
@@ -29,19 +30,21 @@ class HaploDb extends HaploSingleton {
     /**
      * @param HaploDbDriver $driver
      */
-    protected function __construct(HaploDbDriver $driver) {
+    protected function __construct(HaploDbDriver $driver)
+    {
         $this->driver = $driver;
     }
 
     /**
      * @return bool
      */
-    protected function connect() {
+    protected function connect()
+    {
         try {
             $this->db = $this->driver->connect();
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            $this->log_error($e);
+            $this->logError($e);
             
             return false;
         }
@@ -52,8 +55,9 @@ class HaploDb extends HaploSingleton {
     /**
      * @param Exception $e
      */
-    protected function log_error(Exception $e) {
-        HaploLog::log_error(sprintf(
+    protected function logError(Exception $e)
+    {
+        HaploLog::logError(sprintf(
             'DB Error (Msg: %s - Code: %d) on line %d in %s', 
             $e->getMessage(), 
             $e->getCode(),
@@ -66,9 +70,10 @@ class HaploDb extends HaploSingleton {
      * @param HaploDbDriver $driver
      * @return mixed
      */
-    public static function get_instance(HaploDbDriver $driver = null) {
+    public static function getInstance(HaploDbDriver $driver = null)
+    {
         $class = get_called_class();
-        $instanceKey = $class.$driver->get_instance_hash();
+        $instanceKey = $class.$driver->getInstanceHash();
         if (!isset(self::$instances[$instanceKey])) {
             self::$instances[$instanceKey] = new $class($driver);
         }
@@ -81,7 +86,8 @@ class HaploDb extends HaploSingleton {
      * @param array $params
      * @return mixed
      */
-    public function __call($name, $params) {
+    public function __call($name, $params)
+    {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
@@ -92,7 +98,8 @@ class HaploDb extends HaploSingleton {
     /**
      * @throws Exception
      */
-    public function __clone() {
+    public function __clone()
+    {
         throw new Exception('Cloning is not allowed.');
     }
 
@@ -103,7 +110,8 @@ class HaploDb extends HaploSingleton {
      * @param int $count
      * @return bool|object
      */
-    public function get_array($stmt, array $params = array(), $start = 0, $count = 0) {
+    public function getArray($stmt, array $params = array(), $start = 0, $count = 0)
+    {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
@@ -116,7 +124,7 @@ class HaploDb extends HaploSingleton {
                     $stmt = preg_replace(
                         '/^SELECT\s+/i',
                         'SELECT SQL_CALC_FOUND_ROWS ',
-                        sprintf('%s %s', trim($stmt), $this->driver->get_limit($count, $start))
+                        sprintf('%s %s', trim($stmt), $this->driver->getLimit($count, $start))
                     );
                 } else {
                     $countStmt = preg_replace(
@@ -124,8 +132,8 @@ class HaploDb extends HaploSingleton {
                         'SELECT COUNT(*) FROM ',
                         trim($stmt)
                     );
-                    $this->lastRowCount = $this->get_column($countStmt, $params);
-                    $stmt = sprintf('%s %s', trim($stmt), $this->driver->get_limit($count, $start));
+                    $this->lastRowCount = $this->getColumn($countStmt, $params);
+                    $stmt = sprintf('%s %s', trim($stmt), $this->driver->getLimit($count, $start));
                 }
             }
         
@@ -135,7 +143,7 @@ class HaploDb extends HaploSingleton {
                 return $stmt->fetchAll(PDO::FETCH_CLASS);
             }
         } catch (PDOException $e) {
-            $this->log_error($e);
+            $this->logError($e);
         }
         
         return false;
@@ -149,10 +157,11 @@ class HaploDb extends HaploSingleton {
      * @param int $numEitherSide
      * @return array
      */
-    public function get_paged_array($stmt, array $params, $page = 1, $numPerPage = 50, $numEitherSide = 4) {
-        list($start, $count) = $this->get_offsets_from_page($page, $numPerPage);
-        $results = $this->get_array($stmt, $params, $start, $count);
-        $paging = $this->get_paging($page, $numPerPage, $numEitherSide);
+    public function getPagedArray($stmt, array $params, $page = 1, $numPerPage = 50, $numEitherSide = 4)
+    {
+        list($start, $count) = $this->getOffsetsFromPage($page, $numPerPage);
+        $results = $this->getArray($stmt, $params, $start, $count);
+        $paging = $this->getPaging($page, $numPerPage, $numEitherSide);
         return array($results, $paging);
     }
 
@@ -162,8 +171,9 @@ class HaploDb extends HaploSingleton {
      *
      * @return array
      */
-    public function get_list($sql, array $params = array()) {
-        if (($results = $this->get_array($sql, $params)) && is_array($results)) {
+    public function getList($sql, array $params = array())
+    {
+        if (($results = $this->getArray($sql, $params)) && is_array($results)) {
             $list = array();
             foreach ($results as $result) {
                 $list[] = current($result);
@@ -178,7 +188,8 @@ class HaploDb extends HaploSingleton {
      * @param array $params
      * @return bool|object
      */
-    public function get_row($stmt, array $params = array()) {
+    public function getRow($stmt, array $params = array())
+    {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
@@ -190,7 +201,7 @@ class HaploDb extends HaploSingleton {
                 return $stmt->fetchObject();
             }
         } catch (PDOException $e) {
-            $this->log_error($e);
+            $this->logError($e);
         }
         
         return false;
@@ -202,7 +213,8 @@ class HaploDb extends HaploSingleton {
      * @param int $column
      * @return bool
      */
-    public function get_column($stmt, array $params = array(), $column = 0) {
+    public function getColumn($stmt, array $params = array(), $column = 0)
+    {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
@@ -214,7 +226,7 @@ class HaploDb extends HaploSingleton {
                 return $stmt->fetchColumn($column);
             }
         } catch (PDOException $e) {
-            $this->log_error($e);
+            $this->logError($e);
         }
         
         return false;
@@ -227,14 +239,15 @@ class HaploDb extends HaploSingleton {
      * @param int $count
      * @return bool
      */
-    public function get_recordset($stmt, array $params = array(), $start = 0, $count = 0) {
+    public function getRecordset($stmt, array $params = array(), $start = 0, $count = 0)
+    {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
 
         try {
             if ($count > 0) {
-                $stmt = sprintf('%s %s', $stmt, $this->driver->get_limit($count, $start));
+                $stmt = sprintf('%s %s', $stmt, $this->driver->getLimit($count, $start));
             }
         
             if (empty($params) && $result = $this->db->query($stmt)) {
@@ -243,7 +256,7 @@ class HaploDb extends HaploSingleton {
                 return $stmt;
             }
         } catch (PDOException $e) {
-            $this->log_error($e);
+            $this->logError($e);
         }
         
         return false;
@@ -254,7 +267,8 @@ class HaploDb extends HaploSingleton {
      * @param array $params
      * @return bool
      */
-    public function run($stmt, array $params = array()) {
+    public function run($stmt, array $params = array())
+    {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
@@ -266,7 +280,7 @@ class HaploDb extends HaploSingleton {
                 return $stmt->execute($params);
             }
         } catch (PDOException $e) {
-            $this->log_error($e);
+            $this->logError($e);
         }
         
         return false;
@@ -276,7 +290,8 @@ class HaploDb extends HaploSingleton {
      * @param array $values
      * @return mixed
      */
-    public function get_in_values(array $values) {
+    public function getInValues(array $values)
+    {
         if (is_null($this->db) && !$this->connect()) {
             return false;
         }
@@ -291,7 +306,8 @@ class HaploDb extends HaploSingleton {
     /**
      * @return bool|int
      */
-    public function get_total_rows() {
+    public function getTotalRows()
+    {
         if (is_null($this->db) && !$this->connect()) {
             return 0;
         }
@@ -302,7 +318,7 @@ class HaploDb extends HaploSingleton {
                     return $result->fetchColumn(0);
                 }
             } catch (PDOException $e) {
-                $this->log_error($e);
+                $this->logError($e);
             }
         } else {
             return $this->lastRowCount;
@@ -316,7 +332,8 @@ class HaploDb extends HaploSingleton {
      * @param int $numPerPage
      * @return array
      */
-    public function get_offsets_from_page($page, $numPerPage = 50) {
+    public function getOffsetsFromPage($page, $numPerPage = 50)
+    {
         if ($page === 0 && $numPerPage === 0) {
             return array(0, 0);
         }
@@ -330,12 +347,13 @@ class HaploDb extends HaploSingleton {
      * @param int $numEitherSide
      * @return array|bool
      */
-    public function get_paging($page, $numPerPage = 50, $numEitherSide = 4) {
+    public function getPaging($page, $numPerPage = 50, $numEitherSide = 4)
+    {
         if ($page === 0 && $numPerPage === 0) {
             return false;
         }
 
-        $numRows = $this->get_total_rows();
+        $numRows = $this->getTotalRows();
         $numPages = ceil($numRows / $numPerPage);
         
         if ($page < 1 || $page > $numPages) {
@@ -389,7 +407,8 @@ class HaploDb extends HaploSingleton {
     /**
      * @param bool $useSqlCalcFoundRows
      */
-    public function set_use_sql_calc_found_rows($useSqlCalcFoundRows) {
+    public function setUseSqlCalcFoundRows($useSqlCalcFoundRows)
+    {
         if ($this->driver->driverName === 'mysql') {
             $this->useSqlCalcFoundRows = $useSqlCalcFoundRows;
         } else {
@@ -401,7 +420,8 @@ class HaploDb extends HaploSingleton {
      * @param string $identifier
      * @return string
      */
-    public function quote_identifier($identifier) {
+    public function quoteIdentifier($identifier)
+    {
         $parts = explode('.', $identifier);
         foreach ($parts as &$part) {
             $part = '`'.trim(str_replace('`', '``', $part)).'`';
