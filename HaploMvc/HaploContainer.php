@@ -23,7 +23,7 @@ class HaploContainer extends HaploSingleton
     /**
      * @return mixed
      */
-    public function getInstance()
+    public static function getInstance()
     {
         $class = get_called_class();
         if (!isset(static::$instances[$class])) {

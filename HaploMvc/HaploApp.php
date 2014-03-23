@@ -3,8 +3,13 @@ namespace HaploMvc;
 
 use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\Db\HaploActiveRecord;
-use HaploMvc\Exception\HaploClassNotFoundException;
-use ReflectionClass;
+use HaploMvc\Config\HaploConfig;
+use HaploMvc\Template\HaploTemplateFactory;
+use HaploMvc\Translation\HaploTranslations;
+use HaploMvc\Cache\HaploCache;
+use HaploMvc\Security\HaploNonce;
+use HaploMvc\Db\HaploDb;
+use HaploMvc\Db\HaploSqlBuilder;
 
 /**
  * Class HaploApp
@@ -14,6 +19,8 @@ class HaploApp extends HaploSingleton
 {
     /** @var string */
     public $appBase;
+    /** @var \HaploMvc\HaploContainer */
+    public $container = null;
     /** @var \HaploMvc\Config\HaploConfig */
     public $config = null;
     /** @var \HaploMvc\HaploRouter */
@@ -35,83 +42,66 @@ class HaploApp extends HaploSingleton
      * Static helper method used to ensure only one instance of the class is instantiated
      *
      * @param string $appBase
-     * @param bool $doInit
      * @return HaploApp
      */
-    static public function getInstance($appBase = null, $doInit = true)
+    static public function getInstance($appBase = null)
     {
         $class = get_called_class();
         if (!isset(static::$instances[$class]) && !is_null($appBase)) {
-            static::$instances[$class] = new $class($appBase, $doInit);
+            static::$instances[$class] = new $class($appBase);
         }
         return static::$instances[$class];
     }
 
     /**
      * @param string $appBase
-     * @param bool $doInit
      */
-    protected function __construct($appBase, $doInit)
+    protected function __construct($appBase)
     {
         $this->appBase = $appBase;
-        if ($doInit) {
-            $this->init();
-        }
-    }
-
-    /**
-     * @param string $name
-     * @param string $class
-     * @param array $args
-     * @return bool
-     */
-    public function loadClass($name, $class, array $args = array())
-    {
-        if (isset($this->$name) && !is_null($this->$name)) {
-            return false;
-        }
-        $this->$name = $this->getClass($class, $args);
-        return true;
-    }
-
-    /**
-     * @param string $class
-     * @param array $args
-     * @throws HaploClassNotFoundException
-     * @return mixed
-     */
-    public function getClass($class, array $args = array())
-    {
-        if (!class_exists($class)) {
-            throw new HaploClassNotFoundException(sprintf("Class %s not found.", $class));
-        }
-        if (method_exists($class, 'getInstance')) {
-            return !empty($args) ? call_user_func_array("$class::getInstance", $args) : $class::getInstance($this);
-        } else {
-            if (!empty($args)) {
-                $reflection = new ReflectionClass($class);
-                return $reflection->newInstanceArgs($args);
-            } else {
-                return new $class($this);
-            }
-        }
+        $this->init();
     }
 
     public function init()
     {
-        $this->loadClass('config', '\HaploMvc\Config\HaploConfig');
-        $this->loadClass('router', '\HaploMvc\HaploRouter');
-        $this->loadClass('translations', '\HaploMvc\Translation\HaploTranslations');
-        $this->loadClass('cache', '\HaploMvc\Cache\HaploCache');
-        $this->loadClass('nonce', '\HaploMvc\Security\HaploNonce');
-        $this->loadClass('template', '\HaploMvc\Template\HaploTemplateFactory');
-        if (is_null($this->db)) {
-            $dbConfig = $this->config->getSection('db');
-            $dbDriver = isset($dbConfig['driver']) ? $dbConfig['driver'] : 'MySql';
+        $this->container = HaploContainer::getInstance();
+        $this->container->setParam('app', $this);
+        $this->container->registerService('config', function($c) {
+            return HaploConfig::getInstance($c->getParam('app'));
+        });
+        $this->container->registerService('router', function($c) {
+            return HaploRouter::getInstance($c->getParam('app'));
+        });
+        $this->container->registerService('translations', function($c) {
+            return HaploTranslations::getInstance($c->getParam('app'));
+        });
+        $this->container->registerService('cache', function($c) {
+            return HaploCache::getInstance($c->getParam('app'));
+        });
+        $this->container->registerService('nonce', function($c) {
+            return HaploNonce::getInstance($c->getParam('app'));
+        });
+        $this->container->registerService('template', function($c) {
+            return HaploTemplateFactory::getInstance($c->getParam('app'));
+        });
+        $this->container->registerService('db', function($c) {
+            $dbConfig = $c->getParam('app')->config->getSection('db');
+            $dbDriver = array_key_exists('driver', $dbConfig) ? $dbConfig['driver'] : 'MySql';
             $class = sprintf('\HaploMvc\Db\Haplo%sDbDriver', $dbDriver);
-            $this->loadClass('db', '\HaploMvc\Db\HaploDb', array('driver' => new $class($dbConfig)));
-        }
-        $this->loadClass('sqlBuilder', '\HaploMvc\Db\HaploSqlBuilder', array('db' => $this->db));
+            return HaploDb::getInstance(new $class($dbConfig));
+        });
+        $this->container->registerService('sqlBuilder', function($c) {
+            return new HaploSqlBuilder($c->getParam('app')->db);
+        });
+        // shortcuts
+        $this->config = $this->container->getService('config');
+        $this->router = $this->container->getService('router');
+        $this->translations = $this->container->getService('translations');
+        $this->cache = $this->container->getService('cache');
+        $this->nonce = $this->container->getService('nonce');
+        $this->template = $this->container->getService('template');
+        $this->db = $this->container->getService('db');
+        $this->sqlBuilder = $this->container->getService('sqlBuilder');
         HaploActiveRecord::setDependencies($this->db, $this->sqlBuilder);
     }
 

@@ -2,6 +2,7 @@
 namespace Actions;
 
 use HaploMvc\Action\HaploAction;
+use Models\BooksModel;
 
 /**
  * Class Home
@@ -11,7 +12,7 @@ class Home extends HaploAction
 {
     protected function doAll()
     {
-        $booksModel = $this->app->getClass('\Models\BooksModel');
+        $booksModel = new BooksModel($this->app);
         $booksModel->get(1);
         $template = $this->app->template->create('Home.php');
         $template->display();
