@@ -43,6 +43,10 @@ TBD
 
 ## Change Log
 
+### 0.0.14 (23rd March 2014)
+
+Changed default input filter. Minor tweaks.
+
 ### 0.0.13 (23rd March 2014)
 
 Added DB get_list() method. Switched from custom autoloader to the one provided by composer.
