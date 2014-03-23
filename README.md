@@ -1,6 +1,12 @@
 # HaploMvc
 
-[![Build Status](https://travis-ci.org/BrightfishSoftware/HaploMvc.png?branch=master)](https://travis-ci.org/BrightfishSoftware/HaploMvc)
+## Build Statuses
+
+Develop: [![Build Status](https://travis-ci.org/BrightfishSoftware/HaploMvc.png?branch=develop)](https://travis-ci.org/BrightfishSoftware/HaploMvc)
+
+Master: [![Build Status](https://travis-ci.org/BrightfishSoftware/HaploMvc.png?branch=master)](https://travis-ci.org/BrightfishSoftware/HaploMvc)
+
+## Introduction
 
 HaploMvc is a lighweight PHP development framework. It goal is to help you build clear, well structured web sites and applications. I've tried to make the implementation as simple and predictable as possible and have used phpdoc comments extensively to enable code completion functionality in PHP IDEs such as PHP Storm (my personal favourite).
 
