@@ -32,7 +32,7 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function get($key, $default = '', $filter = self::FILTER_ALPHA) {
+    public static function get($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
         return static::process_input($_GET, $key, $default, $filter);
     }
 
@@ -42,7 +42,7 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function post($key, $default = '', $filter = self::FILTER_ALPHA) {
+    public static function post($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
         return static::process_input($_POST, $key, $default, $filter);
     }
 
@@ -52,7 +52,7 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function request($key, $default = '', $filter = self::FILTER_ALPHA) {
+    public static function request($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
         return static::process_input($_REQUEST, $key, $default, $filter);
     }
 
@@ -62,7 +62,7 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function session($key, $default = '', $filter = self::FILTER_ALPHA) {
+    public static function session($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
         return static::process_input($_SESSION, $key, $default, $filter);
     }
 
@@ -72,7 +72,7 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function cookie($key, $default = '', $filter = self::FILTER_ALPHA) {
+    public static function cookie($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
         return static::process_input($_COOKIE, $key, $default, $filter);
     }
 
@@ -82,7 +82,7 @@ class HaploInput {
      * @param int $filter
      * @return mixed
      */
-    public static function server($key, $default = '', $filter = self::FILTER_ALPHA) {
+    public static function server($key, $default = '', $filter = self::FILTER_ALPHA_DASHES_QUOTES) {
         return static::process_input($_SERVER, $key, $default, $filter);
     }
 
@@ -94,7 +94,7 @@ class HaploInput {
      * @return mixed
      */
     protected static function process_input($input, $key, $default, $filter) {
-        if (isset($input[$key])) {
+        if (array_key_exists($key, $input)) {
             switch ($filter) {
                 case static::FILTER_TAGS:
                     return static::strip_tags_recursive($input[$key]);
