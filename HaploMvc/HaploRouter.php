@@ -6,13 +6,13 @@
 
 namespace HaploMvc;
 
-use Closure,
-    HaploMvc\Pattern\HaploSingleton,
-    HaploMvc\Exception\HaploActionTypeNotSupportedException,
-    HaploMvc\Exception\HaploNoDefault404DefinedException,
-    HaploMvc\Exception\HaploNoActionDefinedException,
-    HaploMvc\Exception\HaploNoRedirectUrlDefinedException,
-    HaploMvc\Exception\HaploClassNotFoundException;
+use Closure;
+use HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\Exception\HaploActionTypeNotSupportedException;
+use HaploMvc\Exception\HaploNoDefault404DefinedException;
+use HaploMvc\Exception\HaploNoActionDefinedException;
+use HaploMvc\Exception\HaploNoRedirectUrlDefinedException;
+use HaploMvc\Exception\HaploClassNotFoundException;
 
 /**
  * Class HaploRouter

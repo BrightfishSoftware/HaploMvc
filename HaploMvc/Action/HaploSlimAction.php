@@ -6,8 +6,8 @@
 
 namespace HaploMvc\Action;
 
-use HaploMvc\HaploApp,
-    HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\HaploApp;
+use HaploMvc\Pattern\HaploSingleton;
 
 /**
  * Class HaploSlimAction

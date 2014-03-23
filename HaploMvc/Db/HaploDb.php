@@ -6,11 +6,11 @@
 
 namespace HaploMvc\Db;
 
-use PDO,
-    PDOException,
-    Exception,
-    HaploMvc\Pattern\HaploSingleton,
-    HaploMvc\Debug\HaploLog;
+use PDO;
+use PDOException;
+use Exception;
+use HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\Debug\HaploLog;
 
 /**
  * Class HaploDb

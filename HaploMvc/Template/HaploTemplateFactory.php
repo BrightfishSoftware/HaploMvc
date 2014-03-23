@@ -6,8 +6,8 @@
 
 namespace HaploMvc\Template;
 
-use HaploMvc\Pattern\HaploSingleton,
-    HaploMvc\HaploApp;
+use HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\HaploApp;
 
 /**
  * Class HaploTemplateFactory

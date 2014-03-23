@@ -6,10 +6,10 @@
 
 namespace HaploMvc;
 
-use HaploMvc\Pattern\HaploSingleton,
-    HaploMvc\Db\HaploActiveRecord,
-    HaploMvc\Exception\HaploClassNotFoundException,
-    ReflectionClass;
+use HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\Db\HaploActiveRecord;
+use HaploMvc\Exception\HaploClassNotFoundException;
+use ReflectionClass;
 
 /**
  * Class HaploApp

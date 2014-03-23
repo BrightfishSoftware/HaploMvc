@@ -2,9 +2,9 @@
 namespace HaploMvc\Tests;
 
 use HaploMvc\Db\HaploMySqlDbDriver;
-use PHPUnit_Framework_TestCase,
-    HaploMvc\Db\HaploDb,
-    HaploMvc\Db\HaploSqlBuilder;
+use PHPUnit_Framework_TestCase;
+use HaploMvc\Db\HaploDb;
+use HaploMvc\Db\HaploSqlBuilder;
 
 class HaploSqlBuilderTests extends PHPUnit_Framework_TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 namespace HaploMvc\Tests;
 
-use PHPUnit_Framework_TestCase,
-    HaploMvc\Input\HaploValidate;
+use PHPUnit_Framework_TestCase;
+use HaploMvc\Input\HaploValidate;
 
 class HaploValidateTests extends PHPUnit_Framework_TestCase
 {

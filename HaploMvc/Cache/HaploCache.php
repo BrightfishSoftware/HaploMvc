@@ -6,9 +6,9 @@
 
 namespace HaploMvc\Cache;
 
-use HaploMvc\Pattern\HaploSingleton,
-    HaploMvc\HaploApp,
-    HaploMvc\Exception\HaploLibraryNotFoundException;
+use HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\HaploApp;
+use HaploMvc\Exception\HaploLibraryNotFoundException;
 
 /**
  * Class HaploCache

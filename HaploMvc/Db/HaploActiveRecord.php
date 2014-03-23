@@ -1,9 +1,9 @@
 <?php
 namespace HaploMvc\Db;
 
-use HaploMvc\Exception\HaploDbIdNotFoundException,
-    HaploMvc\Exception\HaploDbColumnDoesNotExistException,
-    HaploMvc\Exception\HaploDbTableNameNotSetException;
+use HaploMvc\Exception\HaploDbIdNotFoundException;
+use HaploMvc\Exception\HaploDbColumnDoesNotExistException;
+use HaploMvc\Exception\HaploDbTableNameNotSetException;
 
 /**
  * Class HaploActiveRecord

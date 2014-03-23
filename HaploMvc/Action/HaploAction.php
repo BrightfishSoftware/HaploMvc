@@ -6,11 +6,11 @@
 
 namespace HaploMvc\Action;
 
-use HaploMvc\Pattern\HaploSingleton,
-    HaploMvc\HaploApp,
-    HaploMvc\HaploRouter,
-    HaploMvc\Exception\HaploMethodNotFoundException,
-    HaploMvc\Exception\HaploActionNotFoundException;
+use HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\HaploApp;
+use HaploMvc\HaploRouter;
+use HaploMvc\Exception\HaploMethodNotFoundException;
+use HaploMvc\Exception\HaploActionNotFoundException;
 
 /**
  * Class HaploAction

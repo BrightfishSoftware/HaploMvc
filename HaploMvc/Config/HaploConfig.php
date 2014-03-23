@@ -6,9 +6,9 @@
 
 namespace HaploMvc\Config;
 
-use HaploMvc\Pattern\HaploSingleton,
-    HaploMvc\HaploApp,
-    HaploMvc\Exception\HaploConfigParseFileException;
+use HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\HaploApp;
+use HaploMvc\Exception\HaploConfigParseFileException;
 
 class HaploConfig extends HaploSingleton
 {

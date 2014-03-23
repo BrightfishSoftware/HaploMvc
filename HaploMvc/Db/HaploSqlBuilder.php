@@ -5,10 +5,10 @@
  **/
 namespace HaploMvc\Db;
 
-use HaploMvc\Exception\HaploInvalidComparisonOperatorException,
-    HaploMvc\Exception\HaploInvalidSortOrderException,
-    HaploMvc\Exception\HaploInvalidJoinTypeException,
-    HaploMvc\Exception\HaploInvalidParameterException;
+use HaploMvc\Exception\HaploInvalidComparisonOperatorException;
+use HaploMvc\Exception\HaploInvalidSortOrderException;
+use HaploMvc\Exception\HaploInvalidJoinTypeException;
+use HaploMvc\Exception\HaploInvalidParameterException;
 
 /**
  * Class HaploSqlBuilder

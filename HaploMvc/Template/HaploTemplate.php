@@ -6,12 +6,12 @@
 
 namespace HaploMvc\Template;
 
-use HaploMvc\HaploApp,
-    HaploMvc\Security\HaploEscaper,
-    HaploMvc\Exception\HaploInvalidTemplateException,
-    HaploMvc\Exception\HaploTemplateFunctionNotFound,
-    HaploMvc\Exception\HaploPostFilterFunctionNotFoundException,
-    HaploMvc\Exception\HaploTemplateNotFoundException;
+use HaploMvc\HaploApp;
+use HaploMvc\Security\HaploEscaper;
+use HaploMvc\Exception\HaploInvalidTemplateException;
+use HaploMvc\Exception\HaploTemplateFunctionNotFound;
+use HaploMvc\Exception\HaploPostFilterFunctionNotFoundException;
+use HaploMvc\Exception\HaploTemplateNotFoundException;
 
 /**
  * Class HaploTemplate

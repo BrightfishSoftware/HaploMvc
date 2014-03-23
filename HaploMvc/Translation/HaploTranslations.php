@@ -6,10 +6,10 @@
 
 namespace HaploMvc\Translation;
 
-use HaploMvc\Pattern\HaploSingleton,
-    HaploMvc\HaploApp,
-    HaploMvc\Exception\HaploLangFileNotFoundException,
-    HaploMvc\Exception\HaploTranslationKeyNotFoundException;
+use HaploMvc\Pattern\HaploSingleton;
+use HaploMvc\HaploApp;
+use HaploMvc\Exception\HaploLangFileNotFoundException;
+use HaploMvc\Exception\HaploTranslationKeyNotFoundException;
 
 class HaploTranslations extends HaploSingleton
 {
