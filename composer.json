@@ -11,5 +11,8 @@
         "phpunit/phpunit": "~3.7.0"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "autoload": {
+        "psr-0": { "": "" }
+    }
 }
