@@ -31,7 +31,7 @@ class HaploRouter extends HaploSingleton {
     /**
      * Contains values of matched variables in the selected URL pattern
      *
-     * @var string
+     * @var array
      **/
     protected $requestVars = array();
     
@@ -165,7 +165,7 @@ class HaploRouter extends HaploSingleton {
      * @return mixed|null
      */
     public function get_request_var($name, $default = null) {
-        return isset($this->requestVars[$name]) ? $this->requestVars[$name] : $default;
+        return array_key_exists($name, $this->requestVars) ? $this->requestVars[$name] : $default;
     }
     
     /**
