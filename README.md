@@ -43,6 +43,10 @@ TBD
 
 ## Change Log
 
+### 0.0.15 (23rd March 2014)
+
+Converting code to PSR-2.
+
 ### 0.0.14 (23rd March 2014)
 
 Changed default input filter. Minor tweaks.
