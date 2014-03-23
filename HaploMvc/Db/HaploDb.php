@@ -157,6 +157,23 @@ class HaploDb extends HaploSingleton {
     }
 
     /**
+     * @param string $sql
+     * @param array $params
+     *
+     * @return array
+     */
+    public function get_list($sql, array $params = array()) {
+        if (($results = $this->get_array($sql, $params)) && is_array($results)) {
+            $list = array();
+            foreach ($results as $result) {
+                $list[] = current($result);
+            }
+            return $list;
+        }
+        return false;
+    }
+
+    /**
      * @param string $stmt
      * @param array $params
      * @return bool|object
