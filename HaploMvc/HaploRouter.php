@@ -48,7 +48,7 @@ class HaploRouter
     /**
      * @param $routes
      */
-    public function addAoutes(array $routes)
+    public function addRoutes(array $routes)
     {
         foreach ($routes as $pattern => $destination) {
             $this->addRoute($pattern, $destination);

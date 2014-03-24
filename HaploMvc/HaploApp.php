@@ -14,15 +14,6 @@ use HaploMvc\Db\HaploSqlBuilder;
 /**
  * Class HaploApp
  * @package HaploMvc
- *
- * @var \HaploMvc\Config\HaploConfig $config
- * @property \HaploMvc\HaploRouter $router
- * @property \HaploMvc\Translation\HaploTranslator $translations
- * @property \HaploMvc\Cache\HaploCache $cache
- * @property \HaploMvc\Security\HaploNonce $nonce
- * @property \HaploMvc\Template\HaploTemplateFactory $template
- * @property \HaploMvc\Db\HaploDb $db
- * @property \HaploMvc\Db\HaploSqlBuilder $sqlBuilder
  */
 class HaploApp extends HaploSingleton
 {
@@ -30,6 +21,22 @@ class HaploApp extends HaploSingleton
     public $appBase;
     /** @var \HaploMvc\HaploContainer */
     public $container = null;
+    /** @var \HaploMvc\Config\HaploConfig  */
+    public $config = null;
+    /** @var \HaploMvc\HaploRouter */
+    public $router = null;
+    /** @var \HaploMvc\Translation\HaploTranslator */
+    public $translator = null;
+    /** @var \HaploMvc\Cache\HaploCache */
+    public $cache = null;
+    /** @var \HaploMvc\Security\HaploNonce */
+    public $nonce = null;
+    /** @var \HaploMvc\Template\HaploTemplateFactory */
+    public $template = null;
+    /** @var \HaploMvc\Db\HaploDb */
+    public $db = null;
+    /** @var \HaploMvc\Db\HaploSqlBuilder */
+    public $sqlBuilder = null;
     /** @var array */
     public $defaultServices = array(
         'config',
@@ -69,31 +76,31 @@ class HaploApp extends HaploSingleton
 
     public function initServices()
     {
-        $this->container->register('config', function($c) {
+        $this->container->register('config', function(HaploContainer $c) {
             return new HaploConfig($c->getParam('app'));
         });
-        $this->container->register('router', function($c) {
+        $this->container->register('router', function(HaploContainer $c) {
             return new HaploRouter($c->getParam('app'));
         });
-        $this->container->register('translator', function($c) {
+        $this->container->register('translator', function(HaploContainer $c) {
             return new HaploTranslator($c->getParam('app'));
         });
-        $this->container->register('cache', function($c) {
+        $this->container->register('cache', function(HaploContainer $c) {
             return new HaploCache($c->getParam('app'));
         });
-        $this->container->register('nonce', function($c) {
+        $this->container->register('nonce', function(HaploContainer $c) {
             return new HaploNonce($c->getParam('app'));
         });
-        $this->container->register('template', function($c) {
+        $this->container->register('template', function(HaploContainer $c) {
             return new HaploTemplateFactory($c->getParam('app'));
         });
-        $this->container->register('db', function($c) {
+        $this->container->register('db', function(HaploContainer $c) {
             $dbConfig = $c->getParam('app')->config->getSection('db');
             $dbDriver = array_key_exists('driver', $dbConfig) ? $dbConfig['driver'] : 'MySql';
             $class = sprintf('\HaploMvc\Db\Haplo%sDbDriver', $dbDriver);
             return new HaploDb(new $class($dbConfig));
         });
-        $this->container->register('sqlBuilder', function($c) {
+        $this->container->register('sqlBuilder', function(HaploContainer $c) {
             return new HaploSqlBuilder($c->getParam('app')->db);
         });
         // shortcuts
