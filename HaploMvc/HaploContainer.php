@@ -43,7 +43,7 @@ class HaploContainer extends HaploSingleton
 
     /**
      * @param string $name
-     * @return bool
+     * @return mixed
      */
     public function getService($name)
     {

@@ -1,6 +1,7 @@
 <?php
 namespace HaploMvc;
 
+use HaploMvc\Exception\HaploUndefinedException;
 use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\Db\HaploActiveRecord;
 use HaploMvc\Config\HaploConfig;
@@ -14,6 +15,15 @@ use HaploMvc\Db\HaploSqlBuilder;
 /**
  * Class HaploApp
  * @package HaploMvc
+ *
+ * @var \HaploMvc\Config\HaploConfig $config
+ * @property \HaploMvc\HaploRouter $router
+ * @property \HaploMvc\Translation\HaploTranslations $translations
+ * @property \HaploMvc\Cache\HaploCache $cache
+ * @property \HaploMvc\Security\HaploNonce $nonce
+ * @property \HaploMvc\Template\HaploTemplateFactory $template
+ * @property \HaploMvc\Db\HaploDb $db
+ * @property \HaploMvc\Db\HaploSqlBuilder $sqlBuilder
  */
 class HaploApp extends HaploSingleton
 {
@@ -21,22 +31,6 @@ class HaploApp extends HaploSingleton
     public $appBase;
     /** @var \HaploMvc\HaploContainer */
     public $container = null;
-    /** @var \HaploMvc\Config\HaploConfig */
-    public $config = null;
-    /** @var \HaploMvc\HaploRouter */
-    public $router = null;
-    /** @var \HaploMvc\Translation\HaploTranslations */
-    public $translations = null;
-    /** @var \HaploMvc\Cache\HaploCache */
-    public $cache = null;
-    /** @var \HaploMvc\Security\HaploNonce */
-    public $nonce = null;
-    /** @var \HaploMvc\Template\HaploTemplateFactory */
-    public $template = null;
-    /** @var \HaploMvc\Db\HaploDb */
-    public $db = null;
-    /** @var \HaploMvc\Db\HaploSqlBuilder */
-    public $sqlBuilder = null;
 
     /**
      * Static helper method used to ensure only one instance of the class is instantiated
@@ -59,13 +53,26 @@ class HaploApp extends HaploSingleton
     protected function __construct($appBase)
     {
         $this->appBase = $appBase;
-        $this->init();
-    }
-
-    public function init()
-    {
         $this->container = HaploContainer::getInstance();
         $this->container->setParam('app', $this);
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     * @throws Exception\HaploUndefinedException
+     */
+    public function __get($name)
+    {
+        if ($service = $this->container->getService($name)) {
+            return $service;
+        } else {
+            throw new HaploUndefinedException('Property not found in HaploApp or HaploContainer.');
+        }
+    }
+
+    public function initServices()
+    {
         $this->container->registerService('config', function($c) {
             return HaploConfig::getInstance($c->getParam('app'));
         });
@@ -94,14 +101,6 @@ class HaploApp extends HaploSingleton
             return new HaploSqlBuilder($c->getParam('app')->db);
         });
         // shortcuts
-        $this->config = $this->container->getService('config');
-        $this->router = $this->container->getService('router');
-        $this->translations = $this->container->getService('translations');
-        $this->cache = $this->container->getService('cache');
-        $this->nonce = $this->container->getService('nonce');
-        $this->template = $this->container->getService('template');
-        $this->db = $this->container->getService('db');
-        $this->sqlBuilder = $this->container->getService('sqlBuilder');
         HaploActiveRecord::setDependencies($this->db, $this->sqlBuilder);
     }
 
