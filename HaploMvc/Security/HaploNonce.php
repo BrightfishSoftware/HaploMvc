@@ -1,14 +1,13 @@
 <?php
 namespace HaploMvc\Security;
 
-use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\HaploApp;
 
 /**
  * Class HaploNonce
  * @package HaploMvc
  */
-class HaploNonce extends HaploSingleton
+class HaploNonce
 {
     /**
      * @var string
@@ -20,25 +19,12 @@ class HaploNonce extends HaploSingleton
     protected $name;
 
     /**
-     * @param HaploApp $app
-     * @return mixed
-     */
-    public static function getInstance(HaploApp $app = null)
-    {
-        $class = get_called_class();
-        if (!isset(self::$instances[$class]) && !is_null($app)) {
-            self::$instances[$class] = new $class($app);
-        }
-        return self::$instances[$class];
-    }
-
-    /**
      * Class constructor - sets up variables and creates token
      *
      * @param HaploApp $app
      * @return HaploNonce
      */
-    protected function __construct(HaploApp $app)
+    public function __construct(HaploApp $app)
     {
         $this->secret = $app->config->getKey('nonce', 'secret');
         $this->name = $app->config->getKey('nonce', 'name');

@@ -1,12 +1,11 @@
 <?php
 namespace HaploMvc\Translation;
 
-use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\HaploApp;
 use HaploMvc\Exception\HaploLangFileNotFoundException;
 use HaploMvc\Exception\HaploTranslationKeyNotFoundException;
 
-class HaploTranslations extends HaploSingleton
+class HaploTranslator
 {
     /**
      * Stores a reference to application object
@@ -58,28 +57,13 @@ class HaploTranslations extends HaploSingleton
     protected $translations = array();
 
     /**
-     * Static helper method used to ensure only one instance of the class is instantiated
-     *
-     * @param $app
-     * @return HaploTranslations
-     */
-    static public function getInstance(HaploApp $app = null)
-    {
-        $class = get_called_class();
-        if (!isset(self::$instances[$class]) && !is_null($app)) {
-            self::$instances[$class] = new $class($app);
-        }
-        return self::$instances[$class];
-    }
-
-    /**
      * Constructor for class
      *
      * @param HaploApp $app
      * @throws HaploLangFileNotFoundException
-     * @return HaploTranslations
+     * @return HaploTranslator
      */
-    protected function __construct(HaploApp $app)
+    public function __construct(HaploApp $app)
     {
         $this->app = $app;
         $this->lang = $this->app->config->getKey('translations', 'lang', 'en-US');

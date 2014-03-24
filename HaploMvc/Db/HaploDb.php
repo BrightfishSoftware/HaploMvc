@@ -4,14 +4,13 @@ namespace HaploMvc\Db;
 use PDO;
 use PDOException;
 use Exception;
-use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\Debug\HaploLog;
 
 /**
  * Class HaploDb
  * @package HaploMvc
  */
-class HaploDb extends HaploSingleton
+class HaploDb
 {
     /** @var HaploDbDriver */
     public $driver = null;
@@ -25,7 +24,7 @@ class HaploDb extends HaploSingleton
     /**
      * @param HaploDbDriver $driver
      */
-    protected function __construct(HaploDbDriver $driver)
+    public function __construct(HaploDbDriver $driver)
     {
         $this->driver = $driver;
     }
@@ -59,20 +58,6 @@ class HaploDb extends HaploSingleton
             $e->getLine(),
             $e->getFile()
         ));
-    }
-
-    /**
-     * @param HaploDbDriver $driver
-     * @return mixed
-     */
-    public static function getInstance(HaploDbDriver $driver = null)
-    {
-        $class = get_called_class();
-        $instanceKey = $class.$driver->getInstanceHash();
-        if (!isset(self::$instances[$instanceKey])) {
-            self::$instances[$instanceKey] = new $class($driver);
-        }
-        return self::$instances[$instanceKey];
     }
     
     // make all PDO functions available directly to class

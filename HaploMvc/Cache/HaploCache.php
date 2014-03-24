@@ -1,7 +1,6 @@
 <?php
 namespace HaploMvc\Cache;
 
-use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\HaploApp;
 use HaploMvc\Exception\HaploLibraryNotFoundException;
 
@@ -9,7 +8,7 @@ use HaploMvc\Exception\HaploLibraryNotFoundException;
  * Class HaploCache
  * @package HaploMvc
  */
-class HaploCache extends HaploSingleton
+class HaploCache
 {
     const CACHE_TYPE_FILE = 'file';
     const CACHE_TYPE_MEMCACHED = 'memcached';
@@ -18,21 +17,8 @@ class HaploCache extends HaploSingleton
 
     /**
      * @param HaploApp $app
-     * @return mixed
      */
-    public static function getInstance(HaploApp $app = null)
-    {
-        $class = get_called_class();
-        if (!isset(self::$instances[$class]) && !is_null($app)) {
-            self::$instances[$class] = new $class($app);
-        }
-        return self::$instances[$class];
-    }
-
-    /**
-     * @param HaploApp $app
-     */
-    protected function __construct(HaploApp $app)
+    public function __construct(HaploApp $app)
     {
         $this->app = $app;
     }

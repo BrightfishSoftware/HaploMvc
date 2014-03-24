@@ -1,11 +1,10 @@
 <?php
 namespace HaploMvc\Config;
 
-use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\HaploApp;
 use HaploMvc\Exception\HaploConfigParseFileException;
 
-class HaploConfig extends HaploSingleton
+class HaploConfig
 {
     /**
      * @var HaploApp
@@ -30,7 +29,7 @@ class HaploConfig extends HaploSingleton
      * @param HaploApp $app
      * @return HaploConfig
      */
-    protected function __construct(HaploApp $app)
+    public function __construct(HaploApp $app)
     {
         $this->app = $app;
         $this->config['_files'] = array();
@@ -145,21 +144,6 @@ class HaploConfig extends HaploSingleton
             }
         }
         return $config1;
-    }
-
-    /**
-     * Static helper method used to ensure only one instance of the class is instantiated
-     *
-     * @param HaploApp $app
-     * @return HaploConfig
-     */
-    static public function getInstance(HaploApp $app = null)
-    {
-        $class = get_called_class();
-        if (!isset(self::$instances[$class]) && !is_null($app)) {
-            self::$instances[$class] = new $class($app);
-        }
-        return self::$instances[$class];
     }
 
     /**

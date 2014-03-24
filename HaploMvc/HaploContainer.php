@@ -14,6 +14,8 @@ class HaploContainer extends HaploSingleton
     protected $items = array();
     /** @var array */
     protected $params = array();
+    /** @var array */
+    protected $objects = array();
 
     protected function __construct()
     {
@@ -36,7 +38,7 @@ class HaploContainer extends HaploSingleton
      * @param string $name
      * @param Closure $callback
      */
-    public function registerService($name, $callback)
+    public function register($name, $callback)
     {
         $this->items[$name] = $callback;
     }
@@ -45,9 +47,20 @@ class HaploContainer extends HaploSingleton
      * @param string $name
      * @return mixed
      */
-    public function getService($name)
+    public function get($name)
     {
-        return array_key_exists($name, $this->items) ? $this->items[$name]($this) : false;
+        if (array_key_exists($name, $this->items)) {
+            $this->objects[$name] = $this->items[$name]($this);
+            return $this->objects[$name];
+        }
+        return false;
+    }
+
+    public function getSingle($name) {
+        if (array_key_exists($name, $this->objects) && !is_null($this->objects[$name])) {
+            return $this->objects[$name];
+        }
+        return $this->get($name);
     }
 
     /**

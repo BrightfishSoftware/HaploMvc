@@ -2,7 +2,6 @@
 namespace HaploMvc;
 
 use Closure;
-use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\Exception\HaploActionTypeNotSupportedException;
 use HaploMvc\Exception\HaploNoDefault404DefinedException;
 use HaploMvc\Exception\HaploNoActionDefinedException;
@@ -13,7 +12,7 @@ use HaploMvc\Exception\HaploClassNotFoundException;
  * Class HaploRouter
  * @package HaploMvc
  */
-class HaploRouter extends HaploSingleton
+class HaploRouter
 {
     /** @var HaploApp */
     protected $app;
@@ -41,26 +40,9 @@ class HaploRouter extends HaploSingleton
     /**
      * @param HaploApp $app
      */
-    protected function __construct(HaploApp $app)
+    public function __construct(HaploApp $app)
     {
         $this->app = $app;
-    }
-
-    /**
-     * Static helper method used to ensure only one instance of the class is instantiated
-     * This overrides the base version in the abstract HaploSingleton class because we
-     * need to support parameters
-     *
-     * @param HaploApp $app
-     * @return HaploRouter
-     */
-    public static function getInstance(HaploApp $app = null)
-    {
-        $class = get_called_class();
-        if (!isset(self::$instances[$class]) && !is_null($app)) {
-            self::$instances[$class] = new $class($app);
-        }
-        return self::$instances[$class];
     }
 
     /**
