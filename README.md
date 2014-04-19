@@ -33,15 +33,23 @@ Step 1: Install Composer (assuming you haven't already got it):
     curl -sS https://getcomposer.org/installer | php
     mv composer.phar /usr/local/bin/composer
 
-Step 2: Install HaploMvc
+Step 2: Include HaploMvc
 
-    composer create-project brightfishsoftware/haplomvc --stability="dev"
+TBD
+    
+Step 3: Setup site directory structure
+
+TBD
 
 ## Getting Started
 
 TBD
 
 ## Change Log
+
+### 0.0.17 (20 April 2014)
+
+Split framework out into core files and example site repo.
 
 ### 0.0.15 (23rd March 2014)
 
