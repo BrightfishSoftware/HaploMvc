@@ -12,8 +12,6 @@ class Home extends HaploAction
 {
     protected function doAll()
     {
-        $booksModel = new BooksModel($this->app);
-        $booksModel->get(1);
         $template = $this->app->template->create('Home.php');
         $template->display();
     }

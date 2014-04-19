@@ -1,22 +1,19 @@
 <?php
 namespace HaploMvc\Tests;
 
-use HaploMvc\Db\HaploMySqlDbDriver;
 use PHPUnit_Framework_TestCase;
-use HaploMvc\Db\HaploDb;
+use HaploMvc\HaploApp;
 use HaploMvc\Db\HaploSqlBuilder;
 
 class HaploSqlBuilderTests extends PHPUnit_Framework_TestCase
 {
-    /** @var HaploDb */
-    protected $db;
     /** @var HaploSqlBuilder */
     protected $sqlBuilder;
 
     public function setUp()
     {
-        $this->db = new HaploDb(new HaploMySqlDbDriver());
-        $this->sqlBuilder = new HaploSqlBuilder($this->db);
+        $app = new HaploApp(dirname(dirname(__DIR__)));
+        $this->sqlBuilder = new HaploSqlBuilder($app->db);
     }
 
     public function tearDown()
