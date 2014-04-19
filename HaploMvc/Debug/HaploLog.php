@@ -9,31 +9,29 @@ use HaploMvc\HaploApp;
  */
 class HaploLog
 {
+    protected $app;
+
+    public function __construct(HaploApp $app) {
+        $this->app = $app;
+    }
+
     /**
      * @param string $msg
-     * @param HaploApp $app
      */
-    public static function logError($msg, HaploApp $app = null)
+    public function logError($msg)
     {
-        if (!$app instanceof HaploApp) {
-            $app = HaploApp::getInstance();
-        }
-        if ($app->config->getKey('logging', 'logErrors', true)) {
-            error_log($msg, 3, $app->config->getKey('logging', 'errorFile'));
+        if ($this->app->config->getKey('logging', 'logErrors', true)) {
+            error_log($msg, 3, $this->app->config->getKey('logging', 'errorFile'));
         }
     }
 
     /**
      * @param string $msg
-     * @param HaploApp $app
      */
-     public static function logInfo($msg, HaploApp $app = null)
+     public function logInfo($msg)
      {
-        if (!$app instanceof HaploApp) {
-            $app = HaploApp::getInstance();
-        }
-        if ($app->config->getKey('logging', 'logInfo', true)) {
-            error_log($msg, 3, $app->config->getKey('logging', 'infoFile'));
+        if ($this->app->config->getKey('logging', 'logInfo', true)) {
+            error_log($msg, 3, $this->app->config->getKey('logging', 'infoFile'));
         }
     }
 }

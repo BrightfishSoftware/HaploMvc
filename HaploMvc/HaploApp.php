@@ -1,7 +1,6 @@
 <?php
 namespace HaploMvc;
 
-use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\Db\HaploActiveRecord;
 use HaploMvc\Config\HaploConfig;
 use HaploMvc\Template\HaploTemplateFactory;
@@ -15,7 +14,7 @@ use HaploMvc\Db\HaploSqlBuilder;
  * Class HaploApp
  * @package HaploMvc
  */
-class HaploApp extends HaploSingleton
+class HaploApp
 {
     /** @var string */
     public $appBase;
@@ -33,6 +32,8 @@ class HaploApp extends HaploSingleton
     public $nonce = null;
     /** @var \HaploMvc\Template\HaploTemplateFactory */
     public $template = null;
+    /** @var \HaploMvc\Debug\HaploLog */
+    public $log;
     /** @var \HaploMvc\Db\HaploDb */
     public $db = null;
     /** @var \HaploMvc\Db\HaploSqlBuilder */
@@ -45,36 +46,24 @@ class HaploApp extends HaploSingleton
         'cache',
         'nonce',
         'template',
+        'log',
         'db',
         'sqlBuilder'
     );
 
     /**
-     * Static helper method used to ensure only one instance of the class is instantiated
-     *
      * @param string $appBase
-     * @return HaploApp
+     * @param HaploContainer $container
      */
-    static public function getInstance($appBase = null)
-    {
-        $class = get_called_class();
-        if (!isset(static::$instances[$class]) && !is_null($appBase)) {
-            static::$instances[$class] = new $class($appBase);
-        }
-        return static::$instances[$class];
-    }
-
-    /**
-     * @param string $appBase
-     */
-    protected function __construct($appBase)
+    public function __construct($appBase = null, HaploContainer $container = null)
     {
         $this->appBase = $appBase;
-        $this->container = HaploContainer::getInstance();
+        $this->container = is_null($container) ? new HaploContainer : $container;
         $this->container->setParam('app', $this);
+        $this->initServices();
     }
 
-    public function initServices()
+    protected function initServices()
     {
         $this->container->register('config', function(HaploContainer $c) {
             return new HaploConfig($c->getParam('app'));

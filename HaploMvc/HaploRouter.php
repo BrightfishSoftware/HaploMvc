@@ -164,7 +164,7 @@ class HaploRouter
      * @param string $default default locale to use
      * @return string locale - if not set use a default
      **/
-    public static function getBrowserLocale($default = 'en-us')
+    public function getBrowserLocale($default = 'en-us')
     {
         if (
             !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) && 
@@ -180,7 +180,7 @@ class HaploRouter
      *
      * @return string
      **/
-    public static function getRequestUri()
+    public function getRequestUri()
     {
         return array_key_exists('REQUEST_URI', $_SERVER) ? $_SERVER['REQUEST_URI'] : '';
     }
@@ -190,7 +190,7 @@ class HaploRouter
      *
      * @return string
      **/
-    public static function getRemoteAddr()
+    public function getRemoteAddr()
     {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -210,7 +210,7 @@ class HaploRouter
      *
      * @return string
      **/
-    public static function getReferer()
+    public function getReferer()
     {
         return array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER'] : '';
     }
@@ -220,7 +220,7 @@ class HaploRouter
      *
      * @return string
      **/
-    public static function getRequestMethod()
+    public function getRequestMethod()
     {
         return array_key_exists('REQUEST_METHOD', $_SERVER) ? strtolower($_SERVER['REQUEST_METHOD']) : '';
     }
@@ -230,7 +230,7 @@ class HaploRouter
      *
      * @return boolean
      **/
-    public static function isAjax()
+    public function isAjax()
     {
         return (
             array_key_exists('HTTP_X_REQUESTED_WITH', $_SERVER) &&
@@ -334,7 +334,7 @@ class HaploRouter
             }
             $action = '\\Actions\\'.$action;
             if (class_exists($action)) {
-                $action::getInstance($this->app);
+                new $action($this->app);
             } else {
                 throw new HaploClassNotFoundException(sprintf("%s not found", $action));
             }

@@ -1,9 +1,8 @@
 <?php
 namespace HaploMvc\Action;
 
-use HaploMvc\Pattern\HaploSingleton;
 use HaploMvc\HaploApp;
-use HaploMvc\HaploRouter;
+use Actions\PageNotFound;
 use HaploMvc\Exception\HaploMethodNotFoundException;
 use HaploMvc\Exception\HaploActionNotFoundException;
 
@@ -11,7 +10,7 @@ use HaploMvc\Exception\HaploActionNotFoundException;
  * Class HaploAction
  * @package HaploMvc
  */
-abstract class HaploAction extends HaploSingleton
+abstract class HaploAction
 {
     /** @var HaploApp */
     protected $app;
@@ -46,15 +45,13 @@ abstract class HaploAction extends HaploSingleton
     protected $success = false;
 
     /**
-     * Class constructor - not called directly as the class is instantiated as a Singleton
-     *
      * @param \HaploMvc\HaploApp $app
      * @return \HaploMvc\Action\HaploAction
      */
-    protected function __construct(HaploApp $app)
+    public function __construct(HaploApp $app)
     {
         $this->app = $app;
-        $requestMethod = HaploRouter::getRequestMethod();
+        $requestMethod = $this->app->router->getRequestMethod();
 
         if (!method_exists($this, 'doInit') || $this->doInit()) {
             foreach ($this->methodOrder as $methodType) {
@@ -78,19 +75,6 @@ abstract class HaploAction extends HaploSingleton
                 }
             }
         }
-    }
-
-    /**
-     * @param HaploApp $app
-     * @return mixed
-     */
-    public static function getInstance(HaploApp $app = null)
-    {
-        $class = get_called_class();
-        if (!isset(self::$instances[$class]) && !is_null($app)) {
-            self::$instances[$class] = new $class($app);
-        }
-        return self::$instances[$class];
     }
 
     /**
@@ -127,7 +111,7 @@ abstract class HaploAction extends HaploSingleton
         header('HTTP/1.1 404 Not Found');
             
         if (class_exists('\Actions\PageNotFound')) {
-            \Actions\PageNotFound::getInstance($this->app);
+            new PageNotFound($this->app);
             exit;
         } else {
             throw new HaploActionNotFoundException('No default 404 action found. Add \Actions\PageNotFound to suppress this message.');

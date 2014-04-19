@@ -3,18 +3,18 @@ namespace HaploMvc\Debug;
 
 class HaploTimer
 {
-    protected static $startTime;
+    protected $startTime;
     
     /**
      * Start timing script
      **/
-    public static function start()
+    public function start()
     {
-        self::$startTime = microtime(true);
+        $this->$startTime = microtime(true);
     }
 
-    public static function get()
+    public function get()
     {
-        return (microtime(true) - self::$startTime);
+        return (microtime(true) - $this->$startTime);
     }
 }

@@ -2,13 +2,12 @@
 namespace HaploMvc;
 
 use Closure;
-use HaploMvc\Pattern\HaploSingleton;
 
 /**
  * Class HaploContainer
  * @package HaploMvc
  */
-class HaploContainer extends HaploSingleton
+class HaploContainer
 {
     /** @var array */
     protected $items = array();
@@ -17,30 +16,21 @@ class HaploContainer extends HaploSingleton
     /** @var array */
     protected $objects = array();
 
-    protected function __construct()
+    public function __construct()
     {
 
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function getInstance()
-    {
-        $class = get_called_class();
-        if (!isset(static::$instances[$class])) {
-            static::$instances[$class] = new $class;
-        }
-        return static::$instances[$class];
     }
 
     /**
      * @param string $name
      * @param Closure $callback
+     * @param bool $replace
      */
-    public function register($name, $callback)
+    public function register($name, $callback, $replace = false)
     {
-        $this->items[$name] = $callback;
+        if (!array_key_exists($name, $this->items) || $replace) {
+            $this->items[$name] = $callback;
+        }
     }
 
     /**
