@@ -57,7 +57,7 @@ class HaploConfig
     protected function getEnvironments()
     {
         $environmentsFile = $this->app->appBase.'/Config/Environments.ini';
-        $server = gethostname();
+        $server = defined('HOSTNAME') ? HOSTNAME : gethostname();
 
         if (file_exists($environmentsFile)) {
             $environments = parse_ini_file($environmentsFile, true);
@@ -65,10 +65,10 @@ class HaploConfig
             if (!empty($environments)) {
                 foreach ($environments as $key => $details) {
                     if (
-                        $key != 'default' &&
+                        $key !== 'default' &&
                         (
-                            $key == $server || // exact match for environment
-                            (substr($key, -1) == '*' && substr($server, 0, strlen($key) - 1)) // wildcard
+                            $key === $server || // exact match for environment
+                            (substr($key, -1) === '*' && substr($server, 0, strlen($key) - 1)) // wildcard
                         )
                     ) {
                         $this->environment = $details;
@@ -97,7 +97,7 @@ class HaploConfig
         $dir = dir($path);
 
         while (false !== ($file = $dir->read())) {
-            if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) == 'ini') {
+            if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'ini') {
                 $files[] = $file;
             }
         }
