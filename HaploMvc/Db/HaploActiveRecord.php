@@ -4,6 +4,7 @@ namespace HaploMvc\Db;
 use HaploMvc\Exception\HaploDbIdNotFoundException;
 use HaploMvc\Exception\HaploDbColumnDoesNotExistException;
 use HaploMvc\Exception\HaploDbTableNameNotSetException;
+use HaploMvc\HaploApp;
 
 /**
  * Class HaploActiveRecord
@@ -23,13 +24,12 @@ abstract class HaploActiveRecord
     public $dirty = false;
 
     /**
-     * @param HaploDb $db
-     * @param HaploSqlBuilder $sqlBuilder
+     * @param HaploApp $app
      */
-    public static function setDependencies(HaploDb $db, HaploSqlBuilder $sqlBuilder = null)
+    public static function setDependencies(HaploApp $app)
     {
-        self::$db = $db;
-        self::$sqlBuilder = !is_null($sqlBuilder) ? $sqlBuilder : new HaploSqlBuilder($db);
+        self::$db = $app->db;
+        self::$sqlBuilder = $app->sqlBuilder;
     }
 
     /**

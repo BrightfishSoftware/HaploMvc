@@ -9,6 +9,7 @@ use HaploMvc\Cache\HaploCache;
 use HaploMvc\Security\HaploNonce;
 use HaploMvc\Db\HaploDb;
 use HaploMvc\Db\HaploSqlBuilder;
+use HaploMvc\Debug\HaploLog;
 
 /**
  * Class HaploApp
@@ -83,20 +84,23 @@ class HaploApp
         $this->container->register('template', function(HaploContainer $c) {
             return new HaploTemplateFactory($c->getParam('app'));
         });
+        $this->container->register('log', function(HaploContainer $c) {
+            return new HaploLog($c->getParam('app'));
+        });
         $this->container->register('db', function(HaploContainer $c) {
             $dbConfig = $c->getParam('app')->config->getSection('db');
             $dbDriver = array_key_exists('driver', $dbConfig) ? $dbConfig['driver'] : 'MySql';
             $class = sprintf('\HaploMvc\Db\Haplo%sDbDriver', $dbDriver);
-            return new HaploDb(new $class($dbConfig));
+            return new HaploDb($c->getParam('app'), new $class($dbConfig));
         });
         $this->container->register('sqlBuilder', function(HaploContainer $c) {
             return new HaploSqlBuilder($c->getParam('app')->db);
         });
+        HaploActiveRecord::setDependencies($this);
         // shortcuts
         foreach ($this->defaultServices as $service) {
             $this->$service = $this->container->getSingle($service);
         }
-        HaploActiveRecord::setDependencies($this->db, $this->sqlBuilder);
     }
 
     public function run()

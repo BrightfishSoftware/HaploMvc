@@ -4,7 +4,7 @@ namespace HaploMvc\Db;
 use PDO;
 use PDOException;
 use Exception;
-use HaploMvc\Debug\HaploLog;
+use HaploMvc\HaploApp;
 
 /**
  * Class HaploDb
@@ -12,6 +12,8 @@ use HaploMvc\Debug\HaploLog;
  */
 class HaploDb
 {
+    /** @var HaploApp */
+    public $app = null;
     /** @var HaploDbDriver */
     public $driver = null;
     /** @var PDO */
@@ -22,10 +24,12 @@ class HaploDb
     protected $lastRowCount = null;
 
     /**
+     * @param HaploApp $app
      * @param HaploDbDriver $driver
      */
-    public function __construct(HaploDbDriver $driver)
+    public function __construct(HaploApp $app, HaploDbDriver $driver)
     {
+        $this->app = $app;
         $this->driver = $driver;
     }
 
@@ -51,7 +55,7 @@ class HaploDb
      */
     protected function logError(Exception $e)
     {
-        HaploLog::logError(sprintf(
+        $this->app->log->logError(sprintf(
             'DB Error (Msg: %s - Code: %d) on line %d in %s', 
             $e->getMessage(), 
             $e->getCode(),
