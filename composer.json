@@ -4,7 +4,6 @@
     "keywords": ["framework", "mvc", "haplo", "haplomvc"],
     "license": "FreeBSD",
     "require": {
-        "php": ">=5.3.0",
         "zendframework/zend-escaper" : ">=2.2.0"
     },
     "require-dev": {

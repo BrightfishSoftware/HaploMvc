@@ -12,7 +12,7 @@ class HaploSqlBuilderTests extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $app = new HaploApp(dirname(dirname(__DIR__)));
+        $app = new HaploApp(APP_BASE);
         $this->sqlBuilder = new HaploSqlBuilder($app->db);
     }
 

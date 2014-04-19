@@ -269,8 +269,9 @@ class HaploTemplate
         // use output buffers to capture data from require statement and store in variable
         ob_start();
 
-        if (file_exists($this->filePath.'/Templates/'.$this->filename)) {
-            require $this->filePath.'/Templates/'.$this->filename;
+        $path = $this->filePath.'/Templates/'.$this->filename;
+        if (file_exists($path)) {
+            require $path;
         } else {
             throw new HaploTemplateNotFoundException("Template ($this->filename) doesn't exist.");
         }
