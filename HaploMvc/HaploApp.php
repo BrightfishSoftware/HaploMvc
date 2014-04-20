@@ -37,8 +37,6 @@ class HaploApp
     public $log;
     /** @var \HaploMvc\Db\HaploDb */
     public $db = null;
-    /** @var \HaploMvc\Db\HaploSqlBuilder */
-    public $sqlBuilder = null;
     /** @var array */
     public $defaultServices = array(
         'config',
@@ -93,10 +91,6 @@ class HaploApp
             $class = sprintf('\HaploMvc\Db\Haplo%sDbDriver', $dbDriver);
             return new HaploDb($c->getParam('app'), new $class($dbConfig));
         });
-        $this->container->register('sqlBuilder', function(HaploContainer $c) {
-            return new HaploSqlBuilder($c->getParam('app')->db);
-        });
-        HaploActiveRecord::setDependencies($this);
         // shortcuts
         foreach ($this->defaultServices as $service) {
             $this->$service = $this->container->getSingle($service);
