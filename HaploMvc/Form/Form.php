@@ -41,7 +41,7 @@ abstract class Form
      */
     public function assignToTemplate(HaploTemplate $template, array $escapeTypes = []) {
         foreach ($this->getPublicProperties() as $object) {
-            $property = $object['name'];
+            $property = $object->name;
             if (array_key_exists($property, $escapeTypes)) {
                 $template->set($property, $this->$property, $escapeTypes[$property]);
             } else {
