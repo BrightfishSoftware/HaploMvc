@@ -26,11 +26,12 @@ abstract class Form
      * @param array $filterTypes
      */
     public function assignFromPost(array $filterTypes = []) {
-        foreach ($this->getPublicProperties() as $key => $value) {
-            if (array_key_exists($key, $filterTypes)) {
-                $this->$key = HaploInput::post($key, $this->$key, $filterTypes[$key]);
+        foreach ($this->getPublicProperties() as $object) {
+            $property = $object->name;
+            if (array_key_exists($property, $filterTypes)) {
+                $this->$property = HaploInput::post($property, $this->$property, $filterTypes[$property]);
             } else {
-                $this->$key = HaploInput::post($key, $this->$key);
+                $this->$property = HaploInput::post($property, $this->$property);
             }
         }
     }
