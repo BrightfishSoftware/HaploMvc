@@ -43,9 +43,13 @@ abstract class Form
         foreach ($this->getPublicProperties() as $object) {
             $property = $object->name;
             if (array_key_exists($property, $escapeTypes)) {
-                $template->set($property, $this->$property, $escapeTypes[$property]);
+                $template->set($property, $this->$property, array(
+                    'escapeMethod' => $escapeTypes[$property]
+                ));
             } else {
-                $template->set($property, $this->$property);
+                $template->set($property, $this->$property, array(
+                    'escapeMethod' => 'escapeAttr'
+                ));
             }
         }
     }
