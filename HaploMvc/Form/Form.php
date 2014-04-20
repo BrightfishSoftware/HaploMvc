@@ -40,11 +40,16 @@ abstract class Form
      * @param array $escapeTypes
      */
     public function assignToTemplate(HaploTemplate $template, array $escapeTypes = []) {
-        foreach ($this->getPublicProperties() as $key => $value) {
-            if (array_key_exists($key, $escapeTypes)) {
-                $template->set($key, $value, $escapeTypes[$key]);
+        foreach ($this->getPublicProperties() as $object) {
+            $property = $object->name;
+            if (array_key_exists($property, $escapeTypes)) {
+                $template->set($property, $this->$property, array(
+                    'escapeMethod' => $escapeTypes[$property]
+                ));
             } else {
-                $template->set($key, $value);
+                $template->set($property, $this->$property, array(
+                    'escapeMethod' => 'escapeAttr'
+                ));
             }
         }
     }
