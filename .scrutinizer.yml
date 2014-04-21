@@ -1,6 +1,7 @@
-tools:
-  php_code_coverage:
-    test_command: phpunit -c HaploMvc/phpunit.xml
-
 before_commands:
-  - "composer install --prefer-source"
+    - 'composer install --prefer-source'
+tools:
+    sensiolabs_security_checker: true
+    php_code_coverage:
+        config_path: HaploMvc/phpunit.xml
+    php_loc: true
