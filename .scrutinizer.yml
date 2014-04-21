@@ -1,0 +1,6 @@
+tools:
+    php_code_coverage:
+      test_command: phpunit -c HaploMvc/phpunit.xml
+
+before_commands:
+    - "composer install --prefer-source"
