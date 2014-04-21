@@ -1,8 +1,6 @@
 tools:
   php_code_coverage:
     test_command: phpunit -c HaploMvc/phpunit.xml
-  php_sim: true
-  php_changetracking: true
 
 before_commands:
   - "composer install --prefer-source"
