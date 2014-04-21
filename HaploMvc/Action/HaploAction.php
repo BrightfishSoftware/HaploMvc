@@ -9,6 +9,25 @@ use HaploMvc\Exception\HaploActionNotFoundException;
 /**
  * Class HaploAction
  * @package HaploMvc
+ *
+ * @method bool doInit()
+ * @method bool doGet()
+ * @method bool doPost()
+ * @method bool doHead()
+ * @method bool doPut()
+ * @method bool doDelete()
+ * @method bool doGetValidate
+ * @method bool doGetSuccess()
+ * @method bool doGetFailure()
+ * @method bool doPostValidate()
+ * @method bool doPostSuccess()
+ * @method bool doPostFailure()
+ * @method bool doAllExceptGet()
+ * @method bool doAllExceptPost()
+ * @method bool doAllExceptHead()
+ * @method bool doAllExceptPut()
+ * @method bool doAllExceptDelete()
+ * @method bool doAll()
  */
 abstract class HaploAction
 {
@@ -81,10 +100,9 @@ abstract class HaploAction
      * Check for valid method calls
      *
      * @param string $name Name of method being run
-     * @param array $args
      * @throws HaploMethodNotFoundException
      */
-    public function __call($name, $args)
+    public function __call($name)
     {
         if (!in_array($name, array(
             'doInit', 'doGet', 'doPost', 'doHead', 'doPut', 'doDelete',

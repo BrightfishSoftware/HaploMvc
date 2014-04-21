@@ -13,7 +13,10 @@ class HaploConfig
     /**
      * @var string
      */
-    protected $environment;
+    protected $environment = array(
+        'name' => '',
+        'files' => array()
+    );
 
     /**
      * Stores merged config details from all config files
@@ -115,7 +118,7 @@ class HaploConfig
      * @param array $files Files to process
      * @throws HaploConfigParseFileException
      */
-    protected function parseFiles($path, $files)
+    protected function parseFiles($path, array $files)
     {
         foreach ($files as $file) {
             $config = parse_ini_file("$path/$file", true);

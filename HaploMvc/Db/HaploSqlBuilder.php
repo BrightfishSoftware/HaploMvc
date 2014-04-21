@@ -525,12 +525,11 @@ class HaploSqlBuilder
 
     /**
      * @param string $table
-     * @param string $on
      * @return HaploSqlBuilder $this
      */
-    public function innerJoin($table, $on)
+    public function innerJoin($table)
     {
-        return $this->_join($table, $on, 'INNER JOIN');
+        return $this->_join($table, 'INNER JOIN');
     }
 
     /**

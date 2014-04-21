@@ -16,7 +16,7 @@ abstract class HaploActiveRecord
     /** @var HaploSqlBuilder */
     protected static $sqlBuilder = null;
     /** @var array */
-    protected $fields = null;
+    protected $fields = array();
     /** @var int */
     public $id = null;
     /** @var bool */
@@ -172,7 +172,7 @@ abstract class HaploActiveRecord
     {
         $params = static::formatBindParams($params);
         list($start, $count) = self::$db->getOffsetsFromPage($page, $numPerPage);
-        $results = self::$db->getArray($sql, $params, $start, $count, true);
+        $results = self::$db->getArray($sql, $params, $start, $count);
         $paging = self::$db->getPaging($page, $numPerPage);
         $objects = array();
         foreach ($results as $result) {
@@ -196,7 +196,7 @@ abstract class HaploActiveRecord
     {
         /** @var object $result */
         $result = self::$sqlBuilder->where(str_replace($name, 'find_by_', ''), '=', $args[0])
-            ->get(static::tableName(), true);
+            ->get(static::tableName());
         if (!empty($result)) {
             return static::hydrate($result);
         } else {

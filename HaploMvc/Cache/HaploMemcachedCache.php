@@ -9,13 +9,18 @@ use Memcached;
  */
 class HaploMemcachedCache
 {
+    /** @var \Memcached */
+    protected $memcached;
+    /** @var string */
     protected $key;
+    /** @var int */
     protected $cacheTime;
+    /** @var array */
     protected static $cache = array();
 
     /**
      * @param string $key
-     * @param $options
+     * @param array $options
      */
     public function __construct($key, array $options)
     {

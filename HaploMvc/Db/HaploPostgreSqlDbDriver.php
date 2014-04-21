@@ -39,7 +39,7 @@ class HaploPostgreSqlDbDriver extends HaploDbDriver
     public function connect()
     {
         return new PDO(
-            $this->getDsn($this->params),
+            $this->getDsn(),
             $this->params['user'],
             $this->params['pass'],
             $this->driverOptions

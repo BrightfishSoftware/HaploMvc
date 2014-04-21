@@ -46,7 +46,7 @@ class HaploSqliteDbDriver extends HaploDbDriver
     public function connect()
     {
         return new PDO(
-            $this->getDsn($this->params),
+            $this->getDsn(),
             null,
             null,
             $this->driverOptions
