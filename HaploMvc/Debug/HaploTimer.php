@@ -10,11 +10,11 @@ class HaploTimer
      **/
     public function start()
     {
-        $this->$startTime = microtime(true);
+        $this->startTime = microtime(true);
     }
 
     public function get()
     {
-        return (microtime(true) - $this->$startTime);
+        return (microtime(true) - $this->startTime);
     }
 }
