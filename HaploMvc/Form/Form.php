@@ -3,6 +3,7 @@ namespace HaploMvc\Form;
 
 use HaploMvc\Template\HaploTemplate;
 use HaploMvc\Input\HaploInput;
+use HaploMvc\HaploApp;
 use ReflectionObject;
 use ReflectionProperty;
 
@@ -14,12 +15,25 @@ abstract class Form
 {
     /** @var array */
     protected $errors = [];
+    /** @var  HaploApp */
+    protected $app;
+    /** @var \HaploMvc\Security\HaploNonce */
+    public $nonce;
+
+    public function __construct(HaploApp $app)
+    {
+        $this->app = $app;
+    }
 
     /**
      * @return bool
      */
     public function validate() {
-        return true;
+        if (!$this->app->nonce->check()) {
+            $this->errors['nonce'] = 'CSRF token check failed.';
+        }
+
+        return empty($this->errors);
     }
 
     /**
@@ -41,6 +55,8 @@ abstract class Form
      * @param array $escapeTypes
      */
     public function assignToTemplate(HaploTemplate $template, array $escapeTypes = []) {
+        $this->nonce = $this->app->nonce->get();
+
         foreach ($this->getPublicProperties() as $object) {
             $property = $object->name;
             if (array_key_exists($property, $escapeTypes)) {
