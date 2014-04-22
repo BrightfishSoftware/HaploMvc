@@ -139,6 +139,10 @@ abstract class HaploActiveRecord
         $this->id = null;
     }
 
+    /**
+     * @param string $field
+     * @return string
+     */
     protected function getFieldFromProperty($field) {
         return strtolower(preg_replace('/([^A-Z])([A-Z])/', "$1_$2", $field));
     }
@@ -188,6 +192,11 @@ abstract class HaploActiveRecord
         return $page !== 0 && $numPerPage !== 0 ? array($objects, $paging) : $objects;
     }
 
+    /**
+     * @param $sql
+     * @param array $params
+     * @return bool|object
+     */
     public static function findOneBySql($sql, $params = array())
     {
         $params = static::formatBindParams($params);
@@ -230,7 +239,11 @@ abstract class HaploActiveRecord
         return $object;
     }
 
-    protected static function formatBindParams($params)
+    /**
+     * @param array $params
+     * @return array
+     */
+    protected static function formatBindParams(array $params)
     {
         $processed = array();
         foreach ($params as $key => $value) {
