@@ -66,10 +66,12 @@ abstract class HaploActiveRecord
      */
     public function __set($name, $value)
     {
-        if (!is_null($this->id) && !array_key_exists($name, $this->fields)) {
-            throw new HaploDbColumnDoesNotExistException(sprintf('Column %s does not exist in table %s.', $name, static::tableName()));
+        $field = $this->getFieldFromProperty($name);
+        if (!is_null($this->id) && !array_key_exists($field, $this->fields)) {
+            throw new HaploDbColumnDoesNotExistException(sprintf('Column %s does not exist in table %s.', $field, static::tableName()));
         }
-        $this->fields[$name] = $value;
+        $setter = 'set'.ucfirst($name);
+        $this->fields[$field] = method_exists($this, $setter) ? $this->$setter($value) : $value;
         $this->dirty = true;
         return $this;
     }
@@ -81,13 +83,14 @@ abstract class HaploActiveRecord
      */
     public function __get($name)
     {
-        if ($name === static::primaryKey()) {
+        $field = $this->getFieldFromProperty($name);
+        if ($field === static::primaryKey()) {
             return $this->id;
         }
-        if (!is_null($this->id) && !array_key_exists($name, $this->fields)) {
-            throw new HaploDbColumnDoesNotExistException(sprintf('Column %s does not exist in table %s.', $name, $this->tableName()));
+        if (!is_null($this->id) && !array_key_exists($field, $this->fields)) {
+            throw new HaploDbColumnDoesNotExistException(sprintf('Column %s does not exist in table %s.', $field, $this->tableName()));
         }
-        return array_key_exists($name, $this->fields) ? $this->fields[$name] : null;
+        return array_key_exists($field, $this->fields) ? $this->fields[$field] : null;
     }
 
     /**
@@ -134,6 +137,10 @@ abstract class HaploActiveRecord
         self::$sqlBuilder->where(static::primaryKey(), '=', $this->id)
             ->delete(static::tableName());
         $this->id = null;
+    }
+
+    protected function getFieldFromProperty($field) {
+        return strtolower(preg_replace('/([^A-Z])([A-Z])/', "$1_$2", $field));
     }
 
     /**
