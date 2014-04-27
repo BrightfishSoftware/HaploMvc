@@ -99,10 +99,11 @@ abstract class HaploAction
     /**
      * Check for valid method calls
      *
-     * @param string $name Name of method being run
+     * @param string $name
+     * @param array $args
      * @throws HaploMethodNotFoundException
      */
-    public function __call($name)
+    public function __call($name, $args)
     {
         if (!in_array($name, array(
             'doInit', 'doGet', 'doPost', 'doHead', 'doPut', 'doDelete',
