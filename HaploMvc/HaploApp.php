@@ -101,7 +101,6 @@ class HaploApp
         foreach ($this->defaultServices as $service) {
             $this->$service = $this->container->getSingle($service);
         }
-        $this->session->start();
     }
 
     public function run()

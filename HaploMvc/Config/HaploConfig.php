@@ -79,7 +79,7 @@ class HaploConfig
                     }
                 }
 
-                if (empty($this->environment)) {
+                if (empty($this->environment['name'])) {
                     $this->environment = $environments['default'];
                 }
             } else {

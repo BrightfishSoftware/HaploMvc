@@ -15,9 +15,10 @@ class HaploSession {
     public function __construct(HaploApp $app)
     {
         $this->app = $app;
+        $this->start();
     }
 
-    public function start()
+    protected function start()
     {
         session_name($this->app->config->getKey('sessions', 'name', 'HaploMvc'));
         session_start();
