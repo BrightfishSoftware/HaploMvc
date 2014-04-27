@@ -104,19 +104,8 @@ class HaploApp
         $this->session->start();
     }
 
-    protected function startSession()
-    {
-        session_name($this->config->getKey('sessions', 'name', 'HaploMvc'));
-        session_start();
-    }
-
     public function run()
     {
         $this->router->getAction();
-    }
-
-    public function refreshSession()
-    {
-        session_regenerate_id();
     }
 }
