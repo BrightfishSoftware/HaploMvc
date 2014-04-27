@@ -23,6 +23,8 @@ class HaploApp
     public $container = null;
     /** @var \HaploMvc\Config\HaploConfig  */
     public $config = null;
+    /** @var \HaploMvc\HaploSession */
+    public $session = null;
     /** @var \HaploMvc\HaploRouter */
     public $router = null;
     /** @var \HaploMvc\Translation\HaploTranslator */
@@ -40,6 +42,7 @@ class HaploApp
     /** @var array */
     public $defaultServices = array(
         'config',
+        'session',
         'router',
         'translator',
         'cache',
@@ -66,6 +69,9 @@ class HaploApp
     {
         $this->container->register('config', function(HaploContainer $c) {
             return new HaploConfig($c->getParam('app'));
+        });
+        $this->container->register('session', function(HaploContainer $c) {
+            return new HaploSession($c->getParam('app'));
         });
         $this->container->register('router', function(HaploContainer $c) {
             return new HaploRouter($c->getParam('app'));
@@ -95,10 +101,22 @@ class HaploApp
         foreach ($this->defaultServices as $service) {
             $this->$service = $this->container->getSingle($service);
         }
+        $this->session->start();
+    }
+
+    protected function startSession()
+    {
+        session_name($this->config->getKey('sessions', 'name', 'HaploMvc'));
+        session_start();
     }
 
     public function run()
     {
         $this->router->getAction();
+    }
+
+    public function refreshSession()
+    {
+        session_regenerate_id();
     }
 }

@@ -159,6 +159,7 @@ class HaploTemplate
             'stripHtml' => $this->app->config->getKey('templates', 'stripHtml', true),
             'escape' => $this->app->config->getKey('templates', 'escape', true),
             'escapeMethod' => $this->app->config->getKey('templates', 'escapeMethod', 'escapeHtml'),
+            'convertEntities' => $this->app->config->getKey('templates', 'convertEntities', true),
             'encoding' => $this->app->config->getKey('templates', 'encoding', 'UTF-8')
         );
         $options = array_merge($defaultOptions, $options);
