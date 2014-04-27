@@ -200,7 +200,8 @@ abstract class HaploActiveRecord
     public static function findOneBySql($sql, $params = array())
     {
         $params = static::formatBindParams($params);
-        return self::$db->getRow($sql, $params);
+        $result = self::$db->getRow($sql, $params);
+        return !empty($result) ? static::hydrate($result) : false;
     }
 
     /**
