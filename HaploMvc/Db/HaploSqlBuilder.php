@@ -563,7 +563,7 @@ class HaploSqlBuilder
         $sql = 'INSERT INTO '.$this->db->quoteIdentifier($table);
         if (!empty($data)) {
             $names = array_keys($data);
-            $values = array_keys($data);
+            $values = array_values($data);
             foreach ($names as &$name) {
                 $name = $this->db->quoteIdentifier($name);
             }
