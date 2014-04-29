@@ -100,8 +100,9 @@ abstract class HaploActiveRecord
     protected function load($id)
     {
         $this->id = $id;
-        $this->fields = self::$sqlBuilder->where(static::primaryKey(), '=', $this->id)
+        $sql = self::$sqlBuilder->where(static::primaryKey(), '=', $this->id)
             ->get(static::tableName());
+        $this->fields = static::$db->getRow($sql);
         if (empty($this->fields)) {
             throw new HaploDbIdNotFoundException(sprintf('ID %d not found in %.', $this->id, static::tableName()));
         }
@@ -118,12 +119,16 @@ abstract class HaploActiveRecord
         }
         if (!is_null($this->id)) { // update
             self::$sqlBuilder->where(static::primaryKey(), '=', $this->id);
-            $result = self::$sqlBuilder->update(static::tableName(), $this->fields);
+            $sql = self::$sqlBuilder->update(static::tableName(), $this->fields);
         } else { // insert
-            $result = self::$sqlBuilder->insert(static::tableName(), $this->fields);
+            $sql = self::$sqlBuilder->insert(static::tableName(), $this->fields);
         }
         $this->dirty = false;
-        return $result;
+        if ($result = static::$db->run($sql)) {
+            $this->id = static::$db->lastInsertId();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -134,8 +139,9 @@ abstract class HaploActiveRecord
         if (is_null($this->id)) {
             return false;
         }
-        self::$sqlBuilder->where(static::primaryKey(), '=', $this->id)
+        $sql = self::$sqlBuilder->where(static::primaryKey(), '=', $this->id)
             ->delete(static::tableName());
+        static::$db->run($sql);
         $this->id = null;
     }
 
