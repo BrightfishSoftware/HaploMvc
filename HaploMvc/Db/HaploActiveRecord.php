@@ -66,7 +66,7 @@ abstract class HaploActiveRecord
      */
     public function __set($name, $value)
     {
-        $field = $this->getFieldFromProperty($name);
+        $field = self::camelCaseToUnderscore($name);
         if (!is_null($this->id) && !array_key_exists($field, $this->fields)) {
             throw new HaploDbColumnDoesNotExistException(sprintf('Column %s does not exist in table %s.', $field, static::tableName()));
         }
@@ -83,7 +83,7 @@ abstract class HaploActiveRecord
      */
     public function __get($name)
     {
-        $field = $this->getFieldFromProperty($name);
+        $field = self::camelCaseToUnderscore($name);
         if ($field === static::primaryKey()) {
             return $this->id;
         }
@@ -149,7 +149,7 @@ abstract class HaploActiveRecord
      * @param string $field
      * @return string
      */
-    protected function getFieldFromProperty($field) {
+    protected static function camelCaseToUnderscore($field) {
         return strtolower(preg_replace('/([^A-Z])([A-Z])/', "$1_$2", $field));
     }
 
@@ -160,8 +160,10 @@ abstract class HaploActiveRecord
      */
     public static function __callStatic($name, $args)
     {
-        if (substr($name, 0, strlen('find_by_')) === 'find_by_') {
+        if (substr($name, 0, strlen('findBy')) === 'findBy') {
             return static::findBy($name, $args);
+        } elseif (substr($name, 0, strlen('findOneBy')) === 'findOneBy') {
+            return static::findOneBy($name, $args);
         }
         return false;
     }
@@ -192,8 +194,10 @@ abstract class HaploActiveRecord
         $results = self::$db->getArray($sql, $params, $start, $count);
         $paging = self::$db->getPaging($page, $numPerPage);
         $objects = array();
-        foreach ($results as $result) {
-            $objects[] = static::hydrate($result);
+        if (!empty($results)) {
+            foreach ($results as $result) {
+                $objects[] = static::hydrate($result);
+            }
         }
         return $page !== 0 && $numPerPage !== 0 ? array($objects, $paging) : $objects;
     }
@@ -218,13 +222,36 @@ abstract class HaploActiveRecord
     protected static function findBy($name, $args)
     {
         /** @var object $result */
-        $result = self::$sqlBuilder->where(str_replace($name, 'find_by_', ''), '=', $args[0])
+        $name = str_replace(self::camelCaseToUnderscore($name), 'find_by_', '');
+        $sql = self::$sqlBuilder->where($name, '=', $args[0])
             ->get(static::tableName());
+        $results = self::$db->getArray($sql);
+        $objects = array();
+        if (!empty($results)) {
+            foreach ($results as $result) {
+                $objects[] = static::hydrate($result);
+            }
+            return $objects;
+        }
+        return false;
+    }
+
+    /**
+     * @param string $name
+     * @param array $args
+     * @return bool|HaploActiveRecord
+     */
+    protected static function findOneBy($name, $args)
+    {
+        /** @var object $result */
+        $name = str_replace(self::camelCaseToUnderscore($name), 'find_one_by_', '');
+        $sql = self::$sqlBuilder->where($name, '=', $args[0])
+            ->get(static::tableName());
+        $result = self::$db->getRow($sql);
         if (!empty($result)) {
             return static::hydrate($result);
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
