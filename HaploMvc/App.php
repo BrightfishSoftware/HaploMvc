@@ -74,7 +74,7 @@ class App
         $this->container->register('db', function(Container $c) {
             $dbConfig = $c->getParam('app')->config->getSection('db');
             $dbDriver = array_key_exists('driver', $dbConfig) ? $dbConfig['driver'] : 'MySql';
-            $class = sprintf('\HaploMvc\Db\Haplo%sDbDriver', $dbDriver);
+            $class = sprintf('\HaploMvc\Db\%sDbDriver', $dbDriver);
             $db = new Db($c->getParam('app'), new $class($dbConfig));
             return $db;
         });
