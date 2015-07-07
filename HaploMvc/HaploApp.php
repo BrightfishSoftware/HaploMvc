@@ -40,10 +40,10 @@ class HaploApp
         $this->appBase = $appBase;
         $this->container = is_null($container) ? new HaploContainer : $container;
         $this->container->setParam('app', $this);
-        $this->initServices();
+        $this->init();
     }
 
-    protected function initServices()
+    protected function init()
     {
         $this->container->register('config', function(HaploContainer $c) {
             return new HaploConfig($c->getParam('app'));
