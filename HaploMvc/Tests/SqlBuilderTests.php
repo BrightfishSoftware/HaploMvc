@@ -37,8 +37,8 @@ class SqlBuilderTests extends PHPUnit_Framework_TestCase
 
     protected function removeTranslationDirs()
     {
-        unlink(APP_BASE.'/Translations/en-US.txt');
-        unlink(APP_BASE.'/Cache/haplo-translations-'.md5('en-US').'.cache');
+        @unlink(APP_BASE.'/Translations/en-US.txt');
+        @unlink(APP_BASE.'/Cache/haplo-translations-'.md5('en-US').'.cache');
         rmdir(APP_BASE.'/Translations');
         rmdir(APP_BASE.'/Cache');
     }
