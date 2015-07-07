@@ -14,6 +14,15 @@ use HaploMvc\Debug\HaploLog;
 /**
  * Class HaploApp
  * @package HaploMvc
+ * @property HaploMvc\Config\HaploConfig $config
+ * @property HaploMvc\HaploSession $session
+ * @property HaploMvc\HaploRouter $router
+ * @property HaploMvc\Translation\HaploTranslator $translator
+ * @property HaploMvc\Cache\HaploCache $cache
+ * @property HaploMvc\Security\HaploNonce $nonce
+ * @property HaploMvc\Template\HaploTemplateFactory $template
+ * @property HaploMvc\Debug\HaploLog $log
+ * @property HaploMvc\Db\HaploDb $db
  */
 class HaploApp
 {
@@ -21,37 +30,6 @@ class HaploApp
     public $appBase;
     /** @var \HaploMvc\HaploContainer */
     public $container = null;
-    /** @var \HaploMvc\Config\HaploConfig  */
-    public $config = null;
-    /** @var \HaploMvc\HaploSession */
-    public $session = null;
-    /** @var \HaploMvc\HaploRouter */
-    public $router = null;
-    /** @var \HaploMvc\Translation\HaploTranslator */
-    public $translator = null;
-    /** @var \HaploMvc\Cache\HaploCache */
-    public $cache = null;
-    /** @var \HaploMvc\Security\HaploNonce */
-    public $nonce = null;
-    /** @var \HaploMvc\Template\HaploTemplateFactory */
-    public $template = null;
-    /** @var \HaploMvc\Debug\HaploLog */
-    public $log;
-    /** @var \HaploMvc\Db\HaploDb */
-    public $db = null;
-    /** @var array */
-    public $defaultServices = array(
-        'config',
-        'session',
-        'router',
-        'translator',
-        'cache',
-        'nonce',
-        'template',
-        'log',
-        'db',
-        'sqlBuilder'
-    );
 
     /**
      * @param string $appBase
@@ -97,14 +75,15 @@ class HaploApp
             $class = sprintf('\HaploMvc\Db\Haplo%sDbDriver', $dbDriver);
             return new HaploDb($c->getParam('app'), new $class($dbConfig));
         });
-        // shortcuts
-        foreach ($this->defaultServices as $service) {
-            $this->$service = $this->container->getSingle($service);
-        }
     }
 
     public function run()
     {
         $this->router->getAction();
+    }
+    
+    public function __get($name)
+    {
+        return $this->container->getSingle($name);
     }
 }
