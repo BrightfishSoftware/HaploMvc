@@ -3,4 +3,4 @@
 vendor
 composer.lock
 atlassian-ide-plugin.xml
-cache/haplo*
+cache/Haplo*

@@ -1,9 +1,9 @@
 <?php
 namespace HaploMvc\Form;
 
-use HaploMvc\Template\HaploTemplate;
-use HaploMvc\Input\HaploInput;
-use HaploMvc\HaploApp;
+use HaploMvc\Template\Template;
+use HaploMvc\Input\Input;
+use HaploMvc\App;
 use ReflectionObject;
 use ReflectionProperty;
 
@@ -15,12 +15,12 @@ abstract class Form
 {
     /** @var array */
     protected $errors = [];
-    /** @var  HaploApp */
+    /** @var  App */
     protected $app;
-    /** @var \HaploMvc\Security\HaploNonce */
+    /** @var \HaploMvc\Security\Nonce */
     public $nonce;
 
-    public function __construct(HaploApp $app)
+    public function __construct(App $app)
     {
         $this->app = $app;
     }
@@ -43,30 +43,30 @@ abstract class Form
         foreach ($this->getPublicProperties() as $object) {
             $property = $object->name;
             if (array_key_exists($property, $filterTypes)) {
-                $this->$property = HaploInput::post($property, $this->$property, $filterTypes[$property]);
+                $this->$property = Input::post($property, $this->$property, $filterTypes[$property]);
             } else {
-                $this->$property = HaploInput::post($property, $this->$property);
+                $this->$property = Input::post($property, $this->$property);
             }
         }
     }
 
     /**
-     * @param HaploTemplate $template
+     * @param Template $template
      * @param array $escapeTypes
      */
-    public function assignToTemplate(HaploTemplate $template, array $escapeTypes = []) {
+    public function assignToTemplate(Template $template, array $escapeTypes = []) {
         $this->nonce = $this->app->nonce->get();
 
         foreach ($this->getPublicProperties() as $object) {
             $property = $object->name;
             if (array_key_exists($property, $escapeTypes)) {
-                $template->set($property, $this->$property, array(
+                $template->set($property, $this->$property, [
                     'escapeMethod' => $escapeTypes[$property]
-                ));
+                ]);
             } else {
-                $template->set($property, $this->$property, array(
+                $template->set($property, $this->$property, [
                     'escapeMethod' => 'escapeAttr'
-                ));
+                ]);
             }
         }
     }
